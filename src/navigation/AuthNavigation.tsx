@@ -1,0 +1,32 @@
+import SignUpScreenStep1 from "@/screens/authScreens/signUpScreens/SignUpScreenStep1";
+import SignUpScreenStep2 from "@/screens/authScreens/signUpScreens/SignUpScreenStep2";
+import SignUpScreenStep3 from "@/screens/authScreens/signUpScreens/SignUpScreenStep3";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import ROUTES from "../constants/ROUTES";
+import LandingScreen from "../screens/authScreens/LandingScreen";
+export default function AuthNavigation() {
+  const Stack = createNativeStackNavigator();
+  const CustomHeader = () => {
+    return null;
+  };
+  return (
+    <Stack.Navigator
+      initialRouteName={ROUTES.landingPage}
+      screenOptions={{ header: CustomHeader }}
+    >
+      <Stack.Screen name={ROUTES.landingPage} component={LandingScreen} />
+      <Stack.Screen
+        name={ROUTES.SignUpScreenStep1}
+        component={SignUpScreenStep1}
+      />
+      <Stack.Screen
+        name={ROUTES.SignUpScreenStep2}
+        component={SignUpScreenStep2}
+      />
+      <Stack.Screen
+        name={ROUTES.SignUpScreenStep3}
+        component={SignUpScreenStep3}
+      />
+    </Stack.Navigator>
+  );
+}
