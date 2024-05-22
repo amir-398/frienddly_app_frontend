@@ -7,7 +7,7 @@ import FONTS from "@/constants/FONTS";
 import ROUTES from "@/constants/ROUTES";
 import React from "react";
 import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
-export default function LandingScreen({ navigation }) {
+export default function LandingScreen({ navigation }: { navigation: any }) {
   return (
     <View style={styles.container}>
       <Image source={logo_image} style={styles.logo} />

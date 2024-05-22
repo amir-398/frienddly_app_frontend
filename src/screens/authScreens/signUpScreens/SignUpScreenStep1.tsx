@@ -1,5 +1,6 @@
 import CustomInput from "@/components/CustomInput";
 import ScreenContainer from "@/components/ScreenContainer";
+import ROUTES from "@/constants/ROUTES";
 import { setUserInfo } from "@/redux/Slices/userInfoSlice";
 import { useAppDispatch } from "@/redux/hooks";
 import { Field, Formik } from "formik";
@@ -15,17 +16,26 @@ interface FormProps {
 }
 
 const validationSchema = Yup.object().shape({
-  firstname: Yup.string().min(1).max(50),
-  lastname: Yup.string().min(1).max(50),
+  firstname: Yup.string()
+    .min(1)
+    .max(50)
+    .matches(/^[a-zA-Z\sé]+$/, "Seulement des lettres")
+    .required("Champ requis"),
+  lastname: Yup.string()
+    .min(1)
+    .max(50)
+    .matches(/^[a-zA-Z\sé]+$/, "Seulement des lettres")
+    .required("Champ requis"),
 });
 
-export default function SignUpScreenStep1() {
+export default function SignUpScreenStep1({ navigation }: { navigation: any }) {
   const dispatch = useAppDispatch();
 
   const onSubmit = (values: FormProps) => {
     const firstname = values.firstname;
     const lastname = values.lastname;
     dispatch(setUserInfo({ firstname, lastname }));
+    navigation.navigate(ROUTES.SignUpScreenStep2);
   };
 
   return (
@@ -52,7 +62,11 @@ export default function SignUpScreenStep1() {
               component={CustomInput}
               placeholder="Ton prénom"
             />
-            <AuthBtn title="Suivant" onPress={handleSubmit} />
+            <AuthBtn
+              title="Suivant"
+              onPress={handleSubmit}
+              disabled={!isValid}
+            />
           </>
         )}
       </Formik>

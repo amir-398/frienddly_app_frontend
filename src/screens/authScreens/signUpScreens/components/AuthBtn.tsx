@@ -12,13 +12,19 @@ import {
 export default function AuthBtn({
   title,
   onPress,
+  disabled,
 }: {
   title: string;
   onPress: () => void;
+  disabled?: boolean;
 }) {
   return (
     <View style={styles.containerBtn}>
-      <TouchableOpacity style={styles.btn} onPress={onPress}>
+      <TouchableOpacity
+        style={[styles.btn, disabled ? styles.btnDisabled : undefined]}
+        onPress={onPress}
+        disabled={disabled}
+      >
         <Text style={styles.text}>{title}</Text>
       </TouchableOpacity>
     </View>
@@ -34,7 +40,7 @@ const styles = StyleSheet.create({
     justifyContent: "flex-end",
     zIndex: -1,
     position: "absolute",
-    paddingBottom: 20,
+    paddingBottom: height * 0.08,
     paddingHorizontal: 20,
   },
   btn: {
@@ -45,6 +51,9 @@ const styles = StyleSheet.create({
     paddingVertical: 15,
     width: width - 40,
     alignSelf: "center",
+  },
+  btnDisabled: {
+    opacity: 0.4,
   },
   text: {
     color: "#fff",

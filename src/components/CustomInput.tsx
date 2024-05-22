@@ -22,8 +22,8 @@ export default function CustomInput(props) {
   };
 
   return (
-    <>
-      <View style={[styles.inputContainer, inputStyle]}>
+    <View style={inputStyle}>
+      <View style={styles.inputContainer}>
         <TextInput
           style={[
             styles.textInput,
@@ -35,7 +35,7 @@ export default function CustomInput(props) {
           ]}
           value={value}
           onChangeText={(text) => onChange(name)(text)}
-          placeholderTextColor={"#333333"}
+          placeholderTextColor={"rgba(0,0,0,0.5)"}
           secureTextEntry={isSecureEntry}
           cursorColor={"#000"}
           onBlur={() => {
@@ -44,6 +44,7 @@ export default function CustomInput(props) {
           }}
           {...inputProps}
         />
+
         {value && (
           <View
             style={[
@@ -61,6 +62,7 @@ export default function CustomInput(props) {
             />
           </View>
         )}
+
         {secureTextEntry && (
           <View style={styles.rightIconContainer}>
             <InteractiveIcon
@@ -73,12 +75,10 @@ export default function CustomInput(props) {
           </View>
         )}
       </View>
-      {hasError && (
-        <View style={styles.errorContainer}>
-          <Text style={styles.errorText}>{errors[name]}</Text>
-        </View>
-      )}
-    </>
+      <View style={styles.errorContainer}>
+        {hasError && <Text style={styles.errorText}>{errors[name]}</Text>}
+      </View>
+    </View>
   );
 }
 
@@ -98,14 +98,17 @@ const styles = StyleSheet.create({
     fontFamily: FONTS.poppinsMedium,
   },
   errorInput: {
-    borderColor: "red",
+    borderColor: "rgba(255,0,0,0.8)",
+  },
+  errorContainer: {
+    width: "100%",
+    justifyContent: "center",
+    height: 17,
   },
   errorText: {
-    color: "red",
+    color: "rgba(255,0,0,0.8)",
     fontFamily: FONTS.poppinsMedium,
     fontSize: 12,
-    marginTop: -15,
-    textAlign: "center",
   },
   rightIconContainer: {
     position: "absolute",
