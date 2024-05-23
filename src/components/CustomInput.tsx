@@ -29,9 +29,8 @@ export default function CustomInput(props) {
             styles.textInput,
             hasError && styles.errorInput,
             {
-              paddingRight: secureTextEntry && iconName && iconType ? 60 : 35,
+              paddingRight: secureTextEntry ? 60 : 35,
             },
-            { paddingLeft: iconName && iconType ? 30 : 10 },
           ]}
           value={value}
           onChangeText={(text) => onChange(name)(text)}
@@ -49,7 +48,7 @@ export default function CustomInput(props) {
           <View
             style={[
               styles.rightIconContainer,
-              { right: secureTextEntry ? 30 : 10 },
+              { right: secureTextEntry ? 35 : 10 },
             ]}
           >
             <InteractiveIcon
@@ -71,6 +70,7 @@ export default function CustomInput(props) {
               color="#000"
               onPress={() => setIsSecureEntry(!isSecureEntry)}
               size={20}
+              padding={1}
             />
           </View>
         )}
@@ -96,6 +96,7 @@ const styles = StyleSheet.create({
     width: "100%",
     fontSize: 14,
     fontFamily: FONTS.poppinsMedium,
+    paddingLeft: 10,
   },
   errorInput: {
     borderColor: "rgba(255,0,0,0.8)",

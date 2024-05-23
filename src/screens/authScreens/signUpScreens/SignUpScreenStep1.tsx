@@ -20,20 +20,22 @@ const validationSchema = Yup.object().shape({
     .min(1)
     .max(50)
     .matches(/^[a-zA-Z\sé]+$/, "Seulement des lettres")
-    .required("Champ requis"),
+    .required("Champ requis")
+    .trim(),
   lastname: Yup.string()
     .min(1)
     .max(50)
     .matches(/^[a-zA-Z\sé]+$/, "Seulement des lettres")
-    .required("Champ requis"),
+    .required("Champ requis")
+    .trim(),
 });
 
 export default function SignUpScreenStep1({ navigation }: { navigation: any }) {
   const dispatch = useAppDispatch();
 
   const onSubmit = (values: FormProps) => {
-    const firstname = values.firstname;
-    const lastname = values.lastname;
+    const firstname = values.firstname.trim();
+    const lastname = values.lastname.trim();
     dispatch(setUserInfo({ firstname, lastname }));
     navigation.navigate(ROUTES.SignUpScreenStep2);
   };

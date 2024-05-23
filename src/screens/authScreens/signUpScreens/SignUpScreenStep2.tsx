@@ -26,15 +26,14 @@ export default function SignUpScreenStep2({ navigation }: { navigation: any }) {
   });
   const [textBirthdayWrong, setTextBirthdayWrong] = useState("");
   const [btnDisable, setBtnDisable] = useState(true);
-  const [age, setAge] = useState(0);
+
   const changeIput = (inputRef: any) => {
     inputRef.current.focus();
   };
-  const onSubmit = (values: FormProps) => {
-    const firstname = values.firstname;
-    const lastname = values.lastname;
-    dispatch(setUserInfo({ firstname, lastname }));
-    navigation.navigate(ROUTES.SignUpScreenStep2);
+  const onSubmit = () => {
+    const birthDate = `${userBirthDate.year}-${userBirthDate.month}-${userBirthDate.day}`;
+    dispatch(setUserInfo({ birthDate }));
+    navigation.navigate(ROUTES.SignUpScreenStep3);
   };
 
   //Day birtday handler
@@ -104,12 +103,6 @@ export default function SignUpScreenStep2({ navigation }: { navigation: any }) {
     const age = calculateAge(
       `${userBirthDate.year}-${userBirthDate.month}-${userBirthDate.day}`
     );
-    console.log("age", age);
-
-    setAge(age);
-
-    //----------------------------------//
-
     //Button condition-------------------//
     if (
       userBirthDate.day.length == 2 &&
@@ -132,8 +125,6 @@ export default function SignUpScreenStep2({ navigation }: { navigation: any }) {
       setBtnDisable(true);
     }
   }, [userBirthDate]);
-
-  const handleSubmit = () => {};
 
   // focus handler
   const focusHander = (textInput: string) => {
@@ -202,7 +193,7 @@ export default function SignUpScreenStep2({ navigation }: { navigation: any }) {
         />
       </View>
       <Text style={styles.textBirthdayWrong}>{textBirthdayWrong}</Text>
-      <AuthBtn title="Suivant" onPress={handleSubmit} />
+      <AuthBtn title="Suivant" onPress={onSubmit} disabled={btnDisable} />
     </ScreenContainer>
   );
 }

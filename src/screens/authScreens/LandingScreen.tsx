@@ -23,7 +23,7 @@ export default function LandingScreen({ navigation }: { navigation: any }) {
         />
         <Btn
           title="S'inscrire"
-          onPress={() => navigation.navigate(ROUTES.SignUpScreenStep1)}
+          onPress={() => navigation.navigate(ROUTES.SignUpScreenStep5)}
           style={styles.rightBtn}
           textStyle={{ color: "#fff" }}
         />
