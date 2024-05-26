@@ -2,7 +2,7 @@ import ScreenContainer from "@/components/ScreenContainer";
 import COLORS from "@/constants/COLORS";
 import FONTS from "@/constants/FONTS";
 import ROUTES from "@/constants/ROUTES";
-import { setUserInfo } from "@/redux/Slices/userInfoSlice";
+import { setUserInfo } from "@/redux/Slices/signUpUserInfoSlice";
 import { useAppDispatch } from "@/redux/hooks";
 import React, { useEffect, useRef, useState } from "react";
 import { StyleSheet, Text, TextInput, View } from "react-native";
@@ -16,9 +16,9 @@ interface FormProps {
 
 export default function SignUpScreenStep2({ navigation }: { navigation: any }) {
   const dispatch = useAppDispatch();
-  const input1Ref = useRef(null);
-  const input2Ref = useRef(null);
-  const input3Ref = useRef(null);
+  const input1Ref = useRef<TextInput>(null);
+  const input2Ref = useRef<TextInput>(null);
+  const input3Ref = useRef<TextInput>(null);
   const [userBirthDate, setuserBirthDate] = useState({
     day: "",
     month: "",

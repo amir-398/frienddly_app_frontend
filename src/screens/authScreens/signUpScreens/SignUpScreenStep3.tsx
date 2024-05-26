@@ -1,9 +1,10 @@
 import CustomInput from "@/components/CustomInput";
 import ScreenContainer from "@/components/ScreenContainer";
 import ROUTES from "@/constants/ROUTES";
-import { setUserInfo } from "@/redux/Slices/userInfoSlice";
+import { useVerifyEmail } from "@/hooks/auth";
+import { setUserInfo } from "@/redux/Slices/signUpUserInfoSlice";
 import { useAppDispatch } from "@/redux/hooks";
-import { Field, Formik } from "formik";
+import { Field, Formik, FormikHelpers } from "formik";
 import React from "react";
 import { StyleSheet } from "react-native";
 import * as Yup from "yup";
@@ -19,6 +20,7 @@ const validationSchema = Yup.object().shape({
     .min(1)
     .max(50)
     .matches(emailRegex, "Email invalide")
+    .email()
     .required("Champ requis")
     .trim(),
 });
@@ -26,15 +28,33 @@ const validationSchema = Yup.object().shape({
 export default function SignUpScreenStep3({ navigation }: { navigation: any }) {
   const dispatch = useAppDispatch();
 
-  const onSubmit = (values: FormProps) => {
-    const email = values.email.trim();
-    dispatch(setUserInfo({ email }));
-    navigation.navigate(ROUTES.SignUpScreenStep4);
+  const { mutate: verifyEmail, isPending: VerifyEmailPending } =
+    useVerifyEmail();
+
+  // onSubmit function to handle form submission
+  const onSubmit = async (
+    values: FormProps,
+    { setFieldError }: FormikHelpers<FormProps>
+  ) => {
+    const email = values.email.trim().toLowerCase();
+    verifyEmail(email, {
+      onSuccess: (isEmailExist) => {
+        if (isEmailExist) {
+          setFieldError("email", "Cet email est déjà utilisé");
+        } else {
+          dispatch(setUserInfo({ email }));
+          navigation.navigate(ROUTES.SignUpScreenStep4);
+        }
+      },
+      onError: () => {
+        setFieldError("email", "Une erreur s'est produite");
+      },
+    });
   };
 
   return (
     <ScreenContainer>
-      <HeaderComponent title="Indiquez votre adresse email?" />
+      <HeaderComponent title="Indiquez votre adresse email" />
       <Formik
         initialValues={{
           email: "",
@@ -42,7 +62,7 @@ export default function SignUpScreenStep3({ navigation }: { navigation: any }) {
         validationSchema={validationSchema}
         onSubmit={onSubmit}
       >
-        {({ handleSubmit, isValid }) => (
+        {({ handleSubmit, isValid, dirty }) => (
           <>
             <Field
               name="email"
@@ -53,7 +73,8 @@ export default function SignUpScreenStep3({ navigation }: { navigation: any }) {
             <AuthBtn
               title="Suivant"
               onPress={handleSubmit}
-              disabled={!isValid}
+              disabled={!(isValid && dirty)}
+              loading={VerifyEmailPending}
             />
           </>
         )}

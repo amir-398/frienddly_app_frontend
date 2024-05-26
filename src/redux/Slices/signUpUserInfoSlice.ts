@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
-interface InitialeStateProps {
+interface initialeStateProps {
   userInfo: {
     firstname?: string;
     lastname?: string;
@@ -11,19 +11,19 @@ interface InitialeStateProps {
   };
 }
 
-const initialState: InitialeStateProps = {
+const initialState: initialeStateProps = {
   userInfo: {},
 };
 
-const userInfo = createSlice({
+const signUpUserInfoSlice = createSlice({
   name: "userInfo",
   initialState,
   reducers: {
     setUserInfo(state, action: PayloadAction<object>) {
-      state.userInfo = action.payload as InitialeStateProps["userInfo"];
+      state.userInfo = { ...state.userInfo, ...action.payload };
     },
   },
 });
 
-export const { setUserInfo } = userInfo.actions;
-export default userInfo.reducer;
+export const { setUserInfo } = signUpUserInfoSlice.actions;
+export default signUpUserInfoSlice.reducer;

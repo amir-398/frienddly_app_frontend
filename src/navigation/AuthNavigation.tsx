@@ -1,3 +1,4 @@
+import SignInScreen from "@/screens/authScreens/signInScreens/SignInScreen";
 import SignUpScreenStep1 from "@/screens/authScreens/signUpScreens/SignUpScreenStep1";
 import SignUpScreenStep2 from "@/screens/authScreens/signUpScreens/SignUpScreenStep2";
 import SignUpScreenStep3 from "@/screens/authScreens/signUpScreens/SignUpScreenStep3";
@@ -13,10 +14,11 @@ export default function AuthNavigation() {
   };
   return (
     <Stack.Navigator
-      initialRouteName={ROUTES.landingPage}
+      initialRouteName={ROUTES.LandingPage}
       screenOptions={{ header: CustomHeader }}
     >
-      <Stack.Screen name={ROUTES.landingPage} component={LandingScreen} />
+      <Stack.Screen name={ROUTES.LandingPage} component={LandingScreen} />
+      <Stack.Screen name={ROUTES.SignInScreen} component={SignInScreen} />
       <Stack.Screen
         name={ROUTES.SignUpScreenStep1}
         component={SignUpScreenStep1}

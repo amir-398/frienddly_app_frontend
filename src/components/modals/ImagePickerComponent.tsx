@@ -40,23 +40,17 @@ export default function ImagePickerComponent({
       }
       if (!result.canceled) {
         const resultData = result.assets[0];
-
-        const imageName = resultData.fileName;
         const imageSize = resultData.fileSize;
         const imageMimeType = resultData.mimeType;
         const imageExtension = imageMimeType?.split("/")[1];
-        const imageUri = resultData.uri;
         const allowedExtensions = ["jpg", "jpeg", "png", "gif"];
         const maxFileSize = 1024 * 1024 * 20;
-
         if (
           imageSize &&
           allowedExtensions.includes(imageExtension ?? "") &&
           imageSize <= maxFileSize
         ) {
           setImageError("");
-          // Create the form data
-
           setImage(resultData);
         } else if (imageSize && imageSize >= maxFileSize) {
           setImage(undefined);

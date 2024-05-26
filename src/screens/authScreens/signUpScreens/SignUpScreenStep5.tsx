@@ -3,69 +3,68 @@ import ImagePickerComponent from "@/components/modals/ImagePickerComponent";
 import COLORS from "@/constants/COLORS";
 import FONTS from "@/constants/FONTS";
 import { useRegister } from "@/hooks/auth";
-import { useAppDispatch, useAppSelector } from "@/redux/hooks";
-import React, { useState } from "react";
+import { useTokenEffect } from "@/hooks/useTokenEffect";
+import { useAppSelector } from "@/redux/hooks";
+import React, { useEffect, useState } from "react";
 import { Image, StyleSheet, Text, TouchableOpacity } from "react-native";
 import AuthBtn from "./components/AuthBtn";
 import HeaderComponent from "./components/HeaderComponent";
-
+type ImageInfo = {
+  [key: string]: string | number | null;
+};
 export default function SignUpScreenStep6({ navigation }: { navigation: any }) {
-  const dispatch = useAppDispatch();
-  const userInfo = useAppSelector((state) => state.userInfoSlice.userInfo);
-  const [formDataImage, setFormDataImage] = useState<object | null>(null);
-  const [image, setImage] = useState<string | null>(null);
+  const userInfo = useAppSelector(
+    (state) => state.signUpUserInfoSlice.userInfo
+  );
+  const { storeToken } = useTokenEffect();
+
+  const [image, setImage] = useState<ImageInfo | null>(null);
+
   const [imageError, setImageError] = useState("");
   const [imagePickerIsVisible, setImagePickerIsVisible] = useState(false);
+  const [btnDisabled, setBtnDisabled] = useState(true);
+  const { mutate: userRegister, isPending: UserRegisterIsPending } =
+    useRegister();
 
-  const { mutate, data, isLoading, isSuccess, error } = useRegister();
-  const userData = {
-    firstname: "John",
-    lastname: "Doe",
-    email: "amir.398@gmail.col",
-    password: "123456",
-    profileImage: formDataImage,
-  };
-  const imageUri = image?.uri;
-  console.log("imageUri", image);
+  //check if image is selected
+  useEffect(() => {
+    if (image) {
+      setBtnDisabled(false);
+    } else {
+      setBtnDisabled(true);
+    }
+  });
 
-  const onSubmit = async () => {
-    const imageName = image?.fileName;
-    const imageMimeType = image?.mimeType;
+  //create form Data with user Data
+  const createFormData = (imageData: any) => {
+    const imageName = imageData?.fileName;
+    const imageMimeType = imageData?.mimeType;
+    const imageUri = imageData?.uri;
     const formData = new FormData();
-    formData.append("file", {
+    formData.append("profilImage", {
       uri: imageUri,
       name: `image/${imageName}`,
       type: imageMimeType,
+    } as unknown as Blob);
+    formData.append("firstname", userInfo.firstname as string);
+    formData.append("lastname", userInfo.lastname as string);
+    formData.append("email", userInfo.email as string);
+    formData.append("password", userInfo.password as string);
+    formData.append("birthDate", userInfo.birthDate as string);
+    return formData;
+  };
+
+  const onSubmit = async () => {
+    const formData = createFormData(image);
+    userRegister(formData, {
+      onSuccess: (data) => {
+        const token = data.token.token;
+        storeToken(token);
+      },
+      onError: (error) => {
+        console.error("Registration failed", error);
+      },
     });
-    console.log("formData", formData);
-
-    try {
-      const response = await fetch(
-        "http://192.168.1.81:3333/api/v1/auth/register",
-        {
-          method: "POST",
-          body: formData,
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-        }
-      );
-
-      const data = await response.json();
-      console.log("Upload success", data);
-    } catch (error) {
-      console.error("Upload failed", error);
-    }
-    // mutate(fetchImage(), {
-    //   onSuccess: (data) => {
-    //     console.log("Registration successful", data);
-    //     // Gestion du succès, par exemple navigation ou mise à jour de l'état
-    //   },
-    //   onError: (error) => {
-    //     console.error("Registration failed", error);
-    //     // Gestion des erreurs, par exemple affichage d'un message d'erreur
-    //   },
-    // });
   };
   return (
     <ScreenContainer>
@@ -81,7 +80,10 @@ export default function SignUpScreenStep6({ navigation }: { navigation: any }) {
           style={styles.wrapperImagePicker}
           onPress={() => setImagePickerIsVisible(true)}
         >
-          <Image source={{ uri: imageUri }} style={styles.imagePicked} />
+          <Image
+            source={{ uri: image?.uri as string }}
+            style={styles.imagePicked}
+          />
         </TouchableOpacity>
       ) : (
         <TouchableOpacity
@@ -93,7 +95,12 @@ export default function SignUpScreenStep6({ navigation }: { navigation: any }) {
         </TouchableOpacity>
       )}
       <Text style={styles.imageError}>{imageError}</Text>
-      <AuthBtn title="Suivant" onPress={onSubmit} />
+      <AuthBtn
+        title="Terminer"
+        onPress={onSubmit}
+        loading={UserRegisterIsPending}
+        disabled={btnDisabled}
+      />
     </ScreenContainer>
   );
 }

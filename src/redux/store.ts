@@ -1,10 +1,16 @@
 import { configureStore } from "@reduxjs/toolkit";
 
+import authSlice from "./Slices/authSlice";
+import loadingScreenSlice from "./Slices/loadingScreenSlice";
+import signUpUserInfoSlice from "./Slices/signUpUserInfoSlice";
 import userInfoSlice from "./Slices/userInfoSlice";
 
 const store = configureStore({
   reducer: {
     userInfoSlice: userInfoSlice,
+    signUpUserInfoSlice: signUpUserInfoSlice,
+    authSlice: authSlice,
+    loadingScreenSlice: loadingScreenSlice,
   },
 });
 

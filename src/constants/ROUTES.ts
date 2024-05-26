@@ -1,5 +1,6 @@
 export default {
-  landingPage: "LandingPage",
+  LandingPage: "LandingPage",
+  SignInScreen: "SignInScreen",
   SignUpScreenStep1: "SignUpScreenStep1",
   SignUpScreenStep2: "SignUpScreenStep2",
   SignUpScreenStep3: "SignUpScreenStep3",

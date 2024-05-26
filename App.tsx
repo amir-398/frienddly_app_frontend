@@ -27,7 +27,6 @@ export default function App() {
   }
   const MyTheme = {
     ...DefaultTheme,
-
     colors: {
       ...DefaultTheme.colors,
       background: "#fff",

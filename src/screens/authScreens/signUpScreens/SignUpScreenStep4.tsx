@@ -1,7 +1,7 @@
 import CustomInput from "@/components/CustomInput";
 import ScreenContainer from "@/components/ScreenContainer";
 import ROUTES from "@/constants/ROUTES";
-import { setUserInfo } from "@/redux/Slices/userInfoSlice";
+import { setUserInfo } from "@/redux/Slices/signUpUserInfoSlice";
 import { useAppDispatch } from "@/redux/hooks";
 import { Field, Formik } from "formik";
 import React from "react";
@@ -30,10 +30,7 @@ const validationSchema = Yup.object({
     )
     .required("Champ requis"),
   passwordConfirmation: Yup.string()
-    .oneOf(
-      [Yup.ref("password"), null],
-      "Les mots de passe doivent correspondre"
-    )
+    .oneOf([Yup.ref("password")], "Les mots de passe doivent correspondre")
     .required("Champ requis"),
 });
 

@@ -1,10 +1,15 @@
-import SubmitBtn from "@/components/SubmitBtn";
 import COLORS from "@/constants/COLORS";
 import FONTS from "@/constants/FONTS";
 import React from "react";
-import { Dimensions, StyleSheet, View } from "react-native";
+import {
+  ActivityIndicator,
+  Dimensions,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+} from "react-native";
 
-export default function AuthBtn({
+export default function SubmitBtn({
   title,
   onPress,
   disabled,
@@ -16,28 +21,22 @@ export default function AuthBtn({
   loading?: boolean;
 }) {
   return (
-    <View style={styles.containerBtn}>
-      <SubmitBtn
-        title={title}
-        onPress={onPress}
-        disabled={disabled}
-        loading={loading}
-      />
-    </View>
+    <TouchableOpacity
+      style={[styles.btn, disabled || loading ? styles.btnDisabled : undefined]}
+      onPress={onPress}
+      disabled={loading || disabled}
+    >
+      {loading ? (
+        <ActivityIndicator color={COLORS.primaryColor} size={30.5} />
+      ) : (
+        <Text style={styles.text}>{title}</Text>
+      )}
+    </TouchableOpacity>
   );
 }
-const height = Dimensions.get("window").height;
+
 const width = Dimensions.get("window").width;
 const styles = StyleSheet.create({
-  containerBtn: {
-    alignSelf: "center",
-    height: height,
-    width: "100%",
-    justifyContent: "flex-end",
-    position: "absolute",
-    paddingBottom: height * 0.08,
-    paddingHorizontal: 20,
-  },
   btn: {
     backgroundColor: COLORS.secondaryColor,
     alignItems: "center",

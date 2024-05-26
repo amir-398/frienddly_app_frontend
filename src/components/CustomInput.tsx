@@ -1,4 +1,3 @@
-import COLORS from "@/constants/COLORS";
 import FONTS from "@/constants/FONTS";
 import React, { useState } from "react";
 import { StyleSheet, Text, TextInput, View } from "react-native";
@@ -87,9 +86,10 @@ const styles = StyleSheet.create({
     position: "relative",
     justifyContent: "center",
     alignItems: "center",
+    zIndex: 1,
   },
   textInput: {
-    borderColor: COLORS.secondaryColor,
+    borderColor: "#000",
     borderWidth: 2,
     borderRadius: 10,
     paddingVertical: 10,
