@@ -6,4 +6,9 @@ export default {
   SignUpScreenStep3: "SignUpScreenStep3",
   SignUpScreenStep4: "SignUpScreenStep4",
   SignUpScreenStep5: "SignUpScreenStep5 ",
+  Home: "Home",
+  PostScreen: "PostScreen",
+  Community: "Community",
+  Chat: "Chat",
+  Notifications: "Notifications",
 };
