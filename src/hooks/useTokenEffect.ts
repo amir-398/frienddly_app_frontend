@@ -1,4 +1,8 @@
-import { deleteToken, setToken } from "@/redux/Slices/authSlice";
+import {
+  deleteToken,
+  initializeAuth,
+  setToken,
+} from "@/redux/Slices/authSlice";
 import { useAppDispatch } from "./../redux/hooks";
 
 export const useTokenEffect = () => {
@@ -12,5 +16,9 @@ export const useTokenEffect = () => {
     await dispatch(deleteToken());
   };
 
-  return { storeToken, removeToken };
+  const handeInitializeAuth = async () => {
+    await dispatch(initializeAuth());
+  };
+
+  return { storeToken, removeToken, handeInitializeAuth };
 };

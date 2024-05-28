@@ -1,12 +1,11 @@
+import { useGetAllPosts } from "@/hooks/posts";
 import * as Location from "expo-location";
 import React, { useEffect, useState } from "react";
 import { StyleSheet, View } from "react-native";
 import MapView, { Marker } from "react-native-maps";
 import PostRender from "./PostRender";
 export default function MapComponent() {
-  const [location, setLocation] = useState(null);
-  console.log(location);
-
+  const [region, setRegion] = useState(null);
   const [errorMsg, setErrorMsg] = useState(null);
 
   useEffect(() => {
@@ -18,9 +17,18 @@ export default function MapComponent() {
       }
 
       let location = await Location.getCurrentPositionAsync({});
-      setLocation(location);
+      setRegion({
+        latitude: location.coords.latitude,
+        longitude: location.coords.longitude,
+      });
     })();
   }, []);
+  const { data: posts, refetch } = useGetAllPosts({
+    lgt: region?.longitude,
+    ltd: region?.latitude,
+  });
+  console.log("MapComponent -> posts", posts);
+
   return (
     <View style={styles.container}>
       <MapView
@@ -29,6 +37,12 @@ export default function MapComponent() {
           longitude: 2.4655165,
           latitudeDelta: 0.0922,
           longitudeDelta: 0.0421,
+        }}
+        onRegionChangeComplete={(region) => {
+          setRegion({
+            latitude: region.latitude,
+            longitude: region.longitude,
+          });
         }}
         style={styles.map}
       >
