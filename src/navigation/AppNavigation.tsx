@@ -12,7 +12,6 @@ export default function AppNavigation() {
   const { isConnected, userData, loading, error } = useAppSelector(
     (state) => state.authSlice
   );
-  console.log("AppNavigation -> isConnected", isConnected);
 
   return loading ? (
     <LoadingScreen />

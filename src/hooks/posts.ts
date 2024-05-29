@@ -1,10 +1,8 @@
 import { useQuery } from "@tanstack/react-query";
 import * as SecureStore from "expo-secure-store";
 import ky from "ky";
-
+const endpoint = process.env.EXPO_PUBLIC_ENDPONT_HOME;
 export async function getAllPosts(filter: { lgt: number; ltd: number }) {
-  console.log("getAllPosts -> filter", filter);
-
   const token = await SecureStore.getItemAsync("token");
   if (!token) {
     throw new Error("No token found");
@@ -12,7 +10,7 @@ export async function getAllPosts(filter: { lgt: number; ltd: number }) {
 
   try {
     const response = await ky(
-      `http://192.168.1.81:3333/api/v1/posts?lgt=${filter.lgt}&ltd=${filter.ltd}`,
+      `${endpoint}/api/v1/posts?lgt=${filter.lgt}&ltd=${filter.ltd}`,
       {
         headers: { Authorization: `Bearer ${token}` },
       }
@@ -25,8 +23,6 @@ export async function getAllPosts(filter: { lgt: number; ltd: number }) {
 }
 
 export function useGetAllPosts(filter: { lgt: number; ltd: number }) {
-  console.log("useGetAllPosts -> filter", filter);
-
   return useQuery({
     queryKey: ["posts", filter],
     queryFn: () => getAllPosts(filter),
