@@ -1,6 +1,8 @@
 import COLORS from "@/constants/COLORS";
 import FONTS from "@/constants/FONTS";
-import React from "react";
+import { useGetCategories } from "@/hooks/categories";
+import { useGetAllPosts } from "@/hooks/posts";
+import React, { useState } from "react";
 import {
   FlatList,
   Pressable,
@@ -14,22 +16,40 @@ import CategoriesComponent from "./components/CategoriesComponent";
 import Header from "./components/Header";
 import PostComponent from "./components/PostComponent";
 import MapComponent from "./components/mapComponents/MapComponent";
-
+interface Post {
+  id: number;
+  title: string;
+  description: string;
+  latitude: number;
+  longitude: number;
+  category: {
+    id: number;
+    name: string;
+  };
+  images: [
+    {
+      url: string;
+      postId: number;
+      id: number;
+    }
+  ];
+}
 export default function Home() {
+  const [selectedCategory, setSelectedCategory] = useState<number | null>(null);
   const cardsContent = [
     {
       id: 1,
       title: "Découvre des restaurants selon tes origines !",
       btnText: "Voir les restaurants",
       image: require("@/assets/images/card2.png"),
-      color: COLORS.secondaryColor,
+      color: COLORS.primaryColor,
     },
     {
       id: 2,
       title: "Découvre des évènements  autour de toi !",
       btnText: "Voir les évènements",
       image: require("@/assets/images/card1.png"),
-      color: COLORS.primaryColor,
+      color: COLORS.secondaryColor,
     },
     {
       id: 3,
@@ -39,32 +59,23 @@ export default function Home() {
       color: COLORS.primaryColor,
     },
   ];
-
-  const postsContent = [
-    {
-      id: 1,
-      title: "Round eatery",
-      note: "4.5",
-      time: "30-40min",
-      distance: "0.3mil",
-      image:
-        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSLHl-acA8bMo8R2vF0arV19dWBkI9SnAa9lMeA6BL-mA&s",
-    },
-    {
-      id: 2,
-      title: "African Flavour",
-      note: "4",
-      time: "20-10min",
-      distance: "0.2mil",
-      image:
-        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSLHl-acA8bMo8R2vF0arV19dWBkI9SnAa9lMeA6BL-mA&s",
-    },
-  ];
+  const { data: postsData } = useGetAllPosts({
+    cat: selectedCategory ?? "",
+    nb: 2,
+  });
+  const { data: categories } = useGetCategories();
   return (
     <ScrollView>
       <Header />
-      <MapComponent />
-      <CategoriesComponent />
+      <MapComponent
+        selectedCategory={selectedCategory}
+        setSelectedCategory={setSelectedCategory}
+      />
+      <CategoriesComponent
+        selectedCategory={selectedCategory}
+        setSelectedCategory={setSelectedCategory}
+        categories={categories}
+      />
       <FlatList
         data={cardsContent}
         style={{ marginHorizontal: 10, marginBottom: 15 }}
@@ -73,14 +84,20 @@ export default function Home() {
         keyExtractor={(item) => item.id.toString()}
         renderItem={({ item }) => <CardsComponent {...item} />}
       />
-      {postsContent.map((item) => (
+      {postsData?.map((item: Post) => (
         <PostComponent key={item.id} {...item} />
       ))}
       <TouchableOpacity style={styles.searchBtn}>
         <Text style={styles.searchText}>Recherche</Text>
       </TouchableOpacity>
       <Pressable>
-        <Text style={styles.filterText}>VOIR TOUS LES RESTAURANTS</Text>
+        <Text style={styles.filterText}>
+          VOIR TOUS LES{" "}
+          {selectedCategory
+            ? categories &&
+              categories?.find((item) => item.id == selectedCategory)?.name
+            : categories && categories[0]?.name?.toUpperCase()}
+        </Text>
       </Pressable>
       <Text style={styles.infoText}>
         Profitez d'une remise de 10 à 15% dans nos restaurants partenaires, que

@@ -4,35 +4,32 @@ import { Dimensions, Image, StyleSheet, Text, View } from "react-native";
 
 interface PostComponentProps {
   title: string;
-  note: string;
-  time: string;
-  distance: string;
-  image: string;
+  images: [
+    {
+      url: string;
+      postId: number;
+      id: number;
+    }
+  ];
 }
-export default function PostComponent({
-  title,
-  note,
-  time,
-  distance,
-  image,
-}: PostComponentProps) {
+export default function PostComponent({ title, images }: PostComponentProps) {
   return (
     <View style={styles.container}>
       <Image
         style={styles.image}
         source={{
-          uri: image,
+          uri: images[0].url,
         }}
       />
       <View style={styles.header}>
         <Text style={styles.title}>{title}</Text>
         <View style={styles.noteContainer}>
-          <Text style={styles.note}>{note} </Text>
+          <Text style={styles.note}>4;5</Text>
         </View>
       </View>
       <View style={styles.bottom}>
-        <Text style={styles.bottomText}>{time} </Text>
-        <Text style={styles.bottomText}>{distance}</Text>
+        <Text style={styles.bottomText}>20-10 min</Text>
+        <Text style={styles.bottomText}> 0.2mil </Text>
       </View>
     </View>
   );

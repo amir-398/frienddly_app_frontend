@@ -69,11 +69,11 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
     backgroundColor: "#fff",
     borderRadius: 20,
-    lineHeight: 30,
   },
   btnText: {
     fontSize: 11,
     fontFamily: FONTS.poppinsMedium,
+    marginTop: 3,
   },
   right: {
     width: "40%",

@@ -29,7 +29,13 @@ interface Region {
   latitudeDelta: number;
   longitudeDelta: number;
 }
-export default function MapComponent() {
+export default function MapComponent({
+  selectedCategory,
+  setSelectedCategory,
+}: {
+  selectedCategory: number | null;
+  setSelectedCategory: (id: number) => void;
+}) {
   const [region, setRegion] = useState<Region | null>(null);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [postsData, setPostsData] = useState<Post[]>([]);
@@ -53,21 +59,28 @@ export default function MapComponent() {
     })();
   }, []);
 
+  // Récupère les posts en fonction de la région
   const { data: posts } = useGetAllPosts({
     lgt: region?.longitude ?? 0,
     ltd: region?.latitude ?? 0,
+    cat: selectedCategory ?? "",
   });
 
   useEffect(() => {
     if (posts && (posts as Post[]).length > 0) {
-      setPostsData((prev) => {
-        // Filtre les posts pour n'ajouter que ceux qui n'existent pas déjà
-        const newPosts = (posts as Post[]).filter(
-          (post: Post) =>
-            !prev.some((existingPost: Post) => existingPost.id === post.id)
-        );
-        return [...prev, ...newPosts];
-      });
+      if (!selectedCategory) {
+        setPostsData((prev) => {
+          // Filtre les posts pour n'ajouter que ceux qui n'existent pas déjà
+          const newPosts = (posts as Post[]).filter(
+            (post: Post) =>
+              !prev?.some((existingPost: Post) => existingPost.id === post.id)
+          );
+
+          return [...prev, ...newPosts];
+        });
+      } else {
+        setPostsData(posts as Post[]);
+      }
     }
   }, [posts]);
 
@@ -79,12 +92,6 @@ export default function MapComponent() {
           longitude: 1.888334,
           latitudeDelta: 5,
           longitudeDelta: 5,
-        }}
-        region={{
-          latitude: region?.latitude ?? 0,
-          longitude: region?.longitude ?? 0,
-          latitudeDelta: region?.latitudeDelta ?? 0,
-          longitudeDelta: region?.longitudeDelta ?? 0,
         }}
         onRegionChangeComplete={(region) => {
           setRegion({
@@ -108,9 +115,15 @@ export default function MapComponent() {
             description={post.description}
             image={
               post?.category.id == 1
-                ? require("@/assets/mapIcons/restaurant.png")
+                ? selectedPost?.id == post.id
+                  ? require("@/assets/mapIcons/restaurant_selected.png")
+                  : require("@/assets/mapIcons/restaurant.png")
                 : post?.category.id == 2
-                ? require("@/assets/mapIcons/party.png")
+                ? selectedPost?.id == post.id
+                  ? require("@/assets/mapIcons/party_selected.png")
+                  : require("@/assets/mapIcons/party.png")
+                : selectedPost?.id == post.id
+                ? require("@/assets/mapIcons/super_selected.png")
                 : require("@/assets/mapIcons/super.png")
             }
             onPress={() => setSelectedPost(post as Post)}
