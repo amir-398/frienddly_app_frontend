@@ -1,3 +1,4 @@
+import COLORS from "@/constants/COLORS";
 import { useGetAllPosts } from "@/hooks/posts";
 import * as Location from "expo-location";
 import React, { useEffect, useState } from "react";
@@ -66,6 +67,7 @@ export default function MapComponent({
     cat: selectedCategory ?? "",
   });
 
+  // add new posts to the postsData
   useEffect(() => {
     if (posts && (posts as Post[]).length > 0) {
       if (!selectedCategory) {
@@ -84,12 +86,16 @@ export default function MapComponent({
     }
   }, [posts]);
 
+  // handle marker press
+  const handleMarkerPress = (post: Post) => {
+    setSelectedPost(post);
+  };
   return (
     <View style={styles.container}>
       <MapView
         initialRegion={{
-          latitude: 46.603354,
-          longitude: 1.888334,
+          latitude: region?.latitude ?? 46.603354,
+          longitude: region?.longitude ?? 1.888334,
           latitudeDelta: 5,
           longitudeDelta: 5,
         }}
@@ -102,17 +108,25 @@ export default function MapComponent({
           });
         }}
         style={styles.map}
-        // onPress={() => setSelectedPost(null)}
+        showsUserLocation={true}
+        loadingEnabled={true}
+        loadingIndicatorColor={COLORS.secondaryColor}
+        onMarkerDeselect={() => setSelectedPost(null)}
+        showsPointsOfInterest={false}
+        showsCompass={false}
+        showsBuildings={false}
+        showsTraffic={false}
+        showsIndoors={false}
+        showsMyLocationButton={false}
       >
         {postsData?.map((post: Post) => (
           <Marker
             key={post.id}
+            onSelect={() => setSelectedPost(post)}
             coordinate={{
               latitude: post.latitude,
               longitude: post.longitude,
             }}
-            title={post.title}
-            description={post.description}
             image={
               post?.category.id == 1
                 ? selectedPost?.id == post.id
@@ -126,7 +140,6 @@ export default function MapComponent({
                 ? require("@/assets/mapIcons/super_selected.png")
                 : require("@/assets/mapIcons/super.png")
             }
-            onPress={() => setSelectedPost(post as Post)}
           />
         ))}
       </MapView>

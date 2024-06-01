@@ -30,11 +30,14 @@ interface Post {
 export default function PostRender(post: Post) {
   const navigation = useNavigation();
   const data = post.post;
+
   return (
     <View style={styles.container}>
       <Pressable
         style={styles.postContainer}
-        onPress={() => navigation.navigate(ROUTES.PostScreen as never)}
+        onPress={() =>
+          navigation.navigate(ROUTES.PostScreen as never, { id: data.id })
+        }
       >
         <ImageBackground
           style={styles.post}

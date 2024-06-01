@@ -8,6 +8,53 @@ interface Filter {
   cat?: number | string;
   nb?: 2;
 }
+interface PostData {
+  id: number;
+  title: string;
+  description: string;
+  price: number;
+  location: string;
+  images: [
+    {
+      url: string;
+      postId: number;
+      id: number;
+    }
+  ];
+  grade: number;
+  grades: [
+    {
+      id: number;
+      userId: number;
+      postId: number;
+      grade: number;
+      createdAt: string;
+      updatedAt: string;
+      user: {
+        firstname: string;
+        lastname: string;
+        profilImage: string;
+        isAdmin: boolean;
+      };
+    }
+  ];
+  comments: [
+    {
+      id: number;
+      userId: number;
+      postId: number;
+      content: string;
+      createdAt: string;
+      updatedAt: string;
+      user: {
+        firstname: string;
+        lastname: string;
+        profilImage: string;
+        isAdmin: boolean;
+      };
+    }
+  ];
+}
 export async function getAllPosts(filter: Filter) {
   const token = await SecureStore.getItemAsync("token");
   if (!token) {
@@ -31,9 +78,32 @@ export async function getAllPosts(filter: Filter) {
   }
 }
 
+// get post by id
+export async function getPostById(id: number): Promise<PostData> {
+  const token = await SecureStore.getItemAsync("token");
+  if (!token) {
+    throw new Error("No token found");
+  }
+  try {
+    const response = await ky(`${endpoint}/api/v1/posts/${id}`, {
+      headers: { Authorization: `Bearer ${token}` },
+    }).json();
+    return response as PostData;
+  } catch (error) {
+    const errorResponse = await error.response.json();
+    throw new Error(errorResponse.message || "Something went wrong");
+  }
+}
 export function useGetAllPosts(filter: Filter) {
   return useQuery({
     queryKey: ["posts", filter],
     queryFn: () => getAllPosts(filter),
+  });
+}
+
+export function useGetPostById(id: number) {
+  return useQuery({
+    queryKey: ["post", id],
+    queryFn: () => getPostById(id),
   });
 }
