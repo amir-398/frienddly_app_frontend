@@ -1,10 +1,10 @@
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import * as SecureStore from "expo-secure-store";
 import ky from "ky";
 const endpoint = process.env.EXPO_PUBLIC_ENDPONT_HOME;
 interface Filter {
-  lgt?: number;
-  ltd?: number;
+  lgt?: number | string;
+  ltd?: number | string;
   cat?: number | string;
   nb?: 2;
 }
@@ -55,7 +55,27 @@ interface PostData {
     }
   ];
 }
-export async function getAllPosts(filter: Filter) {
+interface Category {
+  id: number;
+  name: string;
+}
+
+interface Image {
+  id: number;
+  url: string;
+  postId: number;
+}
+
+interface Post {
+  id: number;
+  title: string;
+  latitude: number;
+  longitude: number;
+  category: Category;
+  images: Image[];
+}
+
+export async function getAllPosts(filter: Filter): Promise<Post[]> {
   const token = await SecureStore.getItemAsync("token");
   if (!token) {
     throw new Error("No token found");
@@ -71,7 +91,7 @@ export async function getAllPosts(filter: Filter) {
         headers: { Authorization: `Bearer ${token}` },
       }
     ).json();
-    return response;
+    return response as Post[];
   } catch (error) {
     const errorResponse = await error.response.json();
     throw new Error(errorResponse.message || "Something went wrong");
@@ -94,6 +114,53 @@ export async function getPostById(id: number): Promise<PostData> {
     throw new Error(errorResponse.message || "Something went wrong");
   }
 }
+// send Comment to post
+async function sendCommentToPost(data: { postId: number; content: string }) {
+  const { postId, content } = data;
+  const token = await SecureStore.getItemAsync("token");
+  if (!token) {
+    throw new Error("No token found");
+  }
+  try {
+    const response = await ky
+      .post(`${endpoint}/api/v1/posts/${postId}/addComment`, {
+        json: { content },
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
+      .json();
+    return response;
+  } catch (error) {
+    const errorResponse = await error.response.json();
+    throw new Error(errorResponse.message || "Something went wrong");
+  }
+}
+
+// send grade to post
+async function sendGradeToPost(data: { postId: number; grade: number }) {
+  const { postId, grade } = data;
+  const token = await SecureStore.getItemAsync("token");
+  if (!token) {
+    throw new Error("No token found");
+  }
+  try {
+    const response = await ky
+      .post(`${endpoint}/api/v1/posts/${postId}/addGrade`, {
+        json: { grade },
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
+      .json();
+    return response;
+  } catch (error) {
+    const errorResponse = await error.response.json();
+    throw new Error(errorResponse.message || "Something went wrong");
+  }
+}
+
+// use get all posts
 export function useGetAllPosts(filter: Filter) {
   return useQuery({
     queryKey: ["posts", filter],
@@ -101,9 +168,26 @@ export function useGetAllPosts(filter: Filter) {
   });
 }
 
+// use get post by id
 export function useGetPostById(id: number) {
   return useQuery({
     queryKey: ["post", id],
     queryFn: () => getPostById(id),
+  });
+}
+
+// use send comment to post
+export function useSendCommentToPost() {
+  return useMutation({
+    mutationKey: ["sendComment"],
+    mutationFn: sendCommentToPost,
+  });
+}
+
+// use send grade to post
+export function useSendGradeToPost() {
+  return useMutation({
+    mutationKey: ["sendGrade"],
+    mutationFn: sendGradeToPost,
   });
 }

@@ -2,27 +2,38 @@ import penIcon from "@/assets/icons/pen.png";
 import ScreenContainer from "@/components/ScreenContainer";
 import COLORS from "@/constants/COLORS";
 import FONTS from "@/constants/FONTS";
-import { useGetPostById } from "@/hooks/posts";
+import { useGetPostById, useSendCommentToPost } from "@/hooks/posts";
+import { setBottomBarIsVisible } from "@/redux/Slices/bottomBarIsVisible";
+import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import { Icon } from "@rneui/themed";
+import { Formik } from "formik";
 import React, { useEffect, useState } from "react";
 import {
+  ActivityIndicator,
   Dimensions,
   FlatList,
   Image,
   Pressable,
-  ScrollView,
   StatusBar,
   StyleSheet,
   Text,
   TextInput,
+  TouchableOpacity,
   View,
 } from "react-native";
+import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
+import Stars from "react-native-stars";
+import * as Yup from "yup";
+import AddGradeModal from "./components/modals/AddGradeModal";
 interface GradeCounts {
   [key: number]: number;
 }
 interface GradePercentages {
   [key: number]: number;
 }
+const validationSchema = Yup.object().shape({
+  commentText: Yup.string().required("Champ requis").trim(),
+});
 export default function PostScreen({
   route,
   navigation,
@@ -30,15 +41,27 @@ export default function PostScreen({
   route: any;
   navigation: any;
 }) {
+  const dispatch = useAppDispatch();
+  const userId = useAppSelector((state) => state.authSlice.userData.id);
   const { id } = route.params;
   const [scrollIsActive, setScrollIsActive] = useState(false);
   const [imgActive, setimgActive] = useState(0);
   const [gradesCounts, setGradesCounts] = useState<GradePercentages>({});
-  const { data: postData } = useGetPostById(id);
+  const [addGradeModalVisible, setAddGradeModalVisible] = useState(false);
+
+  // get post by id
+  const { data: postData, refetch } = useGetPostById(id);
   const grades = postData?.grades;
   const postImages = postData?.images;
   const postComments = postData?.comments;
-  console.log(id);
+
+  // hide bottom bar on first render
+  useEffect(() => {
+    dispatch(setBottomBarIsVisible(false));
+    return () => {
+      dispatch(setBottomBarIsVisible(true));
+    };
+  }, []);
 
   // on first render, calculate the grade counts and percentages
   useEffect(() => {
@@ -78,14 +101,54 @@ export default function PostScreen({
       }
     }
   };
+
+  // useSendCommentToPost hook
+  const { mutate: addComment, isPending } = useSendCommentToPost();
+
+  //handle comment input
+  const handleCommentInput = (values: { commentText: string }) => {
+    const content = values.commentText.trim();
+    addComment(
+      {
+        postId: id,
+        content: content,
+      },
+      {
+        onSuccess: () => {
+          setAddGradeModalVisible(true);
+        },
+        onError: (error) => {
+          console.error("Error adding comment", error);
+        },
+      }
+    );
+  };
+
+  // verify if the user has already commented the post
+  const userHasCommented = postComments?.some(
+    (comment) => comment.userId === userId
+  );
+  // get user grade
+  const usersCommentGrades = (userId: number) => {
+    const userGrade = grades?.find((grade) => grade.userId === userId)?.grade;
+    return userGrade;
+  };
+
   return (
     <>
+      <AddGradeModal
+        isVisible={addGradeModalVisible}
+        setIsVisible={setAddGradeModalVisible}
+        postId={id}
+        refetch={refetch}
+      />
       <StatusBar backgroundColor="transparent" translucent />
-      <ScrollView
+      <KeyboardAwareScrollView
         style={styles.container}
         onScrollBeginDrag={() => !scrollIsActive && setScrollIsActive(true)}
         stickyHeaderIndices={[0]}
         stickyHeaderHiddenOnScroll={true}
+        extraHeight={150}
       >
         <View>
           <FlatList
@@ -93,6 +156,7 @@ export default function PostScreen({
             horizontal
             pagingEnabled
             onScroll={({ nativeEvent }) => onImageChange(nativeEvent)}
+            showsHorizontalScrollIndicator={false}
             renderItem={({ item }) => (
               <Image style={styles.imageHeader} source={{ uri: item.url }} />
             )}
@@ -167,69 +231,90 @@ export default function PostScreen({
             </View>
           </View>
           <Text style={styles.noticeTitle}>Avis</Text>
-
-          {postComments?.map((comment) => (
-            <View key={comment.id}>
-              <View style={styles.header}>
-                <Image
-                  source={{ uri: comment.user.profilImage }}
-                  style={styles.avatar}
-                />
-                <View>
-                  <Text style={styles.commentUserName}>
-                    {" "}
-                    {comment.user.lastname} {comment.user.firstname}
-                  </Text>
-                  <View style={styles.commentStarsContainer}>
-                    <Icon
-                      name="star"
-                      type="ionicon"
-                      color={COLORS.primaryColor}
-                      size={20}
+          {!userHasCommented && (
+            <Formik
+              initialValues={{
+                commentText: "",
+              }}
+              validationSchema={validationSchema}
+              onSubmit={handleCommentInput}
+            >
+              {({ handleSubmit, handleChange, handleBlur, values }) => (
+                <>
+                  <View style={styles.addCommentContainer}>
+                    <Image source={penIcon} style={styles.penIcon} />
+                    <TextInput
+                      style={styles.commentInput}
+                      cursorColor="#000"
+                      placeholder="Écrire un avis"
+                      onChangeText={handleChange("commentText")}
+                      onBlur={handleBlur("commentText")}
+                      value={values.commentText}
+                      readOnly={isPending}
                     />
-                    <Icon
-                      name="star"
-                      type="ionicon"
-                      color={COLORS.primaryColor}
-                      size={20}
-                    />
-                    <Icon
-                      name="star"
-                      type="ionicon"
-                      color={COLORS.primaryColor}
-                      size={20}
-                    />
-                    <Icon
-                      name="star"
-                      type="ionicon"
-                      color={COLORS.primaryColor}
-                      size={20}
-                    />
-                    <Icon
-                      name="star"
-                      type="ionicon"
-                      color={COLORS.primaryColor}
-                      size={20}
+                    {!isPending && (
+                      <TouchableOpacity onPress={() => handleSubmit()}>
+                        <Icon name="send" type="font-awesome" size={20} />
+                      </TouchableOpacity>
+                    )}
+                    {isPending && <ActivityIndicator color="#000" size={30} />}
+                  </View>
+                </>
+              )}
+            </Formik>
+          )}
+          {postComments?.length ?? 0 > 0 ? (
+            postComments?.map((comment) => (
+              <View key={comment.id} style={styles.commentContainer}>
+                <View style={styles.header}>
+                  <Image
+                    source={{ uri: comment.user.profilImage }}
+                    style={styles.avatar}
+                  />
+                  <View>
+                    <Text style={styles.commentUserName}>
+                      {comment.user.lastname} {comment.user.firstname}
+                    </Text>
+                    <Stars
+                      default={usersCommentGrades(comment.userId)}
+                      count={5}
+                      disabled
+                      fullStar={
+                        <Icon
+                          name={"star"}
+                          type="ionicon"
+                          size={20}
+                          color={COLORS.primaryColor}
+                        />
+                      }
+                      emptyStar={
+                        <Icon
+                          name={"star-outline"}
+                          type="ionicon"
+                          color={COLORS.primaryColor}
+                          size={20}
+                        />
+                      }
                     />
                   </View>
                 </View>
+                <Text style={styles.comment}>{comment.content}</Text>
               </View>
-              <Text style={styles.comment}>{comment.content}</Text>
-            </View>
-          ))}
-          <View style={styles.addCommentContainer}>
-            <Image source={penIcon} style={styles.penIcon} />
-            <TextInput cursorColor="#000" placeholder="Écrire un avis" />
-          </View>
+            ))
+          ) : (
+            <Text style={styles.nonCommentText}>
+              Il n'y a pas d'avis pour le moment
+            </Text>
+          )}
         </ScreenContainer>
-      </ScrollView>
+      </KeyboardAwareScrollView>
     </>
   );
 }
 const width = Dimensions.get("window").width;
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    height: 300,
   },
   imageHeader: {
     height: 400,
@@ -356,20 +441,24 @@ const styles = StyleSheet.create({
     borderRadius: 100,
     marginRight: 10,
   },
-
+  commentContainer: {
+    borderBottomColor: "rgba(0, 0, 0, 0.1)",
+    borderBottomWidth: 1,
+    marginBottom: 10,
+  },
   commentUserName: {
     fontFamily: FONTS.poppinsBold,
-    fontSize: 15,
-    marginLeft: 10,
-  },
-  commentStarsContainer: {
-    flexDirection: "row",
-    marginLeft: 10,
+    fontSize: 13,
   },
   comment: {
     fontFamily: FONTS.poppinsRegular,
     fontSize: 15,
     marginVertical: 10,
+  },
+  nonCommentText: {
+    fontFamily: FONTS.poppinsRegular,
+    fontSize: 15,
+    marginBottom: 15,
   },
   addCommentContainer: {
     flexDirection: "row",
@@ -377,10 +466,17 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(0, 0, 0, 0.1)",
     padding: 10,
     borderRadius: 10,
+    marginBottom: 20,
   },
   penIcon: {
     width: 20,
     height: 20,
     marginRight: 10,
+  },
+  commentInput: {
+    flex: 1,
+    fontFamily: FONTS.poppinsMedium,
+    fontSize: 15,
+    paddingTop: 6,
   },
 });

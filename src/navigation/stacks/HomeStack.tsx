@@ -1,6 +1,7 @@
 import ROUTES from "@/constants/ROUTES";
 import Home from "@/screens/home/Home";
 import PostScreen from "@/screens/home/PostScreen";
+import PostsScreen from "@/screens/home/PostsScreen";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 
 export default function HomeStack() {
@@ -15,6 +16,7 @@ export default function HomeStack() {
     >
       <Stack.Screen name={ROUTES.Home} component={Home} />
       <Stack.Screen name={ROUTES.PostScreen} component={PostScreen} />
+      <Stack.Screen name={ROUTES.PostsScreen} component={PostsScreen} />
     </Stack.Navigator>
   );
 }

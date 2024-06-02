@@ -1,6 +1,15 @@
 import FONTS from "@/constants/FONTS";
+import ROUTES from "@/constants/ROUTES";
+import { useNavigation } from "@react-navigation/native";
 import React from "react";
-import { Dimensions, Image, StyleSheet, Text, View } from "react-native";
+import {
+  Dimensions,
+  Image,
+  Pressable,
+  StyleSheet,
+  Text,
+  View,
+} from "react-native";
 
 interface PostComponentProps {
   title: string;
@@ -12,9 +21,15 @@ interface PostComponentProps {
     }
   ];
 }
-export default function PostComponent({ title, images }: PostComponentProps) {
+export default function PostComponent(item: PostComponentProps) {
+  const navigation = useNavigation();
+  const { images, title } = item;
+
   return (
-    <View style={styles.container}>
+    <Pressable
+      style={styles.container}
+      onPress={() => navigation.navigate(ROUTES.PostScreen, { id: item.id })}
+    >
       <Image
         style={styles.image}
         source={{
@@ -31,7 +46,7 @@ export default function PostComponent({ title, images }: PostComponentProps) {
         <Text style={styles.bottomText}>20-10 min</Text>
         <Text style={styles.bottomText}> 0.2mil </Text>
       </View>
-    </View>
+    </Pressable>
   );
 }
 const width = Dimensions.get("window").width;

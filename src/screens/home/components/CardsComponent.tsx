@@ -1,4 +1,6 @@
 import FONTS from "@/constants/FONTS";
+import ROUTES from "@/constants/ROUTES";
+import { useNavigation } from "@react-navigation/native";
 import { Icon } from "@rneui/themed";
 import React from "react";
 import {
@@ -10,19 +12,30 @@ import {
   View,
 } from "react-native";
 interface CardsComponentProps {
+  id: number;
   title: string;
   btnText: string;
   image: any;
   color: string;
+  type: string;
 }
 export default function CardsComponent(props: CardsComponentProps) {
-  const { title, btnText, image, color } = props;
+  const navigation = useNavigation();
+  const { id, title, btnText, image, color, type } = props;
 
   return (
     <View style={[styles.container, { backgroundColor: color }]}>
       <View style={styles.left}>
         <Text style={styles.title}>{title}</Text>
-        <Pressable style={styles.btn}>
+        <Pressable
+          style={styles.btn}
+          onPress={() =>
+            navigation.navigate(ROUTES.PostsScreen, {
+              categoryId: id,
+              title: type,
+            })
+          }
+        >
           <Text style={styles.btnText}>{btnText}</Text>
           <Icon name="chevron-forward" type="ionicon" size={20} />
         </Pressable>

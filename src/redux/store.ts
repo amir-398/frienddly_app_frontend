@@ -1,6 +1,8 @@
 import { configureStore } from "@reduxjs/toolkit";
 
 import authSlice from "./Slices/authSlice";
+import bottomBarIsVisible from "./Slices/bottomBarIsVisible";
+import chatSlice from "./Slices/chatSlice";
 import loadingScreenSlice from "./Slices/loadingScreenSlice";
 import signUpUserInfoSlice from "./Slices/signUpUserInfoSlice";
 import userInfoSlice from "./Slices/userInfoSlice";
@@ -11,6 +13,8 @@ const store = configureStore({
     signUpUserInfoSlice: signUpUserInfoSlice,
     authSlice: authSlice,
     loadingScreenSlice: loadingScreenSlice,
+    bottomBarIsVisible: bottomBarIsVisible,
+    chatSlice: chatSlice,
   },
 });
 

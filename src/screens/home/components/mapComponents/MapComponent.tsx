@@ -42,6 +42,7 @@ export default function MapComponent({
   const [postsData, setPostsData] = useState<Post[]>([]);
   const [selectedPost, setSelectedPost] = useState<Post | null>(null);
 
+  // get user position
   useEffect(() => {
     (async () => {
       let { status } = await Location.requestForegroundPermissionsAsync();
@@ -62,8 +63,8 @@ export default function MapComponent({
 
   // Récupère les posts en fonction de la région
   const { data: posts } = useGetAllPosts({
-    lgt: region?.longitude ?? 0,
-    ltd: region?.latitude ?? 0,
+    lgt: region?.longitude ?? "",
+    ltd: region?.latitude ?? "",
     cat: selectedCategory ?? "",
   });
 
@@ -86,10 +87,6 @@ export default function MapComponent({
     }
   }, [posts]);
 
-  // handle marker press
-  const handleMarkerPress = (post: Post) => {
-    setSelectedPost(post);
-  };
   return (
     <View style={styles.container}>
       <MapView

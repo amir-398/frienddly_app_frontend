@@ -21,6 +21,25 @@ export const getUserData = async () => {
   }
 };
 
+export const getUserProfilImage = async (id) => {
+  const token = await SecureStore.getItemAsync("token");
+  if (!token) {
+    throw new Error("No token found");
+  }
+
+  try {
+    const response = await ky
+      .post(`${endpoint}/api/v1/user/getUserProfilImage`, {
+        json: { userId: id },
+        headers: { Authorization: `Bearer ${token}` },
+      })
+      .text();
+    return response;
+  } catch (error) {
+    console.log("error", error);
+  }
+};
+
 export function useGetUserData(enabled: boolean) {
   return useQuery({
     queryKey: ["userData"],

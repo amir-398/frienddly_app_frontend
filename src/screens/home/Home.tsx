@@ -2,8 +2,10 @@ import COLORS from "@/constants/COLORS";
 import FONTS from "@/constants/FONTS";
 import { useGetCategories } from "@/hooks/categories";
 import { useGetAllPosts } from "@/hooks/posts";
+import { getUserProfilImage } from "@/hooks/userData";
 import React, { useState } from "react";
 import {
+  Button,
   FlatList,
   Pressable,
   ScrollView,
@@ -19,7 +21,6 @@ import MapComponent from "./components/mapComponents/MapComponent";
 interface Post {
   id: number;
   title: string;
-  description: string;
   latitude: number;
   longitude: number;
   category: {
@@ -39,6 +40,7 @@ export default function Home() {
   const cardsContent = [
     {
       id: 1,
+      type: "Restaurant",
       title: "Découvre des restaurants selon tes origines !",
       btnText: "Voir les restaurants",
       image: require("@/assets/images/card2.png"),
@@ -46,6 +48,7 @@ export default function Home() {
     },
     {
       id: 2,
+      type: "Evènements",
       title: "Découvre des évènements  autour de toi !",
       btnText: "Voir les évènements",
       image: require("@/assets/images/card1.png"),
@@ -54,6 +57,7 @@ export default function Home() {
     {
       id: 3,
       title: "Découvre des supermarchés spécialement dédié à tes origines !",
+      type: "Supermarché",
       btnText: "Voir les supermarchés",
       image: require("@/assets/images/card3.png"),
       color: COLORS.primaryColor,
@@ -64,9 +68,15 @@ export default function Home() {
     nb: 2,
   });
   const { data: categories } = useGetCategories();
+  const test = async () => {
+    const response = await getUserProfilImage(2);
+    console.log(response);
+  };
+
   return (
     <ScrollView>
       <Header />
+      <Button title="test" onPress={test} />
       <MapComponent
         selectedCategory={selectedCategory}
         setSelectedCategory={setSelectedCategory}

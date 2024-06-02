@@ -12,6 +12,7 @@ export default function AuthNavigation() {
   const CustomHeader = () => {
     return null;
   };
+
   return (
     <Stack.Navigator
       initialRouteName={ROUTES.LandingPage}

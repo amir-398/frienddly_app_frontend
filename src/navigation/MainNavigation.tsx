@@ -1,14 +1,18 @@
 import COLORS from "@/constants/COLORS";
-import Chat from "@/screens/chat/Chat";
+import { useAppSelector } from "@/redux/hooks";
 import Community from "@/screens/community/Community";
 import Notification from "@/screens/notification/Notification";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { Icon } from "@rneui/themed";
+import ChatStack from "./stacks/ChatStack";
 import HomeStack from "./stacks/HomeStack";
 
 const Tab = createBottomTabNavigator();
 
 export default function MainNavigation() {
+  const bottomBarIsVisible = useAppSelector(
+    (state) => state.bottomBarIsVisible.isVisible
+  );
   return (
     <Tab.Navigator
       screenOptions={({ route }) => ({
@@ -48,12 +52,13 @@ export default function MainNavigation() {
           borderRightWidth: 1,
           width: "100.1%",
           alignSelf: "center",
+          display: bottomBarIsVisible ? "flex" : "none",
         },
         headerShown: false,
       })}
     >
       <Tab.Screen name="Accueil" component={HomeStack} />
-      <Tab.Screen name="Chat" component={Chat} />
+      <Tab.Screen name="Chat" component={ChatStack} />
       <Tab.Screen name="Communauté" component={Community} />
       <Tab.Screen name="Notifications" component={Notification} />
     </Tab.Navigator>
