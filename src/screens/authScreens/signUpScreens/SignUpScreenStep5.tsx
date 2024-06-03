@@ -59,7 +59,8 @@ export default function SignUpScreenStep6({ navigation }: { navigation: any }) {
     userRegister(formData, {
       onSuccess: (data) => {
         const token = data.token.token;
-        storeToken(token);
+        const streamtoken = data.streamtoken;
+        storeToken(token, streamtoken);
       },
       onError: (error) => {
         console.error("Registration failed", error);

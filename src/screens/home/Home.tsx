@@ -2,10 +2,8 @@ import COLORS from "@/constants/COLORS";
 import FONTS from "@/constants/FONTS";
 import { useGetCategories } from "@/hooks/categories";
 import { useGetAllPosts } from "@/hooks/posts";
-import { getUserProfilImage } from "@/hooks/userData";
 import React, { useState } from "react";
 import {
-  Button,
   FlatList,
   Pressable,
   ScrollView,
@@ -68,15 +66,10 @@ export default function Home() {
     nb: 2,
   });
   const { data: categories } = useGetCategories();
-  const test = async () => {
-    const response = await getUserProfilImage(2);
-    console.log(response);
-  };
 
   return (
     <ScrollView>
       <Header />
-      <Button title="test" onPress={test} />
       <MapComponent
         selectedCategory={selectedCategory}
         setSelectedCategory={setSelectedCategory}

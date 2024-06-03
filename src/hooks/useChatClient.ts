@@ -1,26 +1,27 @@
 // useChatClient.js
 
+import { useAppSelector } from "@/redux/hooks";
+import * as SecureStore from "expo-secure-store";
 import { useEffect, useState } from "react";
 import { StreamChat } from "stream-chat";
-import {
-  chatApiKey,
-  chatUserId,
-  chatUserName,
-  chatUserToken,
-} from "../../chatConfig";
+import { chatApiKey } from "../../chatConfig";
 
-const user = {
-  id: chatUserId,
-  name: chatUserName,
-};
 const chatClient = StreamChat.getInstance(chatApiKey);
 
 export const useChatClient = () => {
   const [clientIsReady, setClientIsReady] = useState(false);
+  const userData = useAppSelector((state) => state.authSlice.userData);
+  const userId = userData.id.toString();
+  const name = userData.firstname + " " + userData.lastname;
+  const user = {
+    id: userId,
+    name: name,
+  };
   useEffect(() => {
     const setupClient = async () => {
       try {
-        chatClient.connectUser(user, chatUserToken);
+        const streamToken = await SecureStore.getItemAsync("streamToken");
+        chatClient.connectUser(user, streamToken);
         setClientIsReady(true);
         // connectUser is an async function. So you can choose to await for it or not depending on your use case (e.g. to show custom loading indicator)
         // But in case you need the chat to load from offline storage first then you should render chat components

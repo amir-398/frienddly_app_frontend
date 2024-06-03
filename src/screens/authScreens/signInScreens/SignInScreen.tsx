@@ -52,7 +52,8 @@ export default function SignInScreen() {
       {
         onSuccess: (data) => {
           const token = data.token.token;
-          storeToken(token);
+          const streamToken = data.streamToken;
+          storeToken(token, streamToken);
         },
         onError: (error) => {
           setError(true);

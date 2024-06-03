@@ -28,8 +28,16 @@ export const initializeAuth = createAsyncThunk(
 
 export const setToken = createAsyncThunk(
   "auth/setToken",
-  async (token: string, { dispatch }) => {
+  async (
+    {
+      token: token,
+      streamToken: streamToken,
+    }: { token: string; streamToken: string },
+    { dispatch }
+  ) => {
     await SecureStore.setItemAsync("token", token);
+
+    await SecureStore.setItemAsync("streamToken", streamToken);
     await dispatch(initializeAuth());
   }
 );
@@ -38,6 +46,7 @@ export const deleteToken = createAsyncThunk(
   "auth/deleteToken",
   async (_, { dispatch }) => {
     await SecureStore.deleteItemAsync("token");
+    await SecureStore.deleteItemAsync("streamToken");
     dispatch(setUserIsConnected(false));
   }
 );

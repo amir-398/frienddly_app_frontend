@@ -21,7 +21,7 @@ export const getUserData = async () => {
   }
 };
 
-export const getUserProfilImage = async (id) => {
+export const getUserProfilImage = async (id: number) => {
   const token = await SecureStore.getItemAsync("token");
   if (!token) {
     throw new Error("No token found");
