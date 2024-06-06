@@ -17,8 +17,8 @@ interface FormProps {
 
 const validationSchema = Yup.object().shape({
   firstname: Yup.string()
-    .min(3)
-    .max(50)
+    .min(3, "Minimum 3 caractères")
+    .max(50, "Maximum 50 caractères")
     .matches(/^[a-zA-Z\sé]+$/, "Seulement des lettres")
     .required("Champ requis")
     .trim(),

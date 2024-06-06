@@ -1,15 +1,30 @@
-import COLORS from "@/constants/COLORS";
-import ROUTES from "@/constants/ROUTES";
-import { getUserProfilImage } from "@/hooks/userData";
-import { setChannel } from "@/redux/Slices/chatSlice";
+import messageRight1 from "@/assets/icons/message_right_icon_1.png";
+import messageRight2 from "@/assets/icons/messages_right_icon_2.png";
+import messageLeft from "@/assets/icons/messges_left_icon.png";
+import ScreenContainer from "@/components/ScreenContainer";
+import FONTS from "@/constants/FONTS";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import React, { useEffect, useState } from "react";
-import { Image, Pressable, StyleSheet, Text, View } from "react-native";
-import { ChannelList } from "stream-chat-expo";
+import {
+  FlatList,
+  Image,
+  StatusBar,
+  StyleSheet,
+  Text,
+  TextInput,
+  View,
+} from "react-native";
+import { useChatContext } from "stream-chat-expo";
+import CustomListItem from "./components/CustomListItem";
 export default function Chat({ navigation }: { navigation: any }) {
   const userData = useAppSelector((state) => state.authSlice.userData);
   const userId = userData.id.toString();
   const dispatch = useAppDispatch();
+  const { client } = useChatContext();
+
+  const [searchQuery, setSearchQuery] = useState("");
+  const [channels, setChannels] = useState([]);
+
   const filters = {
     members: {
       $in: [userId],
@@ -20,98 +35,117 @@ export default function Chat({ navigation }: { navigation: any }) {
     last_message_at: -1,
   };
 
-  const CustomListItem = (props) => {
-    const { unread, channel, latestMessagePreview } = props;
-    // Déterminer le nom du canal
-    // Récupérer l'autre membre du canal (l'utilisateur actuel est exclu)
-    const otherMember = Object.values(channel.state.members).find(
-      (member) => member.user.id !== userId
-    );
-    const userData = otherMember?.user;
-    const userName = userData?.name;
-    const [userImage, setUserImage] = useState<string | undefined>("");
-    console.log("la", latestMessagePreview);
+  useEffect(() => {
+    const fetchChannels = async () => {
+      try {
+        const response = await client.queryChannels(filters, sort, {
+          watch: true,
+          state: true,
+        });
+        setChannels(response);
+      } catch (error) {
+        console.error("Error fetching channels:", error);
+      }
+    };
 
-    // Effet pour récupérer l'image utilisateur
-    useEffect(() => {
-      const fetchUserImage = async () => {
-        if (userData?.id) {
-          try {
-            const response = await getUserProfilImage(userData.id);
-            setUserImage(response);
-          } catch (error) {
-            console.log("Error fetching user image:", error);
-          }
-        }
-      };
+    fetchChannels();
 
-      fetchUserImage();
-    }, [userData?.id]);
-    const backgroundColor = unread ? COLORS.primaryColorLight : "#fff";
-    return (
-      <Pressable
-        onPress={() => {
-          dispatch(setChannel(channel));
-          navigation.navigate(ROUTES.ChatScreen);
-        }}
-        style={[styles.container, { backgroundColor }]}
-      >
-        <Image
-          source={{ uri: userImage ? userImage : "" }}
-          style={styles.channelImage}
-        />
-        <View style={styles.textContainer}>
-          <Text style={styles.channelName}>{userName} </Text>
-          <Text style={styles.latestMessage}>
-            {latestMessagePreview
-              ? latestMessagePreview.previews[0].text == "Nothing yet..."
-                ? "Vous n'avez pas de message"
-                : latestMessagePreview.previews[0].text
-              : "Vous n'avez pas de message"}
-          </Text>
-        </View>
-      </Pressable>
-    );
-  };
+    const handleEvent = () => {
+      fetchChannels(); // Re-fetch channels to get the latest state
+    };
+
+    client.on("message.new", handleEvent);
+    client.on("message.updated", handleEvent);
+    client.on("message.deleted", handleEvent);
+    client.on("channel.updated", handleEvent);
+    client.on("channel.deleted", handleEvent);
+    client.on("notification.message_new", handleEvent);
+
+    return () => {
+      client.off("message.new", handleEvent);
+      client.off("message.updated", handleEvent);
+      client.off("message.deleted", handleEvent);
+      client.off("channel.updated", handleEvent);
+      client.off("channel.deleted", handleEvent);
+      client.off("notification.message_new", handleEvent);
+    };
+  }, [searchQuery]);
+
+  const filteredChannels = channels.filter((channel) => {
+    const memberNames = Object.values(channel.state.members)
+      .filter((member) => member.user.id !== userId)
+      .map((member) => member.user.name.toLowerCase());
+
+    return memberNames.some((name) => name.includes(searchQuery.toLowerCase()));
+  });
+
   return (
-    <ChannelList
-      Preview={CustomListItem}
-      filters={filters}
-      sort={sort}
-      onSelect={(channel) => {
-        dispatch(setChannel(channel));
-        navigation.navigate(ROUTES.ChatScreen);
-      }}
-    />
+    <View>
+      <ScreenContainer>
+        <View style={styles.header}>
+          <Image source={messageLeft} style={styles.headerIcon} />
+          <View style={styles.headerRight}>
+            <Image source={messageRight1} style={styles.headerIcon} />
+            <Image source={messageRight2} style={styles.headerIcon} />
+          </View>
+        </View>
+        <StatusBar backgroundColor={"#fff"} />
+        <Text style={styles.title}>Discussions</Text>
+
+        <TextInput
+          style={styles.searchBar}
+          placeholder="Rechercher par nom ou prénom"
+          value={searchQuery}
+          onChangeText={setSearchQuery}
+        />
+      </ScreenContainer>
+      <FlatList
+        data={filteredChannels}
+        keyExtractor={(item) => item.id}
+        renderItem={({ item }) => (
+          <CustomListItem
+            channel={item}
+            latestMessagePreview={
+              item.state.messages[item.state.messages.length - 1]
+            } // Pass the latest message preview
+            unread={item.countUnread()} // Use countUnread method
+            navigation={navigation}
+            dispatch={dispatch}
+            userId={userId}
+          />
+        )}
+      />
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
+  header: {
     flexDirection: "row",
+    justifyContent: "space-between",
     alignItems: "center",
-    padding: 10,
-    marginVertical: 5,
-    borderRadius: 10,
-    borderBottomColor: "red",
-    borderBottomWidth: 1,
+    height: 60,
   },
-  channelImage: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
+  headerRight: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    width: 80,
     marginRight: 10,
   },
-  textContainer: {
-    flex: 1,
+  headerIcon: {
+    width: 30,
+    height: 30,
   },
-  channelName: {
-    fontWeight: "bold",
-    fontSize: 16,
-    marginBottom: 2,
+  title: {
+    fontSize: 24,
+    fontFamily: FONTS.poppinsBold,
   },
-  latestMessage: {
-    fontSize: 14,
-    color: "#ccc",
+  searchBar: {
+    height: 40,
+    borderColor: "gray",
+    borderWidth: 1,
+    borderRadius: 5,
+    paddingHorizontal: 10,
+    marginBottom: 20,
   },
 });

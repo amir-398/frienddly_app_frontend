@@ -16,6 +16,7 @@ import CategoriesComponent from "./components/CategoriesComponent";
 import Header from "./components/Header";
 import PostComponent from "./components/PostComponent";
 import MapComponent from "./components/mapComponents/MapComponent";
+
 interface Post {
   id: number;
   title: string;

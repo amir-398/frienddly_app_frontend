@@ -143,7 +143,7 @@ export default function SignUpScreenStep2({ navigation }: { navigation: any }) {
   };
   return (
     <ScreenContainer>
-      <HeaderComponent title="Quel est ton nom et prénom ?" />
+      <HeaderComponent title="Quel est ta date de naissance ?" />
 
       <View style={styles.inputContainer}>
         <TextInput

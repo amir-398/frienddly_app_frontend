@@ -15,6 +15,5 @@ export default function ScreenContainer({
 const styles = StyleSheet.create({
   container: {
     paddingHorizontal: 20,
-    flex: 1,
   },
 });

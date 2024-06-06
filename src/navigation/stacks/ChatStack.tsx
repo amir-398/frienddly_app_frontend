@@ -28,6 +28,13 @@ export default function ChatStack() {
         backgroundColor: "transparent",
       },
     },
+    messageSimple: {
+      file: {
+        container: {
+          backgroundColor: "red",
+        },
+      },
+    },
   };
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
