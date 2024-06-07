@@ -7,7 +7,7 @@ import React from "react";
 import { Text } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { StreamChat } from "stream-chat";
-import { Chat, OverlayProvider } from "stream-chat-expo";
+import { Chat, OverlayProvider, Streami18n } from "stream-chat-expo";
 import { chatApiKey } from "../../../chatConfig";
 
 export default function ChatStack() {
@@ -28,17 +28,11 @@ export default function ChatStack() {
         backgroundColor: "transparent",
       },
     },
-    messageSimple: {
-      file: {
-        container: {
-          backgroundColor: "red",
-        },
-      },
-    },
   };
+  const streami18n = new Streami18n({ language: "fr" });
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
-      <OverlayProvider value={{ style: chatTheme }}>
+      <OverlayProvider value={{ style: chatTheme }} i18nInstance={streami18n}>
         <Chat client={chatClient}>
           <Stack.Navigator
             initialRouteName={ROUTES.Chat}

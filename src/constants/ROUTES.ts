@@ -10,7 +10,7 @@ export default {
   PostScreen: "PostScreen",
   PostsScreen: "PostsScreen",
   Community: "Community",
-  Chat: "Chat",
+  Chat: "ChatStack",
   ChatScreen: "ChatScreen",
   Notifications: "Notifications",
 };

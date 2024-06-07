@@ -1,8 +1,8 @@
 import { setBottomBarIsVisible } from "@/redux/Slices/bottomBarIsVisible";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import React, { useEffect } from "react";
-import { StyleSheet } from "react-native";
 import { Channel, MessageList } from "stream-chat-expo";
+import CustomChannelHeader from "./components/CustomChannelHeader";
 import CustomMessageInput from "./components/CustomMessageInput";
 import CustomMessageList from "./components/CustomMessageList";
 export default function ChatScreen() {
@@ -14,20 +14,12 @@ export default function ChatScreen() {
     };
   }, []);
   const channel = useAppSelector((state) => state.chatSlice.channel);
-  const myMessageTheme = {
-    messageContainer: {
-      backgroundColor: "red", // Couleur de fond pour vos messages
-    },
-    messageText: {
-      color: "#000", // Couleur du texte de vos messages
-    },
-  };
+
   return (
     <Channel channel={channel} MessageSimple={CustomMessageList}>
+      <CustomChannelHeader />
       <MessageList />
       <CustomMessageInput />
     </Channel>
   );
 }
-
-const styles = StyleSheet.create({});
