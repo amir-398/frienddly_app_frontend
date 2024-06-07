@@ -1,11 +1,18 @@
 import notifIcon from "@/assets/icons/notif.png";
 import logo from "@/assets/logo/logo.png";
 import FONTS from "@/constants/FONTS";
-import React from "react";
+import Notification from "@/screens/notification/Notification";
+import React, { useState } from "react";
 import { Image, Pressable, StyleSheet, Text, View } from "react-native";
 export default function Header() {
+  const [notificationModalIsVisible, setNotificationModalIsVisible] =
+    useState(false);
   return (
     <View style={styles.container}>
+      <Notification
+        isVisible={notificationModalIsVisible}
+        setIsVisible={setNotificationModalIsVisible}
+      />
       <View style={styles.left}>
         <Text style={styles.title}>Paris</Text>
       </View>
@@ -13,7 +20,7 @@ export default function Header() {
         <Image style={styles.logo} source={logo} />
       </View>
       <View style={styles.right}>
-        <Pressable>
+        <Pressable onPress={() => setNotificationModalIsVisible(true)}>
           <Image source={notifIcon} style={styles.notifIcon} />
         </Pressable>
       </View>

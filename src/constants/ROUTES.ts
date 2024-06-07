@@ -13,4 +13,5 @@ export default {
   Chat: "ChatStack",
   ChatScreen: "ChatScreen",
   Notifications: "Notifications",
+  ProfilScreen: "ProfilScreen",
 };

@@ -1,17 +1,17 @@
 import COLORS from "@/constants/COLORS";
 import FONTS from "@/constants/FONTS";
 import ROUTES from "@/constants/ROUTES";
+import { useAppContext } from "@/context/AppProvider";
 import { getUserProfilImage } from "@/hooks/userData";
-import { setChannel } from "@/redux/Slices/chatSlice";
-import { useAppDispatch, useAppSelector } from "@/redux/hooks";
+import { useAppSelector } from "@/redux/hooks";
 import { useNavigation } from "@react-navigation/native";
 import { DateTime } from "luxon";
 import React, { useEffect, useState } from "react";
 import { Image, Pressable, StyleSheet, Text, View } from "react-native";
 
-export default function CustomListItem(props) {
+export default function CustomListItem(props: any) {
   const { unread, channel, latestMessagePreview } = props;
-  const dispatch = useAppDispatch();
+  const { setChannel } = useAppContext();
   const navigation = useNavigation();
   const userInfo = useAppSelector((state) => state.authSlice.userData);
   const userId = userInfo.id.toString();
@@ -71,7 +71,7 @@ export default function CustomListItem(props) {
   return (
     <Pressable
       onPress={() => {
-        dispatch(setChannel(channel));
+        setChannel(channel);
         navigation.navigate(ROUTES.ChatScreen);
       }}
       style={[styles.container, { backgroundColor }]}

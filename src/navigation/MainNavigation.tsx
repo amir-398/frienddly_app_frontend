@@ -1,7 +1,7 @@
 import COLORS from "@/constants/COLORS";
 import { useAppSelector } from "@/redux/hooks";
 import Community from "@/screens/community/Community";
-import Notification from "@/screens/notification/Notification";
+import ProfilScreen from "@/screens/profilScreen/ProfilScreen";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { Icon } from "@rneui/themed";
 import ChatStack from "./stacks/ChatStack";
@@ -26,7 +26,7 @@ export default function MainNavigation() {
             iconName = focused ? "list" : "list-outline";
           } else if (route.name === "Chat") {
             iconName = focused ? "chatbubble" : "chatbubble-outline";
-          } else if (route.name === "Notifications") {
+          } else if (route.name === "Profil") {
             iconName = focused ? "notifications" : "notifications-outline";
           }
           return (
@@ -60,7 +60,7 @@ export default function MainNavigation() {
       <Tab.Screen name="Accueil" component={HomeStack} />
       <Tab.Screen name="Chat" component={ChatStack} />
       <Tab.Screen name="Communauté" component={Community} />
-      <Tab.Screen name="Notifications" component={Notification} />
+      <Tab.Screen name="Profil" component={ProfilScreen} />
     </Tab.Navigator>
   );
 }

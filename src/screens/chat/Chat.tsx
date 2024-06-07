@@ -23,7 +23,7 @@ export default function Chat({ navigation }: { navigation: any }) {
   const { client } = useChatContext();
 
   const [searchQuery, setSearchQuery] = useState("");
-  const [channels, setChannels] = useState([]);
+  const [channels, setChannels] = useState<any[]>([]);
 
   const filters = {
     members: {
@@ -73,8 +73,8 @@ export default function Chat({ navigation }: { navigation: any }) {
 
   const filteredChannels = channels.filter((channel) => {
     const memberNames = Object.values(channel.state.members)
-      .filter((member) => member.user.id !== userId)
-      .map((member) => member.user.name.toLowerCase());
+      .filter((member: any) => member.user.id !== userId)
+      .map((member: any) => member.user.name.toLowerCase());
 
     return memberNames.some((name) => name.includes(searchQuery.toLowerCase()));
   });
@@ -107,8 +107,8 @@ export default function Chat({ navigation }: { navigation: any }) {
             channel={item}
             latestMessagePreview={
               item.state.messages[item.state.messages.length - 1]
-            } // Pass the latest message preview
-            unread={item.countUnread()} // Use countUnread method
+            }
+            unread={item.countUnread()}
             navigation={navigation}
             dispatch={dispatch}
             userId={userId}

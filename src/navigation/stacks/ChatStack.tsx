@@ -1,4 +1,5 @@
 import ROUTES from "@/constants/ROUTES";
+import { AppProvider } from "@/context/AppProvider";
 import { useChatClient } from "@/hooks/useChatClient";
 import HomeChat from "@/screens/chat/Chat";
 import ChatScreen from "@/screens/chat/ChatScreen";
@@ -31,18 +32,20 @@ export default function ChatStack() {
   };
   const streami18n = new Streami18n({ language: "fr" });
   return (
-    <GestureHandlerRootView style={{ flex: 1 }}>
-      <OverlayProvider value={{ style: chatTheme }} i18nInstance={streami18n}>
-        <Chat client={chatClient}>
-          <Stack.Navigator
-            initialRouteName={ROUTES.Chat}
-            screenOptions={{ header: CustomHeader }}
-          >
-            <Stack.Screen name={ROUTES.Chat} component={HomeChat} />
-            <Stack.Screen name={ROUTES.ChatScreen} component={ChatScreen} />
-          </Stack.Navigator>
-        </Chat>
-      </OverlayProvider>
-    </GestureHandlerRootView>
+    <AppProvider>
+      <GestureHandlerRootView style={{ flex: 1 }}>
+        <OverlayProvider value={{ style: chatTheme }}>
+          <Chat client={chatClient} i18nInstance={streami18n}>
+            <Stack.Navigator
+              initialRouteName={ROUTES.Chat}
+              screenOptions={{ header: CustomHeader }}
+            >
+              <Stack.Screen name={ROUTES.Chat} component={HomeChat} />
+              <Stack.Screen name={ROUTES.ChatScreen} component={ChatScreen} />
+            </Stack.Navigator>
+          </Chat>
+        </OverlayProvider>
+      </GestureHandlerRootView>
+    </AppProvider>
   );
 }
