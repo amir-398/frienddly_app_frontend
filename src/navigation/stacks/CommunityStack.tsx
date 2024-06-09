@@ -1,17 +1,15 @@
 import ROUTES from "@/constants/ROUTES";
 import { AppProvider } from "@/context/AppProvider";
-import { useChatClient } from "@/hooks/useChatClient";
-import HomeChat from "@/screens/chat/Chat";
-import ChatScreen from "@/screens/chat/ChatScreen";
+import Community from "@/screens/community/Community";
+import CommunityChat from "@/screens/community/CommunityChat";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import React from "react";
-import { Text } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { StreamChat } from "stream-chat";
 import { Chat, OverlayProvider, Streami18n } from "stream-chat-expo";
 import { chatApiKey } from "../../../chatConfig";
 
-export default function ChatStack() {
+export default function CommunityStack() {
   const Stack = createNativeStackNavigator();
   const chatClient = StreamChat.getInstance(chatApiKey);
   const CustomHeader = () => {
@@ -32,11 +30,14 @@ export default function ChatStack() {
         <OverlayProvider value={{ style: chatTheme }}>
           <Chat client={chatClient} i18nInstance={streami18n}>
             <Stack.Navigator
-              initialRouteName={ROUTES.Chat}
+              initialRouteName={ROUTES.Community}
               screenOptions={{ header: CustomHeader }}
             >
-              <Stack.Screen name={ROUTES.Chat} component={HomeChat} />
-              <Stack.Screen name={ROUTES.ChatScreen} component={ChatScreen} />
+              <Stack.Screen name={ROUTES.Community} component={Community} />
+              <Stack.Screen
+                name={ROUTES.CommunityChat}
+                component={CommunityChat}
+              />
             </Stack.Navigator>
           </Chat>
         </OverlayProvider>

@@ -1,38 +1,28 @@
 import logo from "@/assets/logo/logo_2.png";
 import COLORS from "@/constants/COLORS";
 import FONTS from "@/constants/FONTS";
+import { NotificationProps } from "@/enums/notification";
 import {
   useAcceptFriendRequestNotification,
   useRefuseFriendRequestNotification,
 } from "@/hooks/friends";
-import { DateTime } from "luxon";
+import { formatNotificationDate } from "@/utils/notificationsUtils/formatNotificationDate";
 import React from "react";
 import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
-export default function InvitationNotif({ item }: { item: any }) {
+export default function InvitationNotif({
+  item,
+  setNotifications,
+}: {
+  item: NotificationProps;
+  setNotifications: React.Dispatch<React.SetStateAction<NotificationProps[]>>;
+}) {
   const senderUsername = item?.friendship.senderData.lastname;
   const senderFirstname = item?.friendship.senderData.firstname;
   const senderProfileImage = item?.friendship.senderData.profilImage;
   const senderName = `${senderFirstname} ${senderUsername}`;
-  // function to format the date
-  const formatNotificationDate = (dateStr: string) => {
-    const now = DateTime.now();
-    const date = DateTime.fromISO(dateStr);
-    const diffInMinutes = now.diff(date, "minutes").toObject().minutes ?? 0;
-    const diffInHours = now.diff(date, "hours").toObject().hours ?? 0;
-    const diffInDays = now.diff(date, "days").toObject().days ?? 0;
-    if (diffInMinutes < 1) {
-      return "à l'instant";
-    } else if (diffInMinutes < 60) {
-      return `${Math.round(diffInMinutes)}m`;
-    } else if (diffInHours < 24) {
-      return `${Math.round(diffInHours)}h`;
-    } else if (diffInDays < 7) {
-      return `${Math.round(diffInDays)}j`;
-    } else {
-      return date.toFormat("dd LLL");
-    }
-  };
+
+  const friendshipStatus = item.friendship.status;
   const notificationDate = formatNotificationDate(item.createdAt);
 
   // accept friend request
@@ -41,12 +31,24 @@ export default function InvitationNotif({ item }: { item: any }) {
     error,
     isSuccess,
   } = useAcceptFriendRequestNotification();
-  if (isSuccess) {
-    console.log("success");
-  }
-  if (error) {
-    console.log("error", error);
-  }
+
+  const accepteFriendRequest = (friendshipId: number) => {
+    acceptFriendRequest(friendshipId, {
+      onSuccess: () => {
+        setNotifications((prevNotifications: NotificationProps[]) => {
+          const updatedNotifications = [...prevNotifications];
+          const notificationIndex = updatedNotifications.findIndex(
+            (notif) => notif.id === item.id
+          );
+          if (notificationIndex !== -1) {
+            updatedNotifications[notificationIndex].friendship.status =
+              "accepted";
+          }
+          return updatedNotifications;
+        });
+      },
+    });
+  };
 
   // refuse friend request
   const { mutate: refuseFriendRequest } = useRefuseFriendRequestNotification();
@@ -64,23 +66,27 @@ export default function InvitationNotif({ item }: { item: any }) {
         <View style={styles.mainWrapper}>
           <View style={styles.leftWrapper}>
             <Text style={styles.mainText}>
-              Vous avez reçu une invitation de la part de{" "}
+              {friendshipStatus == "accepted"
+                ? "Vous avez acceptés l'invitation de "
+                : "Vous avez reçu une invitation de la part de "}
               <Text style={styles.inviter}>{senderName}</Text>
             </Text>
-            <View style={styles.btnsContainer}>
-              <TouchableOpacity
-                style={styles.acceptBtn}
-                onPress={() => acceptFriendRequest(item.friendship.id)}
-              >
-                <Text style={styles.btnText}>Accepter</Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={styles.refuseBtn}
-                onPress={() => refuseFriendRequest(item.friendship.id)}
-              >
-                <Text style={styles.btnText}>Refuser</Text>
-              </TouchableOpacity>
-            </View>
+            {friendshipStatus == "pending" && (
+              <View style={styles.btnsContainer}>
+                <TouchableOpacity
+                  style={styles.acceptBtn}
+                  onPress={() => accepteFriendRequest(item.friendship.id)}
+                >
+                  <Text style={styles.btnText}>Accepter</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={styles.refuseBtn}
+                  onPress={() => refuseFriendRequest(item.friendship.id)}
+                >
+                  <Text style={styles.btnText}>Refuser</Text>
+                </TouchableOpacity>
+              </View>
+            )}
           </View>
           <Image
             source={{ uri: senderProfileImage }}

@@ -29,6 +29,7 @@ export default function Chat({ navigation }: { navigation: any }) {
     members: {
       $in: [userId],
     },
+    channelType: "private",
   };
 
   const sort = {
@@ -99,22 +100,28 @@ export default function Chat({ navigation }: { navigation: any }) {
           onChangeText={setSearchQuery}
         />
       </ScreenContainer>
-      <FlatList
-        data={filteredChannels}
-        keyExtractor={(item) => item.id}
-        renderItem={({ item }) => (
-          <CustomListItem
-            channel={item}
-            latestMessagePreview={
-              item.state.messages[item.state.messages.length - 1]
-            }
-            unread={item.countUnread()}
-            navigation={navigation}
-            dispatch={dispatch}
-            userId={userId}
-          />
-        )}
-      />
+      {filteredChannels.length > 0 ? (
+        <FlatList
+          data={filteredChannels}
+          keyExtractor={(item) => item.id}
+          renderItem={({ item }) => (
+            <CustomListItem
+              channel={item}
+              latestMessagePreview={
+                item.state.messages[item.state.messages.length - 1]
+              }
+              unread={item.countUnread()}
+              navigation={navigation}
+              dispatch={dispatch}
+              userId={userId}
+            />
+          )}
+        />
+      ) : (
+        <Text style={styles.noneChatText}>
+          Vous n'avez aucune discussion pour le moment
+        </Text>
+      )}
     </View>
   );
 }
@@ -147,5 +154,11 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     paddingHorizontal: 10,
     marginBottom: 20,
+  },
+  noneChatText: {
+    textAlign: "center",
+    fontSize: 14,
+    fontFamily: FONTS.poppinsMedium,
+    marginTop: 20,
   },
 });

@@ -1,5 +1,6 @@
 import FONTS from "@/constants/FONTS";
 import ROUTES from "@/constants/ROUTES";
+import { S3ENDPOINTPOSTIMAGES } from "@/constants/S3Endpoint";
 import { useNavigation } from "@react-navigation/native";
 import React from "react";
 import {
@@ -33,7 +34,7 @@ export default function PostComponent(item: PostComponentProps) {
       <Image
         style={styles.image}
         source={{
-          uri: images[0].url,
+          uri: S3ENDPOINTPOSTIMAGES + images[0].url,
         }}
       />
       <View style={styles.header}>

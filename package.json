@@ -1,5 +1,5 @@
 {
-  "name": "frienddly_app_frontend",
+  "name": "frienddly",
   "version": "1.0.0",
   "main": "expo/AppEntry.js",
   "scripts": {

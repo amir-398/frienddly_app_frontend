@@ -1,6 +1,7 @@
 import COLORS from "@/constants/COLORS";
 import FONTS from "@/constants/FONTS";
 import ROUTES from "@/constants/ROUTES";
+import { S3ENDPOINTPOSTIMAGES } from "@/constants/S3Endpoint";
 import { useNavigation } from "@react-navigation/native";
 import { Icon } from "@rneui/base";
 import { LinearGradient } from "expo-linear-gradient";
@@ -30,6 +31,7 @@ interface Post {
 export default function PostRender(post: Post) {
   const navigation = useNavigation();
   const data = post.post;
+  console.log(S3ENDPOINTPOSTIMAGES + data?.images[0]?.url);
 
   return (
     <View style={styles.container}>
@@ -42,7 +44,7 @@ export default function PostRender(post: Post) {
         <ImageBackground
           style={styles.post}
           source={{
-            uri: data?.images[0]?.url,
+            uri: S3ENDPOINTPOSTIMAGES + data?.images[0]?.url,
           }}
           resizeMode="cover"
         >

@@ -36,7 +36,8 @@ export const getUserProfilImage = async (id: number) => {
       .text();
     return response;
   } catch (error) {
-    console.log("error", error);
+    const errorResponse = await error.response.json();
+    throw new Error(errorResponse.message || "Something went wrong");
   }
 };
 

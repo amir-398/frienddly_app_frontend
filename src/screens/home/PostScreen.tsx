@@ -2,6 +2,7 @@ import penIcon from "@/assets/icons/pen.png";
 import ScreenContainer from "@/components/ScreenContainer";
 import COLORS from "@/constants/COLORS";
 import FONTS from "@/constants/FONTS";
+import { S3ENDPOINTPOSTIMAGES } from "@/constants/S3Endpoint";
 import { useGetPostById, useSendCommentToPost } from "@/hooks/posts";
 import { setBottomBarIsVisible } from "@/redux/Slices/bottomBarIsVisible";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
@@ -158,7 +159,10 @@ export default function PostScreen({
             onScroll={({ nativeEvent }) => onImageChange(nativeEvent)}
             showsHorizontalScrollIndicator={false}
             renderItem={({ item }) => (
-              <Image style={styles.imageHeader} source={{ uri: item.url }} />
+              <Image
+                style={styles.imageHeader}
+                source={{ uri: S3ENDPOINTPOSTIMAGES + item.url }}
+              />
             )}
           />
           <View style={styles.wrapDot}>

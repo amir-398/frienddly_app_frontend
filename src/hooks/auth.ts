@@ -2,7 +2,6 @@ import { useMutation } from "@tanstack/react-query";
 import ky from "ky";
 
 const endpoint = process.env.EXPO_PUBLIC_ENDPONT_HOME;
-console.log("endpoint", endpoint);
 
 // Typage pour les informations de l'utilisateur
 import * as SecureStore from "expo-secure-store";

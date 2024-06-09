@@ -1,3 +1,5 @@
+import Community from "@/screens/community/Community";
+
 export default {
   LandingPage: "LandingPage",
   SignInScreen: "SignInScreen",
@@ -14,4 +16,5 @@ export default {
   ChatScreen: "ChatScreen",
   Notifications: "Notifications",
   ProfilScreen: "ProfilScreen",
+  CommunityChat: "CommunityChat",
 };

@@ -67,6 +67,7 @@ export default function MapComponent({
     ltd: region?.latitude ?? "",
     cat: selectedCategory ?? "",
   });
+  console.log("posts", posts);
 
   // add new posts to the postsData
   useEffect(() => {
