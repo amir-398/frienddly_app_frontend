@@ -75,6 +75,9 @@ const authSlice = createSlice({
     setUserIsConnected(state, action: PayloadAction<boolean>) {
       state.isConnected = action.payload;
     },
+    setUserData(state, action: PayloadAction<any>) {
+      state.userData = { ...state.userData, ...action.payload };
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -94,5 +97,6 @@ const authSlice = createSlice({
   },
 });
 
-export const { setIsLoading, setUserIsConnected } = authSlice.actions;
+export const { setIsLoading, setUserIsConnected, setUserData } =
+  authSlice.actions;
 export default authSlice.reducer;

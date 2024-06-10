@@ -16,5 +16,6 @@ export default {
   ChatScreen: "ChatScreen",
   Notifications: "Notifications",
   ProfilScreen: "ProfilScreen",
+  EditProfilData: "EditProfilData",
   CommunityChat: "CommunityChat",
 };

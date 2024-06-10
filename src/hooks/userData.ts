@@ -1,4 +1,4 @@
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import * as SecureStore from "expo-secure-store";
 import ky from "ky";
 
@@ -41,10 +41,37 @@ export const getUserProfilImage = async (id: number) => {
   }
 };
 
+const updateUserData = async (data: any) => {
+  const token = await SecureStore.getItemAsync("token");
+  if (!token) {
+    throw new Error("No token found");
+  }
+
+  try {
+    const response = await ky
+      .put(`${endpoint}/api/v1/user/update`, {
+        json: data,
+        headers: { Authorization: `Bearer ${token}` },
+      })
+      .json();
+    return response;
+  } catch (error: any) {
+    const errorResponse = await error.response.json();
+    throw new Error(errorResponse.message || "Something went wrong");
+  }
+};
+
 export function useGetUserData(enabled: boolean) {
   return useQuery({
     queryKey: ["userData"],
     queryFn: getUserData,
     enabled,
+  });
+}
+
+export function useUpdateUserData() {
+  return useMutation({
+    mutationKey: ["updateUserData"],
+    mutationFn: updateUserData,
   });
 }

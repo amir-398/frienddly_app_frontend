@@ -3,13 +3,13 @@ import iconProfilHovered from "@/assets/icons/bottomIconHovered.png";
 import COLORS from "@/constants/COLORS";
 import { useChatClient } from "@/hooks/useChatClient";
 import { useAppSelector } from "@/redux/hooks";
-import ProfilScreen from "@/screens/profilScreen/ProfilScreen";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { Icon } from "@rneui/themed";
 import { Image } from "react-native"; // Import de l'Image de react-native
 import ChatStack from "./stacks/ChatStack";
 import CommunityStack from "./stacks/CommunityStack";
 import HomeStack from "./stacks/HomeStack";
+import ProfilStack from "./stacks/ProfilStack";
 
 const Tab = createBottomTabNavigator();
 
@@ -72,7 +72,7 @@ export default function MainNavigation() {
       <Tab.Screen name="Accueil" component={HomeStack} />
       <Tab.Screen name="Chat" component={ChatStack} />
       <Tab.Screen name="Communauté" component={CommunityStack} />
-      <Tab.Screen name="Profil" component={ProfilScreen} />
+      <Tab.Screen name="Profil" component={ProfilStack} />
     </Tab.Navigator>
   );
 }
