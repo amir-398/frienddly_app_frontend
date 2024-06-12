@@ -5,16 +5,16 @@ import bottomBarIsVisible from "./Slices/bottomBarIsVisible";
 import chatSlice from "./Slices/chatSlice";
 import loadingScreenSlice from "./Slices/loadingScreenSlice";
 import signUpUserInfoSlice from "./Slices/signUpUserInfoSlice";
-import userInfoSlice from "./Slices/userInfoSlice";
+import userInvitedFriends from "./Slices/userInvitedFriends";
 
 const store = configureStore({
   reducer: {
-    userInfoSlice: userInfoSlice,
     signUpUserInfoSlice: signUpUserInfoSlice,
     authSlice: authSlice,
     loadingScreenSlice: loadingScreenSlice,
     bottomBarIsVisible: bottomBarIsVisible,
     chatSlice: chatSlice,
+    userInvitedFriends: userInvitedFriends,
   },
 });
 

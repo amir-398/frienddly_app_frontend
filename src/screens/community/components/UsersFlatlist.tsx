@@ -1,10 +1,16 @@
 import COLORS from "@/constants/COLORS";
 import FONTS from "@/constants/FONTS";
+import ROUTES from "@/constants/ROUTES";
+import { S3ENDPOINTUSERIMAGES } from "@/constants/S3Endpoint";
 import { useFriendsSuggestion, useSendFriendRequest } from "@/hooks/friends";
+import { setUserInvitedFriend } from "@/redux/Slices/userInvitedFriends";
+import { useAppDispatch, useAppSelector } from "@/redux/hooks";
+import { useNavigation } from "@react-navigation/native";
 import React, { useState } from "react";
 import {
   FlatList,
   Image,
+  Pressable,
   StyleSheet,
   Text,
   TouchableOpacity,
@@ -12,7 +18,11 @@ import {
 } from "react-native";
 
 export default function UsersFlatlist() {
-  const [sendedInvitations, setSendedInvitations] = useState<number[]>([]);
+  const navigation = useNavigation();
+  const dispatch = useAppDispatch();
+  const sendedInvitations = useAppSelector(
+    (state) => state.userInvitedFriends.usersId
+  );
   const { data = [], isLoading, error } = useFriendsSuggestion();
   const { mutate: sendFriendRequest } = useSendFriendRequest();
 
@@ -20,7 +30,7 @@ export default function UsersFlatlist() {
     try {
       sendFriendRequest(userId, {
         onSuccess: () => {
-          setSendedInvitations([...sendedInvitations, userId]);
+          dispatch(setUserInvitedFriend(userId));
         },
         onError: (error) => {
           console.log("error", error);
@@ -49,11 +59,16 @@ export default function UsersFlatlist() {
       keyExtractor={(item) => item.id.toString()}
       horizontal
       renderItem={({ item }) => (
-        <View style={styles.userCardContainer}>
+        <Pressable
+          style={styles.userCardContainer}
+          onPress={() =>
+            navigation.navigate(ROUTES.ProfilScreen, { userId: item.id })
+          }
+        >
           <View>
             <Image
               style={styles.profilImage}
-              source={{ uri: item.profilImage }}
+              source={{ uri: S3ENDPOINTUSERIMAGES + item.profilImage }}
             />
             <Text style={styles.cardText}>
               {item.firstname} {item.lastname}
@@ -76,7 +91,7 @@ export default function UsersFlatlist() {
               {isInvitationSended(item.id) ? "Invitation envoyée" : "Inviter"}
             </Text>
           </TouchableOpacity>
-        </View>
+        </Pressable>
       )}
     />
   );

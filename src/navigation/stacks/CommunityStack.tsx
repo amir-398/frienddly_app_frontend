@@ -2,6 +2,7 @@ import ROUTES from "@/constants/ROUTES";
 import { AppProvider } from "@/context/AppProvider";
 import Community from "@/screens/community/Community";
 import CommunityChat from "@/screens/community/CommunityChat";
+import ProfilScreen from "@/screens/profilScreen/ProfilScreen";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import React from "react";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
@@ -37,6 +38,10 @@ export default function CommunityStack() {
               <Stack.Screen
                 name={ROUTES.CommunityChat}
                 component={CommunityChat}
+              />
+              <Stack.Screen
+                name={ROUTES.ProfilScreen}
+                component={ProfilScreen}
               />
             </Stack.Navigator>
           </Chat>

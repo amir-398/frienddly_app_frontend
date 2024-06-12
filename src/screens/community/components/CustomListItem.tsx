@@ -1,8 +1,6 @@
 import FONTS from "@/constants/FONTS";
 import ROUTES from "@/constants/ROUTES";
-import { S3ENDPOINT } from "@/constants/S3Endpoint";
 import { useAppContext } from "@/context/AppProvider";
-import { useGetPresignedUrl } from "@/hooks/assets";
 import { useNavigation } from "@react-navigation/native";
 import React from "react";
 import {
@@ -35,7 +33,7 @@ export default function CustomListItem(props: any) {
     >
       {channelImage && (
         <ImageBackground
-          source={{ uri: S3ENDPOINT + channelImage }}
+          source={{ uri: channelImage }}
           style={styles.channelImage}
         >
           <Text style={styles.channelText}>{channelName}</Text>

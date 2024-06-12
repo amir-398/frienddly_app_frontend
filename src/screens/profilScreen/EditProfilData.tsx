@@ -4,13 +4,16 @@ import ImagePickerComponent from "@/components/modals/ImagePickerComponent";
 import COLORS from "@/constants/COLORS";
 import FONTS from "@/constants/FONTS";
 import { S3ENDPOINTUSERIMAGES } from "@/constants/S3Endpoint";
-import { useUpdateUserData } from "@/hooks/userData";
-import { setUserData } from "@/redux/Slices/authSlice";
+import { useTokenEffect } from "@/hooks/useTokenEffect";
+import { useDeleteUserData, useUpdateUserData } from "@/hooks/userData";
+import { deleteToken, setUserData } from "@/redux/Slices/authSlice";
 import { setBottomBarIsVisible } from "@/redux/Slices/bottomBarIsVisible";
 import { useAppDispatch } from "@/redux/hooks";
-import { Formik } from "formik";
+import { decodeText } from "@/utils/decodes/decodeText";
+import { FormikProvider, useFormik } from "formik";
 import React, { useEffect, useState } from "react";
 import {
+  ActivityIndicator,
   Image,
   Pressable,
   ScrollView,
@@ -21,6 +24,7 @@ import {
   View,
 } from "react-native";
 import * as Yup from "yup";
+
 const atLeastOneFieldRequired = (fields, message) => {
   return Yup.mixed().test({
     name: "atLeastOneFieldRequired",
@@ -40,13 +44,14 @@ const fieldsToCheck = [
   "lastname",
   "description",
   "cityOfBirth",
-  "Ilike",
+  "iLike",
   "favoriteShows",
-  "centreOfInterest",
+  "centerOfInterest",
   "astrologicalSign",
   "favoriteArtists",
   "activity",
   "dreamCity",
+  "image",
 ];
 
 // Schéma de validation Yup
@@ -56,13 +61,14 @@ const validationSchema = Yup.object()
     lastname: Yup.string(),
     description: Yup.string(),
     cityOfBirth: Yup.string(),
-    Ilike: Yup.string(),
+    iLike: Yup.string(),
     favoriteShows: Yup.string(),
-    centreOfInterest: Yup.string(),
+    centerOfInterest: Yup.string(),
     astrologicalSign: Yup.string(),
     favoriteArtists: Yup.string(),
     activity: Yup.string(),
     dreamCity: Yup.string(),
+    image: Yup.string(),
   })
   .concat(
     Yup.object().shape({
@@ -72,9 +78,11 @@ const validationSchema = Yup.object()
       ),
     })
   );
+
 type ImageInfo = {
   [key: string]: string | number | null;
 };
+
 export default function EditProfilData({
   navigation,
   route,
@@ -84,31 +92,96 @@ export default function EditProfilData({
 }) {
   const { userInfo } = route.params;
   const dispatch = useAppDispatch();
+  const { removeToken } = useTokenEffect();
   const [image, setImage] = useState<ImageInfo | null>(null);
-
   const [imageError, setImageError] = useState("");
   const [imagePickerIsVisible, setImagePickerIsVisible] = useState(false);
-  const { mutate: updateUserData } = useUpdateUserData();
-  // hide bottom bar on first render
+
+  const { mutate: updateUserData, isPending: updateUserDataIsPending } =
+    useUpdateUserData();
+
+  const { mutate: deleteUser, isSuccess } = useDeleteUserData();
+
+  const formikProps = useFormik({
+    initialValues: {
+      firstname: "",
+      lastname: "",
+      description: "",
+      cityOfBirth: "",
+      iLike: "",
+      favoriteShows: "",
+      centerOfInterest: "",
+      astrologicalSign: "",
+      favoriteArtists: "",
+      activity: "",
+      dreamCity: "",
+      image: "",
+    },
+    validationSchema: validationSchema,
+    onSubmit: (values) => handleSubmit(values),
+  });
+
+  // Hide bottom bar on first render
   useEffect(() => {
     dispatch(setBottomBarIsVisible(false));
     return () => {
       dispatch(setBottomBarIsVisible(true));
     };
   }, []);
-  const handleSubmit = async (values: any) => {
+
+  useEffect(() => {
+    if (image) {
+      formikProps.setFieldValue("image", image.uri);
+    }
+  }, [image]);
+
+  // Submition function to update user data
+  const handleSubmit = async (values: any): Promise<any> => {
+    const formData = new FormData();
+    if (image) {
+      const imageName = image?.fileName;
+      const imageMimeType = image?.mimeType;
+      const imageUri = image?.uri;
+      formData.append("profilImage", {
+        uri: imageUri,
+        name: imageName,
+        type: imageMimeType,
+      } as unknown as Blob);
+    }
+
     // Filtrer les valeurs non vides
     const filteredValues = Object.fromEntries(
       Object.entries(values).filter(([_, v]) => v !== "")
     );
-    updateUserData(filteredValues, {
-      onSuccess: () => {
-        dispatch(setUserData(filteredValues));
+    // Ajouter les valeurs filtrées au FormData
+    filteredValues &&
+      Object.entries(filteredValues).forEach(([key, value]) => {
+        formData.append(key, value as string);
+      });
+    updateUserData(formData, {
+      onSuccess: (response) => {
+        dispatch(setUserData(response.data));
+        navigation.goBack();
       },
       onError: (error) => {
         console.log(error.message);
       },
     });
+  };
+
+  const handleDisconnect = () => {
+    removeToken();
+  };
+
+  const deleteUserAccount = () => {
+    console.log("delete user account");
+
+    try {
+      deleteUser();
+      isSuccess && deleteToken();
+    } catch (error) {
+      console.log(error.message);
+    }
   };
   return (
     <ScrollView style={styles.container}>
@@ -135,200 +208,215 @@ export default function EditProfilData({
         <View style={styles.changeImage}>
           <Image
             style={styles.imageProfilContainer}
-            source={{ uri: S3ENDPOINTUSERIMAGES + userInfo.profilImage }}
+            source={{
+              uri: image
+                ? image.uri
+                : S3ENDPOINTUSERIMAGES + userInfo.profilImage,
+            }}
           />
           <Pressable onPress={() => setImagePickerIsVisible(true)}>
             <Text style={styles.changeImageText}>Modifier la photo</Text>
           </Pressable>
         </View>
         <View>
-          <Formik
-            initialValues={{
-              firstname: "",
-              lastname: "",
-              description: "",
-              cityOfBirth: "",
-              Ilike: "",
-              favoriteShows: "",
-              centreOfInterest: "",
-              astrologicalSign: "",
-              favoriteArtists: "",
-              activity: "",
-              dreamCity: "",
-            }}
-            validationSchema={validationSchema}
-            onSubmit={handleSubmit}
-          >
-            {({ handleChange, handleBlur, handleSubmit, values }) => (
-              <View>
-                <View style={styles.inputContainer}>
-                  <Text style={styles.inputTitle}>Prénom</Text>
-                  <TextInput
-                    onChangeText={handleChange("firstname")}
-                    onBlur={handleBlur("firstname")}
-                    value={values.firstname}
-                    style={styles.textInput}
-                    placeholder={userInfo.firstname}
-                    cursorColor={"#000"}
-                  />
-                </View>
-                <View style={styles.inputContainer}>
-                  <Text style={styles.inputTitle}>Nom</Text>
-                  <TextInput
-                    onChangeText={handleChange("lastname")}
-                    onBlur={handleBlur("lastname")}
-                    value={values.lastname}
-                    style={styles.textInput}
-                    placeholder={userInfo.lastname}
-                    cursorColor={"#000"}
-                  />
-                </View>
-
-                <View style={styles.inputContainer}>
-                  <Text style={styles.inputTitle}>Description</Text>
-                  <TextInput
-                    onChangeText={handleChange("description")}
-                    onBlur={handleBlur("description")}
-                    value={values.description}
-                    style={styles.textInput}
-                    placeholder={
-                      userInfo.description
-                        ? userInfo.description
-                        : "Description"
-                    }
-                    cursorColor={"#000"}
-                  />
-                </View>
-                <View style={styles.inputContainer}>
-                  <Text style={styles.inputTitle}>Ville de naissance</Text>
-                  <TextInput
-                    onChangeText={handleChange("cityOfBirth")}
-                    onBlur={handleBlur("cityOfBirth")}
-                    value={values.cityOfBirth}
-                    style={styles.textInput}
-                    placeholder={
-                      userInfo.cityOfBirth
-                        ? userInfo.cityOfBirth
-                        : "Ville de naissance"
-                    }
-                    cursorColor={"#000"}
-                  />
-                </View>
-                <View style={styles.inputContainer}>
-                  <Text style={styles.inputTitle}>J'adore</Text>
-                  <TextInput
-                    onChangeText={handleChange("Ilike")}
-                    onBlur={handleBlur("Ilike")}
-                    value={values.Ilike}
-                    style={styles.textInput}
-                    placeholder={userInfo.Ilike ? userInfo.Ilike : "J'adore"}
-                    cursorColor={"#000"}
-                  />
-                </View>
-                <View style={styles.inputContainer}>
-                  <Text style={styles.inputTitle}>Séries préférées</Text>
-                  <TextInput
-                    onChangeText={handleChange("favoriteShows")}
-                    onBlur={handleBlur("favoriteShows")}
-                    value={values.favoriteShows}
-                    style={styles.textInput}
-                    placeholder={
-                      userInfo.favoriteShows
-                        ? userInfo.favoriteShows
-                        : "Séries préférées"
-                    }
-                    cursorColor={"#000"}
-                  />
-                </View>
-                <View style={styles.inputContainer}>
-                  <Text style={styles.inputTitle}>Centre d'intérêt</Text>
-                  <TextInput
-                    onChangeText={handleChange("centreOfInterest")}
-                    onBlur={handleBlur("centreOfInterest")}
-                    value={values.centreOfInterest}
-                    style={styles.textInput}
-                    placeholder={
-                      userInfo.centreOfInterest
-                        ? userInfo.centreOfInterest
-                        : "Centre d'intérêt"
-                    }
-                    cursorColor={"#000"}
-                  />
-                </View>
-                <View style={styles.inputContainer}>
-                  <Text style={styles.inputTitle}>Signe astrologique</Text>
-                  <TextInput
-                    onChangeText={handleChange("astrologicalSign")}
-                    onBlur={handleBlur("astrologicalSign")}
-                    value={values.astrologicalSign}
-                    style={styles.textInput}
-                    placeholder={
-                      userInfo.astrologicalSign
-                        ? userInfo.astrologicalSign
-                        : "Signe astrologique"
-                    }
-                    cursorColor={"#000"}
-                  />
-                </View>
-                <View style={styles.inputContainer}>
-                  <Text style={styles.inputTitle}>Artistes préférés</Text>
-                  <TextInput
-                    onChangeText={handleChange("favoriteArtists")}
-                    onBlur={handleBlur("favoriteArtists")}
-                    value={values.favoriteArtists}
-                    style={styles.textInput}
-                    placeholder={
-                      userInfo.favoriteArtists
-                        ? userInfo.favoriteArtists
-                        : "Artistes préférés"
-                    }
-                    cursorColor={"#000"}
-                  />
-                </View>
-                <View style={styles.inputContainer}>
-                  <Text style={styles.inputTitle}>Activité</Text>
-                  <TextInput
-                    onChangeText={handleChange("activity")}
-                    onBlur={handleBlur("activity")}
-                    value={values.activity}
-                    style={styles.textInput}
-                    placeholder={
-                      userInfo.activity ? userInfo.activity : "Activité"
-                    }
-                    cursorColor={"#000"}
-                  />
-                </View>
-                <View style={styles.inputContainer}>
-                  <Text style={styles.inputTitle}>Ville de rêve</Text>
-                  <TextInput
-                    onChangeText={handleChange("dreamCity")}
-                    onBlur={handleBlur("dreamCity")}
-                    value={values.dreamCity}
-                    style={styles.textInput}
-                    placeholder={
-                      userInfo.dreamCity ? userInfo.dreamCity : "Ville de rêve"
-                    }
-                    cursorColor={"#000"}
-                  />
-                </View>
-                <TouchableOpacity
-                  style={styles.saveBtn}
-                  onPress={() => handleSubmit()}
-                >
-                  <Text style={styles.saveBtnText}>Enregistrer</Text>
-                </TouchableOpacity>
+          <FormikProvider value={formikProps}>
+            <View>
+              <View style={styles.inputContainer}>
+                <Text style={styles.inputTitle}>Prénom</Text>
+                <TextInput
+                  onChangeText={formikProps.handleChange("firstname")}
+                  onBlur={formikProps.handleBlur("firstname")}
+                  value={formikProps.values.firstname}
+                  multiline={true}
+                  style={styles.textInput}
+                  placeholder={userInfo.firstname}
+                  cursorColor={"#000"}
+                />
               </View>
-            )}
-          </Formik>
+              <View style={styles.inputContainer}>
+                <Text style={styles.inputTitle}>Nom</Text>
+                <TextInput
+                  onChangeText={formikProps.handleChange("lastname")}
+                  onBlur={formikProps.handleBlur("lastname")}
+                  value={formikProps.values.lastname}
+                  multiline={true}
+                  style={styles.textInput}
+                  placeholder={userInfo.lastname}
+                  cursorColor={"#000"}
+                />
+              </View>
+
+              <View style={styles.inputContainer}>
+                <Text style={styles.inputTitle}>Description</Text>
+                <TextInput
+                  onChangeText={formikProps.handleChange("description")}
+                  onBlur={formikProps.handleBlur("description")}
+                  value={formikProps.values.description}
+                  style={styles.textInput}
+                  multiline={true}
+                  placeholder={
+                    userInfo.description
+                      ? decodeText(
+                          userInfo.description.length > 50
+                            ? userInfo.description.substring(0, 50) + "..."
+                            : userInfo.description
+                        )
+                      : "Description"
+                  }
+                  cursorColor={"#000"}
+                />
+              </View>
+              <View style={styles.inputContainer}>
+                <Text style={styles.inputTitle}>Ville de naissance</Text>
+                <TextInput
+                  onChangeText={formikProps.handleChange("cityOfBirth")}
+                  onBlur={formikProps.handleBlur("cityOfBirth")}
+                  value={formikProps.values.cityOfBirth}
+                  style={styles.textInput}
+                  multiline={true}
+                  placeholder={
+                    userInfo.cityOfBirth
+                      ? userInfo.cityOfBirth
+                      : "Ville de naissance"
+                  }
+                  cursorColor={"#000"}
+                />
+              </View>
+              <View style={styles.inputContainer}>
+                <Text style={styles.inputTitle}>J'adore</Text>
+                <TextInput
+                  onChangeText={formikProps.handleChange("iLike")}
+                  onBlur={formikProps.handleBlur("iLike")}
+                  value={formikProps.values.iLike}
+                  style={styles.textInput}
+                  multiline={true}
+                  placeholder={userInfo.iLike ? userInfo.iLike : "J'adore"}
+                  cursorColor={"#000"}
+                />
+              </View>
+              <View style={styles.inputContainer}>
+                <Text style={styles.inputTitle}>Séries préférées</Text>
+                <TextInput
+                  onChangeText={formikProps.handleChange("favoriteShows")}
+                  onBlur={formikProps.handleBlur("favoriteShows")}
+                  value={formikProps.values.favoriteShows}
+                  style={styles.textInput}
+                  multiline={true}
+                  placeholder={
+                    userInfo.favoriteShows
+                      ? userInfo.favoriteShows
+                      : "Séries préférées"
+                  }
+                  cursorColor={"#000"}
+                />
+              </View>
+              <View style={styles.inputContainer}>
+                <Text style={styles.inputTitle}>Centre d'intérêt</Text>
+                <TextInput
+                  onChangeText={formikProps.handleChange("centerOfInterest")}
+                  onBlur={formikProps.handleBlur("centerOfInterest")}
+                  value={formikProps.values.centerOfInterest}
+                  style={styles.textInput}
+                  multiline={true}
+                  placeholder={
+                    userInfo.centerOfInterest
+                      ? userInfo.centerOfInterest
+                      : "Centre d'intérêt"
+                  }
+                  cursorColor={"#000"}
+                />
+              </View>
+              <View style={styles.inputContainer}>
+                <Text style={styles.inputTitle}>Signe astrologique</Text>
+                <TextInput
+                  onChangeText={formikProps.handleChange("astrologicalSign")}
+                  onBlur={formikProps.handleBlur("astrologicalSign")}
+                  value={formikProps.values.astrologicalSign}
+                  style={styles.textInput}
+                  multiline={true}
+                  placeholder={
+                    userInfo.astrologicalSign
+                      ? userInfo.astrologicalSign
+                      : "Signe astrologique"
+                  }
+                  cursorColor={"#000"}
+                />
+              </View>
+              <View style={styles.inputContainer}>
+                <Text style={styles.inputTitle}>Artistes préférés</Text>
+                <TextInput
+                  onChangeText={formikProps.handleChange("favoriteArtists")}
+                  onBlur={formikProps.handleBlur("favoriteArtists")}
+                  value={formikProps.values.favoriteArtists}
+                  style={styles.textInput}
+                  multiline={true}
+                  placeholder={
+                    userInfo.favoriteArtists
+                      ? userInfo.favoriteArtists
+                      : "Artistes préférés"
+                  }
+                  cursorColor={"#000"}
+                />
+              </View>
+              <View style={styles.inputContainer}>
+                <Text style={styles.inputTitle}>Activité</Text>
+                <TextInput
+                  onChangeText={formikProps.handleChange("activity")}
+                  onBlur={formikProps.handleBlur("activity")}
+                  value={formikProps.values.activity}
+                  style={styles.textInput}
+                  multiline={true}
+                  placeholder={
+                    userInfo.activity ? userInfo.activity : "Activité"
+                  }
+                  cursorColor={"#000"}
+                />
+              </View>
+              <View style={styles.inputContainer}>
+                <Text style={styles.inputTitle}>Ville de rêve</Text>
+                <TextInput
+                  onChangeText={formikProps.handleChange("dreamCity")}
+                  onBlur={formikProps.handleBlur("dreamCity")}
+                  value={formikProps.values.dreamCity}
+                  style={styles.textInput}
+                  multiline={true}
+                  placeholder={
+                    userInfo.dreamCity ? userInfo.dreamCity : "Ville de rêve"
+                  }
+                  cursorColor={"#000"}
+                />
+              </View>
+              <TouchableOpacity
+                style={[
+                  styles.saveBtn,
+                  (updateUserDataIsPending ||
+                    !(formikProps.isValid && formikProps.dirty)) && {
+                    opacity: 0.5,
+                  },
+                ]}
+                onPress={() => formikProps.handleSubmit()}
+                disabled={
+                  updateUserDataIsPending ||
+                  !(formikProps.isValid && formikProps.dirty)
+                }
+              >
+                {updateUserDataIsPending ? (
+                  <ActivityIndicator color="#fff" />
+                ) : (
+                  <Text style={styles.saveBtnText}>Enregistrer</Text>
+                )}
+              </TouchableOpacity>
+            </View>
+          </FormikProvider>
         </View>
 
         <View style={styles.btnsBottomContainer}>
-          <View style={styles.btnsTop}>
-            <Text style={styles.btnsTopText}>Changer de compte</Text>
-          </View>
-          <View style={styles.btnsBottom}>
+          <Pressable style={styles.btnsTop} onPress={deleteUserAccount}>
+            <Text style={styles.btnsTopText}>Supprimer votre compte</Text>
+          </Pressable>
+          <Pressable style={styles.btnsBottom} onPress={handleDisconnect}>
             <Text style={styles.btnsBottomText}>Déconnexion</Text>
-          </View>
+          </Pressable>
         </View>
       </ScreenContainer>
     </ScrollView>
@@ -383,21 +471,21 @@ const styles = StyleSheet.create({
     fontFamily: FONTS.poppinsMedium,
     fontSize: 12,
     marginVertical: 10,
+    width: "40%",
   },
   textInput: {
     borderRadius: 10,
-    padding: 10,
-    position: "absolute",
-    left: 150,
     fontFamily: FONTS.poppinsMedium,
-    paddingTop: 10,
     width: "60%",
+    paddingVertical: 10,
   },
   saveBtn: {
     backgroundColor: COLORS.primaryColor,
     borderRadius: 20,
-    paddingHorizontal: 30,
-    paddingVertical: 5,
+    height: 50,
+    width: "80%",
+    alignItems: "center",
+    justifyContent: "center",
     marginTop: 20,
     alignSelf: "center",
   },

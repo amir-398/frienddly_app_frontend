@@ -3,7 +3,7 @@ import COLORS from "@/constants/COLORS";
 import FONTS from "@/constants/FONTS";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import React, { useEffect, useState } from "react";
-import { FlatList, StatusBar, StyleSheet, Text } from "react-native";
+import { FlatList, StyleSheet, Text } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 import { useChatContext } from "stream-chat-expo";
 import CommunityHeader from "./components/CommunityHeader";
@@ -65,7 +65,6 @@ export default function Community({ navigation }: { navigation: any }) {
 
   return (
     <ScrollView>
-      <StatusBar backgroundColor={"#fff"} />
       <ScreenContainer>
         <CommunityHeader />
         <Text style={styles.sugText}>Suggestion d'amis : </Text>
@@ -93,27 +92,11 @@ export default function Community({ navigation }: { navigation: any }) {
 }
 
 const styles = StyleSheet.create({
-  header: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    height: 60,
-  },
-  headerRight: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    width: 80,
-    marginRight: 10,
-  },
-  headerIcon: {
-    width: 30,
-    height: 30,
-  },
   sugText: {
     fontSize: 20,
     fontFamily: FONTS.poppinsBold,
     borderBottomColor: COLORS.primaryColor,
     borderBottomWidth: 1,
-    marginBottom: 10,
+    marginVertical: 10,
   },
 });

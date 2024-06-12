@@ -3,39 +3,101 @@ import COLORS from "@/constants/COLORS";
 import FONTS from "@/constants/FONTS";
 import ROUTES from "@/constants/ROUTES";
 import { S3ENDPOINTUSERIMAGES } from "@/constants/S3Endpoint";
-import { useAppSelector } from "@/redux/hooks";
+import { useSendFriendRequest } from "@/hooks/friends";
+import { useGetProfilUser } from "@/hooks/userData";
+import { setUserInvitedFriend } from "@/redux/Slices/userInvitedFriends";
+import { useAppDispatch, useAppSelector } from "@/redux/hooks";
+import { decodeText } from "@/utils/decodes/decodeText";
 import { calculateAge } from "@/utils/userUtils/CalculateAge";
 import { Icon } from "@rneui/themed";
 import React from "react";
 import {
   Image,
   ScrollView,
-  StatusBar,
   StyleSheet,
   Text,
   TouchableOpacity,
   View,
 } from "react-native";
 
-export default function ProfilScreen({ navigation }: { navigation: any }) {
+export default function ProfilScreen({
+  navigation,
+  route,
+}: {
+  navigation: any;
+  route: any;
+}) {
+  const dispatch = useAppDispatch();
+  const userId = route.params?.userId;
   const userData = useAppSelector((state) => state.authSlice.userData);
-  const userInfo = userData;
+  const sendedInvitations = useAppSelector(
+    (state) => state.userInvitedFriends.usersId
+  );
+  const userIsInvited = userId && sendedInvitations.includes(userId);
+
+  const { mutate: sendFriendRequest } = useSendFriendRequest();
+
+  const handleSendFriendRequest = async () => {
+    try {
+      sendFriendRequest(userId, {
+        onSuccess: () => {
+          dispatch(setUserInvitedFriend(userId));
+        },
+        onError: (error) => {
+          console.log("error", error);
+        },
+      });
+    } catch (error) {
+      console.log("error", error);
+    }
+  };
+
+  let userInfo;
+
+  if (userId) {
+    const { data: userProfilInfo } = useGetProfilUser(userId);
+    userInfo = userProfilInfo;
+  } else {
+    userInfo = userData;
+  }
+
+  if (!userInfo) {
+    return <Text>Loading...</Text>;
+  }
+
   const profilImage = userInfo?.profilImage;
-  const firstname = userInfo?.firstname;
-  const lastname = userInfo?.lastname;
+  const firstname = decodeText(userInfo?.firstname);
+  const lastname = decodeText(userInfo?.lastname);
   const age = calculateAge(userInfo?.birthDate);
-  const bio = userInfo?.description;
-  const cityOfBirth = userInfo?.cityOfBirth;
-  const Ilike = userInfo?.Ilike;
-  const favoriteShows = userInfo?.favoriteShows;
-  const centreOfInterest = userInfo?.centreOfInterest;
-  const astrologicalSign = userInfo?.astrologicalSign;
-  const favoriteArtists = userInfo?.favoriteArtists;
-  const activity = userInfo?.activity;
-  const dreamCity = userInfo?.dreamCity;
+  const bio = userInfo?.description
+    ? decodeText(userInfo?.description)
+    : "Bio pas encore renseignée";
+  const cityOfBirth = userInfo?.cityOfBirth
+    ? decodeText(userInfo?.cityOfBirth)
+    : "Pas encore renseigné";
+  const iLike = userInfo?.iLike
+    ? decodeText(userInfo?.iLike)
+    : "Pas encore renseigné";
+  const favoriteShows = userInfo?.favoriteShows
+    ? decodeText(userInfo?.favoriteShows)
+    : "Pas encore renseigné";
+  const centerOfInterest = userInfo?.centerOfInterest
+    ? decodeText(userInfo?.centerOfInterest)
+    : "Pas encore renseigné";
+  const astrologicalSign = userInfo?.astrologicalSign
+    ? decodeText(userInfo?.astrologicalSign)
+    : "Pas encore renseigné";
+  const favoriteArtists = userInfo?.favoriteArtists
+    ? decodeText(userInfo?.favoriteArtists)
+    : "Pas encore renseigné";
+  const activity = userInfo?.activity
+    ? decodeText(userInfo?.activity)
+    : "Pas encore renseigné";
+  const dreamCity = userInfo?.dreamCity
+    ? decodeText(userInfo?.dreamCity)
+    : "Pas encore renseigné";
   return (
     <ScrollView style={styles.container}>
-      <StatusBar backgroundColor={"#DEDEDE"} />
       <ScreenContainer>
         <View style={styles.iconSettingsContainer}>
           <Icon name="settings-outline" type="ionicon" size={24} />
@@ -50,29 +112,42 @@ export default function ProfilScreen({ navigation }: { navigation: any }) {
               {firstname} {lastname}
             </Text>
             <Text style={styles.headerText}>{age} ans</Text>
-            <TouchableOpacity
-              style={styles.headerBtn}
-              onPress={() =>
-                navigation.navigate(ROUTES.EditProfilData, { userInfo })
-              }
-            >
-              <Text style={styles.headerBtnText}>Modifier le profil</Text>
-            </TouchableOpacity>
+            {userData.id == userInfo.id && (
+              <TouchableOpacity
+                style={styles.headerBtn}
+                onPress={() =>
+                  navigation.navigate(ROUTES.EditProfilData, { userInfo })
+                }
+              >
+                <Text style={styles.headerBtnText}>Modifier le profil</Text>
+              </TouchableOpacity>
+            )}
           </View>
         </View>
-        <Text style={styles.bioText}>
-          {bio == null
-            ? "Veuillez ajouter une bio à votre profil"
-            : "Lorem ipsum dolor sit amet consectetur adipisicing elit. Dolorem modi nihil velit ullam unde minima iusto"}
-        </Text>
-        <View style={styles.btnsContainer}>
-          <TouchableOpacity style={styles.inviteBtn}>
-            <Text style={styles.inviteBtnText}>Inviter</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.sendMessageBtn}>
-            <Text style={styles.sendMessageBtnText}>Envoyer un message </Text>
-          </TouchableOpacity>
-        </View>
+        <Text style={styles.bioText}>{bio}</Text>
+        {userData.id !== userInfo.id && (
+          <View style={styles.btnsContainer}>
+            <TouchableOpacity
+              style={[
+                styles.inviteBtn,
+                {
+                  backgroundColor: userIsInvited
+                    ? "grey"
+                    : COLORS.secondaryColor,
+                },
+              ]}
+              onPress={handleSendFriendRequest}
+              disabled={userIsInvited}
+            >
+              <Text style={styles.inviteBtnText}>
+                {userIsInvited ? "Invitation envoyée" : "Inviter"}
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.sendMessageBtn}>
+              <Text style={styles.sendMessageBtnText}>Envoyer un message </Text>
+            </TouchableOpacity>
+          </View>
+        )}
 
         <Text style={styles.dataTitle}>Qui suis-je vraiment</Text>
         <View style={styles.dataContainer}>
@@ -81,13 +156,13 @@ export default function ProfilScreen({ navigation }: { navigation: any }) {
               <Text style={{ fontFamily: FONTS.poppinsBold }}>
                 Je suis née à :
               </Text>{" "}
-              {cityOfBirth != null ? cityOfBirth : "Pas encore renseigné"}{" "}
+              {cityOfBirth}
             </Text>
           </View>
           <View style={styles.dataBottomContainer}>
             <Text style={styles.dataText}>
               <Text style={{ fontFamily: FONTS.poppinsBold }}>J'adore :</Text>{" "}
-              {Ilike != null ? Ilike : "Pas encore renseigné"}{" "}
+              {iLike}
             </Text>
           </View>
         </View>
@@ -97,7 +172,7 @@ export default function ProfilScreen({ navigation }: { navigation: any }) {
               <Text style={{ fontFamily: FONTS.poppinsBold }}>
                 Film série préféré :
               </Text>{" "}
-              {favoriteShows != null ? favoriteShows : "Pas encore renseigné"}{" "}
+              {favoriteShows}
             </Text>
           </View>
           <View style={styles.dataBottomContainer}>
@@ -105,9 +180,7 @@ export default function ProfilScreen({ navigation }: { navigation: any }) {
               <Text style={{ fontFamily: FONTS.poppinsBold }}>
                 Mes centres d’intérêts :
               </Text>{" "}
-              {centreOfInterest != null
-                ? centreOfInterest
-                : "Pas encore renseigné"}{" "}
+              {centerOfInterest}
             </Text>
           </View>
         </View>
@@ -117,9 +190,7 @@ export default function ProfilScreen({ navigation }: { navigation: any }) {
               <Text style={{ fontFamily: FONTS.poppinsBold }}>
                 Signe astrologique :
               </Text>{" "}
-              {astrologicalSign != null
-                ? astrologicalSign
-                : "Pas encore renseigné"}{" "}
+              {astrologicalSign}
             </Text>
           </View>
           <View style={styles.dataBottomContainer}>
@@ -127,9 +198,7 @@ export default function ProfilScreen({ navigation }: { navigation: any }) {
               <Text style={{ fontFamily: FONTS.poppinsBold }}>
                 Mon artiste préféré :
               </Text>{" "}
-              {favoriteArtists != null
-                ? favoriteArtists
-                : "Pas encore renseigné"}{" "}
+              {favoriteArtists}
             </Text>
           </View>
         </View>
@@ -139,7 +208,7 @@ export default function ProfilScreen({ navigation }: { navigation: any }) {
               <Text style={{ fontFamily: FONTS.poppinsBold }}>
                 Mon activité / Mes études :
               </Text>{" "}
-              {activity != null ? activity : "Pas encore renseigné"}{" "}
+              {activity}
             </Text>
           </View>
           <View style={styles.dataBottomContainer}>
@@ -147,7 +216,7 @@ export default function ProfilScreen({ navigation }: { navigation: any }) {
               <Text style={{ fontFamily: FONTS.poppinsBold }}>
                 Ma ville de rêve :
               </Text>{" "}
-              {dreamCity != null ? dreamCity : "Pas encore renseigné"}{" "}
+              {dreamCity}
             </Text>
           </View>
         </View>
@@ -169,7 +238,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   headerRight: {
-    marginLeft: 10,
+    marginLeft: 15,
   },
   headerText: {
     fontFamily: FONTS.poppinsBold,
@@ -197,22 +266,27 @@ const styles = StyleSheet.create({
   inviteBtn: {
     backgroundColor: COLORS.secondaryColor,
     borderRadius: 20,
-    paddingHorizontal: 30,
+    width: 150,
     paddingVertical: 5,
   },
   inviteBtnText: {
     color: "#fff",
     fontFamily: FONTS.poppinsMedium,
+    textAlign: "center",
+    fontSize: 13,
+    marginTop: 2,
   },
   sendMessageBtn: {
     backgroundColor: COLORS.primaryColor,
     borderRadius: 20,
-    paddingHorizontal: 30,
+    paddingHorizontal: 20,
     paddingVertical: 5,
   },
   sendMessageBtnText: {
     color: "#fff",
     fontFamily: FONTS.poppinsMedium,
+    fontSize: 13,
+    marginTop: 2,
   },
   dataTitle: {
     fontFamily: FONTS.poppinsBold,

@@ -1,6 +1,5 @@
 import InteractiveIcon from "@/components/InteractiveIcon";
 import FONTS from "@/constants/FONTS";
-import { S3ENDPOINT } from "@/constants/S3Endpoint";
 import { useNavigation } from "@react-navigation/native";
 import React from "react";
 import { Image, StyleSheet, Text, View } from "react-native";
@@ -23,10 +22,7 @@ export default function CommunityChannelHeader({
         onPress={() => navigation.goBack()}
       />
       {channelImage && (
-        <Image
-          source={{ uri: S3ENDPOINT + channelImage }}
-          style={styles.profileImage}
-        />
+        <Image source={{ uri: channelImage }} style={styles.profileImage} />
       )}
       <View>
         <Text style={styles.profileName}>{channelName}</Text>

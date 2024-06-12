@@ -1,9 +1,8 @@
 import InteractiveIcon from "@/components/InteractiveIcon";
 import FONTS from "@/constants/FONTS";
-import { getUserProfilImage } from "@/hooks/userData";
 import { useAppSelector } from "@/redux/hooks";
 import { useNavigation } from "@react-navigation/native";
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { Image, StyleSheet, Text, View } from "react-native";
 import { useChannelContext } from "stream-chat-expo";
 
@@ -11,29 +10,22 @@ export default function CustomChannelHeader() {
   const navigation = useNavigation();
   const { channel } = useChannelContext();
   const userId = useAppSelector((state) => state.authSlice.userData.id);
-  const [userImage, setUserImage] = useState<string | undefined>("");
 
   // Filtrez le membre du canal qui n'est pas l'utilisateur actuel
-  const recipient = Object.values(channel.state.members).find(
-    (member) => member.user && member.user.id !== userId
-  )?.user;
+  const otherMember = Object.values(channel.state.members).find(
+    (member) => member.user && member.user.id !== userId.toString()
+  );
 
-  if (!recipient) {
+  if (!otherMember) {
     return null;
   }
-  // getUserImage
-  useEffect(() => {
-    const fetchUserImage = async () => {
-      try {
-        const response = await getUserProfilImage(Number(recipient.id));
-        setUserImage(response);
-      } catch (error) {
-        console.log("Error fetching user image:", error);
-      }
-    };
 
-    fetchUserImage();
-  }, [recipient]);
+  const userData = otherMember?.user;
+
+  const username = userData?.name;
+
+  const userImage = userData?.image;
+
   return (
     <View style={styles.headerContainer}>
       <InteractiveIcon
@@ -46,16 +38,16 @@ export default function CustomChannelHeader() {
         <Image source={{ uri: userImage }} style={styles.profileImage} />
       )}
       <View>
-        <Text style={styles.profileName}>{recipient.name}</Text>
+        <Text style={styles.profileName}>{username}</Text>
         <View style={styles.onlineStatusContainer}>
           <View
             style={[
               styles.statusCircle,
-              { backgroundColor: recipient.online ? "#4caf50" : "red" },
+              { backgroundColor: userData.online ? "#4caf50" : "red" },
             ]}
           ></View>
           <Text style={styles.onlineStatusText}>
-            {recipient.online ? "En ligne" : "Hors ligne"}
+            {userData.online ? "En ligne" : "Hors ligne"}
           </Text>
         </View>
       </View>

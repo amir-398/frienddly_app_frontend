@@ -76,7 +76,7 @@ const authSlice = createSlice({
       state.isConnected = action.payload;
     },
     setUserData(state, action: PayloadAction<any>) {
-      state.userData = { ...state.userData, ...action.payload };
+      state.userData = action.payload;
     },
   },
   extraReducers: (builder) => {

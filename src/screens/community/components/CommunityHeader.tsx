@@ -1,12 +1,17 @@
 import logo from "@/assets/logo/logo.png";
+import InteractiveIcon from "@/components/InteractiveIcon";
 import FONTS from "@/constants/FONTS";
-import { Icon } from "@rneui/themed";
 import React, { useState } from "react";
 import { Image, Pressable, StyleSheet, Text, View } from "react-native";
+import SearchUserModal from "./SearchUserModal";
 export default function CommunityHeader() {
   const [searchModalIsVisible, setSearchModalIsVisible] = useState(false);
   return (
     <View style={styles.container}>
+      <SearchUserModal
+        visible={searchModalIsVisible}
+        setIsVisible={setSearchModalIsVisible}
+      />
       <View style={styles.left}>
         <Text style={styles.title}>Paris</Text>
       </View>
@@ -15,7 +20,13 @@ export default function CommunityHeader() {
       </View>
       <View style={styles.right}>
         <Pressable onPress={() => setSearchModalIsVisible(true)}>
-          <Icon name="search" type="ionicon" color={"#000"} />
+          <InteractiveIcon
+            onPress={() => setSearchModalIsVisible(true)}
+            name="search"
+            type="ionicon"
+            color={"#000"}
+            padding={5}
+          />
         </Pressable>
       </View>
     </View>

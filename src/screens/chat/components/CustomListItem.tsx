@@ -2,11 +2,10 @@ import COLORS from "@/constants/COLORS";
 import FONTS from "@/constants/FONTS";
 import ROUTES from "@/constants/ROUTES";
 import { useAppContext } from "@/context/AppProvider";
-import { getUserProfilImage } from "@/hooks/userData";
 import { useAppSelector } from "@/redux/hooks";
 import { useNavigation } from "@react-navigation/native";
 import { DateTime } from "luxon";
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { Image, Pressable, StyleSheet, Text, View } from "react-native";
 
 export default function CustomListItem(props: any) {
@@ -20,22 +19,7 @@ export default function CustomListItem(props: any) {
   );
   const userData = otherMember?.user;
   const userName = userData?.name;
-  const [userImage, setUserImage] = useState<string | undefined>("");
-
-  useEffect(() => {
-    const fetchUserImage = async () => {
-      if (userData?.id) {
-        try {
-          const response = await getUserProfilImage(userData.id);
-          setUserImage(response);
-        } catch (error) {
-          console.log("Error fetching user image:", error);
-        }
-      }
-    };
-
-    fetchUserImage();
-  }, [userData?.id]);
+  const userImage = userData?.image;
 
   const backgroundColor = unread ? COLORS.primaryColorLight : "#fff";
   let lastMessageText =
@@ -55,7 +39,7 @@ export default function CustomListItem(props: any) {
   const messageDate = messageDateISO ? DateTime.fromISO(messageDateISO) : null;
 
   const now = DateTime.now();
-  let displayTime = "Inconnu";
+  let displayTime;
   if (messageDate) {
     if (messageDate.hasSame(now, "day")) {
       displayTime = messageDate.toLocaleString(DateTime.TIME_SIMPLE);
@@ -114,18 +98,20 @@ const styles = StyleSheet.create({
     paddingTop: 10,
     paddingHorizontal: 10,
     borderRadius: 10,
+    marginBottom: 5,
   },
   channelImage: {
     width: 60,
     height: 60,
     borderRadius: 50,
     marginRight: 10,
+    marginBottom: 10,
   },
   textContainer: {
     flex: 1,
     borderBottomColor: COLORS.primaryColor,
     borderBottomWidth: 1,
-    paddingBottom: 10,
+    paddingBottom: 15,
   },
   channelName: {
     fontWeight: "bold",
