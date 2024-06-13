@@ -1,21 +1,61 @@
 import filterIcon from "@/assets/icons/filter.png";
+import FONTS from "@/constants/FONTS";
+import ROUTES from "@/constants/ROUTES";
+import { useNavigation } from "@react-navigation/native";
 import { Icon } from "@rneui/base";
+import { Formik } from "formik";
 import React from "react";
-import { Image, StyleSheet, TextInput, View } from "react-native";
-export default function SearchBar() {
+import { Image, Pressable, StyleSheet, TextInput, View } from "react-native";
+import * as Yup from "yup";
+const validationSchema = Yup.object().shape({
+  search: Yup.string().required("Veuillez entrer un mot-clé"),
+});
+export default function SearchBar({
+  setFilterModalVisible,
+  searchBarRef,
+}: {
+  setFilterModalVisible: (visible: boolean) => void;
+  searchBarRef: any;
+}) {
+  const navigation = useNavigation();
+  const handleSubmit = (values: { search: string }) => {
+    navigation.navigate(ROUTES.PostsScreen, {
+      q: values.search,
+      title: "Résultats de recherche",
+    });
+  };
+
   return (
     <View style={styles.container}>
       <View style={styles.left}>
         <Icon name="search" type="ionicon" />
       </View>
-      <TextInput
-        style={styles.input}
-        placeholder="De quoi as-tu envie aujourd’hui ?"
-        placeholderTextColor={"grey"}
-      />
-      <View style={styles.right}>
+      <Formik
+        initialValues={{ search: "" }}
+        validationSchema={validationSchema}
+        onSubmit={handleSubmit}
+      >
+        {({ handleChange, handleBlur, handleSubmit, values }) => (
+          <TextInput
+            style={styles.input}
+            placeholder="De quoi as-tu envie aujourd’hui ?"
+            placeholderTextColor={"grey"}
+            onChangeText={handleChange("search")}
+            onBlur={handleBlur("search")}
+            value={values.search}
+            returnKeyType="search"
+            onSubmitEditing={() => handleSubmit()}
+            ref={searchBarRef}
+            cursorColor={"#000"}
+          />
+        )}
+      </Formik>
+      <Pressable
+        style={styles.right}
+        onPress={() => setFilterModalVisible(true)}
+      >
         <Image style={styles.filterIcon} source={filterIcon} />
-      </View>
+      </Pressable>
     </View>
   );
 }
@@ -42,6 +82,9 @@ const styles = StyleSheet.create({
     height: 40,
     borderRightColor: "grey",
     borderRightWidth: 1,
+    fontFamily: FONTS.poppinsRegular,
+    fontSize: 12,
+    paddingTop: 3,
   },
   right: {
     width: "12.5%",

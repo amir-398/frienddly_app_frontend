@@ -19,6 +19,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function ProfilScreen({
   navigation,
@@ -97,131 +98,135 @@ export default function ProfilScreen({
     ? decodeText(userInfo?.dreamCity)
     : "Pas encore renseigné";
   return (
-    <ScrollView style={styles.container}>
-      <ScreenContainer>
-        <View style={styles.iconSettingsContainer}>
-          <Icon name="settings-outline" type="ionicon" size={24} />
-        </View>
-        <View style={styles.headerContainer}>
-          <Image
-            source={{ uri: S3ENDPOINTUSERIMAGES + profilImage }}
-            style={{ width: 100, height: 100, borderRadius: 50 }}
-          />
-          <View style={styles.headerRight}>
-            <Text style={styles.headerText}>
-              {firstname} {lastname}
-            </Text>
-            <Text style={styles.headerText}>{age} ans</Text>
-            {userData.id == userInfo.id && (
-              <TouchableOpacity
-                style={styles.headerBtn}
-                onPress={() =>
-                  navigation.navigate(ROUTES.EditProfilData, { userInfo })
-                }
-              >
-                <Text style={styles.headerBtnText}>Modifier le profil</Text>
-              </TouchableOpacity>
-            )}
+    <SafeAreaView style={{ flex: 1 }}>
+      <ScrollView style={styles.container}>
+        <ScreenContainer>
+          <View style={styles.iconSettingsContainer}>
+            <Icon name="settings-outline" type="ionicon" size={24} />
           </View>
-        </View>
-        <Text style={styles.bioText}>{bio}</Text>
-        {userData.id !== userInfo.id && (
-          <View style={styles.btnsContainer}>
-            <TouchableOpacity
-              style={[
-                styles.inviteBtn,
-                {
-                  backgroundColor: userIsInvited
-                    ? "grey"
-                    : COLORS.secondaryColor,
-                },
-              ]}
-              onPress={handleSendFriendRequest}
-              disabled={userIsInvited}
-            >
-              <Text style={styles.inviteBtnText}>
-                {userIsInvited ? "Invitation envoyée" : "Inviter"}
+          <View style={styles.headerContainer}>
+            <Image
+              source={{ uri: S3ENDPOINTUSERIMAGES + profilImage }}
+              style={{ width: 100, height: 100, borderRadius: 50 }}
+            />
+            <View style={styles.headerRight}>
+              <Text style={styles.headerText}>
+                {firstname} {lastname}
               </Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.sendMessageBtn}>
-              <Text style={styles.sendMessageBtnText}>Envoyer un message </Text>
-            </TouchableOpacity>
+              <Text style={styles.headerText}>{age} ans</Text>
+              {userData.id == userInfo.id && (
+                <TouchableOpacity
+                  style={styles.headerBtn}
+                  onPress={() =>
+                    navigation.navigate(ROUTES.EditProfilData, { userInfo })
+                  }
+                >
+                  <Text style={styles.headerBtnText}>Modifier le profil</Text>
+                </TouchableOpacity>
+              )}
+            </View>
           </View>
-        )}
+          <Text style={styles.bioText}>{bio}</Text>
+          {userData.id !== userInfo.id && (
+            <View style={styles.btnsContainer}>
+              <TouchableOpacity
+                style={[
+                  styles.inviteBtn,
+                  {
+                    backgroundColor: userIsInvited
+                      ? "grey"
+                      : COLORS.secondaryColor,
+                  },
+                ]}
+                onPress={handleSendFriendRequest}
+                disabled={userIsInvited}
+              >
+                <Text style={styles.inviteBtnText}>
+                  {userIsInvited ? "Invitation envoyée" : "Inviter"}
+                </Text>
+              </TouchableOpacity>
+              <TouchableOpacity style={styles.sendMessageBtn}>
+                <Text style={styles.sendMessageBtnText}>
+                  Envoyer un message{" "}
+                </Text>
+              </TouchableOpacity>
+            </View>
+          )}
 
-        <Text style={styles.dataTitle}>Qui suis-je vraiment</Text>
-        <View style={styles.dataContainer}>
-          <View style={styles.dataTopContainer}>
-            <Text style={styles.dataText}>
-              <Text style={{ fontFamily: FONTS.poppinsBold }}>
-                Je suis née à :
-              </Text>{" "}
-              {cityOfBirth}
-            </Text>
+          <Text style={styles.dataTitle}>Qui suis-je vraiment</Text>
+          <View style={styles.dataContainer}>
+            <View style={styles.dataTopContainer}>
+              <Text style={styles.dataText}>
+                <Text style={{ fontFamily: FONTS.poppinsBold }}>
+                  Je suis née à :
+                </Text>{" "}
+                {cityOfBirth}
+              </Text>
+            </View>
+            <View style={styles.dataBottomContainer}>
+              <Text style={styles.dataText}>
+                <Text style={{ fontFamily: FONTS.poppinsBold }}>J'adore :</Text>{" "}
+                {iLike}
+              </Text>
+            </View>
           </View>
-          <View style={styles.dataBottomContainer}>
-            <Text style={styles.dataText}>
-              <Text style={{ fontFamily: FONTS.poppinsBold }}>J'adore :</Text>{" "}
-              {iLike}
-            </Text>
+          <View style={styles.dataContainer}>
+            <View style={styles.dataTopContainer}>
+              <Text style={styles.dataText}>
+                <Text style={{ fontFamily: FONTS.poppinsBold }}>
+                  Film série préféré :
+                </Text>{" "}
+                {favoriteShows}
+              </Text>
+            </View>
+            <View style={styles.dataBottomContainer}>
+              <Text style={styles.dataText}>
+                <Text style={{ fontFamily: FONTS.poppinsBold }}>
+                  Mes centres d’intérêts :
+                </Text>{" "}
+                {centerOfInterest}
+              </Text>
+            </View>
           </View>
-        </View>
-        <View style={styles.dataContainer}>
-          <View style={styles.dataTopContainer}>
-            <Text style={styles.dataText}>
-              <Text style={{ fontFamily: FONTS.poppinsBold }}>
-                Film série préféré :
-              </Text>{" "}
-              {favoriteShows}
-            </Text>
+          <View style={styles.dataContainer}>
+            <View style={styles.dataTopContainer}>
+              <Text style={styles.dataText}>
+                <Text style={{ fontFamily: FONTS.poppinsBold }}>
+                  Signe astrologique :
+                </Text>{" "}
+                {astrologicalSign}
+              </Text>
+            </View>
+            <View style={styles.dataBottomContainer}>
+              <Text style={styles.dataText}>
+                <Text style={{ fontFamily: FONTS.poppinsBold }}>
+                  Mon artiste préféré :
+                </Text>{" "}
+                {favoriteArtists}
+              </Text>
+            </View>
           </View>
-          <View style={styles.dataBottomContainer}>
-            <Text style={styles.dataText}>
-              <Text style={{ fontFamily: FONTS.poppinsBold }}>
-                Mes centres d’intérêts :
-              </Text>{" "}
-              {centerOfInterest}
-            </Text>
+          <View style={styles.dataContainer}>
+            <View style={styles.dataTopContainer}>
+              <Text style={styles.dataText}>
+                <Text style={{ fontFamily: FONTS.poppinsBold }}>
+                  Mon activité / Mes études :
+                </Text>{" "}
+                {activity}
+              </Text>
+            </View>
+            <View style={styles.dataBottomContainer}>
+              <Text style={styles.dataText}>
+                <Text style={{ fontFamily: FONTS.poppinsBold }}>
+                  Ma ville de rêve :
+                </Text>{" "}
+                {dreamCity}
+              </Text>
+            </View>
           </View>
-        </View>
-        <View style={styles.dataContainer}>
-          <View style={styles.dataTopContainer}>
-            <Text style={styles.dataText}>
-              <Text style={{ fontFamily: FONTS.poppinsBold }}>
-                Signe astrologique :
-              </Text>{" "}
-              {astrologicalSign}
-            </Text>
-          </View>
-          <View style={styles.dataBottomContainer}>
-            <Text style={styles.dataText}>
-              <Text style={{ fontFamily: FONTS.poppinsBold }}>
-                Mon artiste préféré :
-              </Text>{" "}
-              {favoriteArtists}
-            </Text>
-          </View>
-        </View>
-        <View style={styles.dataContainer}>
-          <View style={styles.dataTopContainer}>
-            <Text style={styles.dataText}>
-              <Text style={{ fontFamily: FONTS.poppinsBold }}>
-                Mon activité / Mes études :
-              </Text>{" "}
-              {activity}
-            </Text>
-          </View>
-          <View style={styles.dataBottomContainer}>
-            <Text style={styles.dataText}>
-              <Text style={{ fontFamily: FONTS.poppinsBold }}>
-                Ma ville de rêve :
-              </Text>{" "}
-              {dreamCity}
-            </Text>
-          </View>
-        </View>
-      </ScreenContainer>
-    </ScrollView>
+        </ScreenContainer>
+      </ScrollView>
+    </SafeAreaView>
   );
 }
 

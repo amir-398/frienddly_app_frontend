@@ -23,6 +23,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import * as Yup from "yup";
 
 const atLeastOneFieldRequired = (fields, message) => {
@@ -184,242 +185,244 @@ export default function EditProfilData({
     }
   };
   return (
-    <ScrollView style={styles.container}>
-      <ImagePickerComponent
-        isVisible={imagePickerIsVisible}
-        setIsVisible={setImagePickerIsVisible}
-        setImage={setImage}
-        setImageError={setImageError}
-      />
-      <ScreenContainer>
-        <View style={styles.header}>
-          <View style={styles.headerIconContainer}>
-            <InteractiveIcon
-              onPress={() => navigation.goBack()}
-              name="arrow-back"
-              type="ionicon"
-              size={24}
-              color="#000"
-              padding={5}
-            />
-          </View>
-          <Text style={styles.headerTitle}>Modifier le profil</Text>
-        </View>
-        <View style={styles.changeImage}>
-          <Image
-            style={styles.imageProfilContainer}
-            source={{
-              uri: image
-                ? image.uri
-                : S3ENDPOINTUSERIMAGES + userInfo.profilImage,
-            }}
-          />
-          <Pressable onPress={() => setImagePickerIsVisible(true)}>
-            <Text style={styles.changeImageText}>Modifier la photo</Text>
-          </Pressable>
-        </View>
-        <View>
-          <FormikProvider value={formikProps}>
-            <View>
-              <View style={styles.inputContainer}>
-                <Text style={styles.inputTitle}>Prénom</Text>
-                <TextInput
-                  onChangeText={formikProps.handleChange("firstname")}
-                  onBlur={formikProps.handleBlur("firstname")}
-                  value={formikProps.values.firstname}
-                  multiline={true}
-                  style={styles.textInput}
-                  placeholder={userInfo.firstname}
-                  cursorColor={"#000"}
-                />
-              </View>
-              <View style={styles.inputContainer}>
-                <Text style={styles.inputTitle}>Nom</Text>
-                <TextInput
-                  onChangeText={formikProps.handleChange("lastname")}
-                  onBlur={formikProps.handleBlur("lastname")}
-                  value={formikProps.values.lastname}
-                  multiline={true}
-                  style={styles.textInput}
-                  placeholder={userInfo.lastname}
-                  cursorColor={"#000"}
-                />
-              </View>
-
-              <View style={styles.inputContainer}>
-                <Text style={styles.inputTitle}>Description</Text>
-                <TextInput
-                  onChangeText={formikProps.handleChange("description")}
-                  onBlur={formikProps.handleBlur("description")}
-                  value={formikProps.values.description}
-                  style={styles.textInput}
-                  multiline={true}
-                  placeholder={
-                    userInfo.description
-                      ? decodeText(
-                          userInfo.description.length > 50
-                            ? userInfo.description.substring(0, 50) + "..."
-                            : userInfo.description
-                        )
-                      : "Description"
-                  }
-                  cursorColor={"#000"}
-                />
-              </View>
-              <View style={styles.inputContainer}>
-                <Text style={styles.inputTitle}>Ville de naissance</Text>
-                <TextInput
-                  onChangeText={formikProps.handleChange("cityOfBirth")}
-                  onBlur={formikProps.handleBlur("cityOfBirth")}
-                  value={formikProps.values.cityOfBirth}
-                  style={styles.textInput}
-                  multiline={true}
-                  placeholder={
-                    userInfo.cityOfBirth
-                      ? userInfo.cityOfBirth
-                      : "Ville de naissance"
-                  }
-                  cursorColor={"#000"}
-                />
-              </View>
-              <View style={styles.inputContainer}>
-                <Text style={styles.inputTitle}>J'adore</Text>
-                <TextInput
-                  onChangeText={formikProps.handleChange("iLike")}
-                  onBlur={formikProps.handleBlur("iLike")}
-                  value={formikProps.values.iLike}
-                  style={styles.textInput}
-                  multiline={true}
-                  placeholder={userInfo.iLike ? userInfo.iLike : "J'adore"}
-                  cursorColor={"#000"}
-                />
-              </View>
-              <View style={styles.inputContainer}>
-                <Text style={styles.inputTitle}>Séries préférées</Text>
-                <TextInput
-                  onChangeText={formikProps.handleChange("favoriteShows")}
-                  onBlur={formikProps.handleBlur("favoriteShows")}
-                  value={formikProps.values.favoriteShows}
-                  style={styles.textInput}
-                  multiline={true}
-                  placeholder={
-                    userInfo.favoriteShows
-                      ? userInfo.favoriteShows
-                      : "Séries préférées"
-                  }
-                  cursorColor={"#000"}
-                />
-              </View>
-              <View style={styles.inputContainer}>
-                <Text style={styles.inputTitle}>Centre d'intérêt</Text>
-                <TextInput
-                  onChangeText={formikProps.handleChange("centerOfInterest")}
-                  onBlur={formikProps.handleBlur("centerOfInterest")}
-                  value={formikProps.values.centerOfInterest}
-                  style={styles.textInput}
-                  multiline={true}
-                  placeholder={
-                    userInfo.centerOfInterest
-                      ? userInfo.centerOfInterest
-                      : "Centre d'intérêt"
-                  }
-                  cursorColor={"#000"}
-                />
-              </View>
-              <View style={styles.inputContainer}>
-                <Text style={styles.inputTitle}>Signe astrologique</Text>
-                <TextInput
-                  onChangeText={formikProps.handleChange("astrologicalSign")}
-                  onBlur={formikProps.handleBlur("astrologicalSign")}
-                  value={formikProps.values.astrologicalSign}
-                  style={styles.textInput}
-                  multiline={true}
-                  placeholder={
-                    userInfo.astrologicalSign
-                      ? userInfo.astrologicalSign
-                      : "Signe astrologique"
-                  }
-                  cursorColor={"#000"}
-                />
-              </View>
-              <View style={styles.inputContainer}>
-                <Text style={styles.inputTitle}>Artistes préférés</Text>
-                <TextInput
-                  onChangeText={formikProps.handleChange("favoriteArtists")}
-                  onBlur={formikProps.handleBlur("favoriteArtists")}
-                  value={formikProps.values.favoriteArtists}
-                  style={styles.textInput}
-                  multiline={true}
-                  placeholder={
-                    userInfo.favoriteArtists
-                      ? userInfo.favoriteArtists
-                      : "Artistes préférés"
-                  }
-                  cursorColor={"#000"}
-                />
-              </View>
-              <View style={styles.inputContainer}>
-                <Text style={styles.inputTitle}>Activité</Text>
-                <TextInput
-                  onChangeText={formikProps.handleChange("activity")}
-                  onBlur={formikProps.handleBlur("activity")}
-                  value={formikProps.values.activity}
-                  style={styles.textInput}
-                  multiline={true}
-                  placeholder={
-                    userInfo.activity ? userInfo.activity : "Activité"
-                  }
-                  cursorColor={"#000"}
-                />
-              </View>
-              <View style={styles.inputContainer}>
-                <Text style={styles.inputTitle}>Ville de rêve</Text>
-                <TextInput
-                  onChangeText={formikProps.handleChange("dreamCity")}
-                  onBlur={formikProps.handleBlur("dreamCity")}
-                  value={formikProps.values.dreamCity}
-                  style={styles.textInput}
-                  multiline={true}
-                  placeholder={
-                    userInfo.dreamCity ? userInfo.dreamCity : "Ville de rêve"
-                  }
-                  cursorColor={"#000"}
-                />
-              </View>
-              <TouchableOpacity
-                style={[
-                  styles.saveBtn,
-                  (updateUserDataIsPending ||
-                    !(formikProps.isValid && formikProps.dirty)) && {
-                    opacity: 0.5,
-                  },
-                ]}
-                onPress={() => formikProps.handleSubmit()}
-                disabled={
-                  updateUserDataIsPending ||
-                  !(formikProps.isValid && formikProps.dirty)
-                }
-              >
-                {updateUserDataIsPending ? (
-                  <ActivityIndicator color="#fff" />
-                ) : (
-                  <Text style={styles.saveBtnText}>Enregistrer</Text>
-                )}
-              </TouchableOpacity>
+    <SafeAreaView>
+      <ScrollView style={styles.container}>
+        <ImagePickerComponent
+          isVisible={imagePickerIsVisible}
+          setIsVisible={setImagePickerIsVisible}
+          setImage={setImage}
+          setImageError={setImageError}
+        />
+        <ScreenContainer>
+          <View style={styles.header}>
+            <View style={styles.headerIconContainer}>
+              <InteractiveIcon
+                onPress={() => navigation.goBack()}
+                name="arrow-back"
+                type="ionicon"
+                size={24}
+                color="#000"
+                padding={5}
+              />
             </View>
-          </FormikProvider>
-        </View>
+            <Text style={styles.headerTitle}>Modifier le profil</Text>
+          </View>
+          <View style={styles.changeImage}>
+            <Image
+              style={styles.imageProfilContainer}
+              source={{
+                uri: image
+                  ? image.uri
+                  : S3ENDPOINTUSERIMAGES + userInfo.profilImage,
+              }}
+            />
+            <Pressable onPress={() => setImagePickerIsVisible(true)}>
+              <Text style={styles.changeImageText}>Modifier la photo</Text>
+            </Pressable>
+          </View>
+          <View>
+            <FormikProvider value={formikProps}>
+              <View>
+                <View style={styles.inputContainer}>
+                  <Text style={styles.inputTitle}>Prénom</Text>
+                  <TextInput
+                    onChangeText={formikProps.handleChange("firstname")}
+                    onBlur={formikProps.handleBlur("firstname")}
+                    value={formikProps.values.firstname}
+                    multiline={true}
+                    style={styles.textInput}
+                    placeholder={userInfo.firstname}
+                    cursorColor={"#000"}
+                  />
+                </View>
+                <View style={styles.inputContainer}>
+                  <Text style={styles.inputTitle}>Nom</Text>
+                  <TextInput
+                    onChangeText={formikProps.handleChange("lastname")}
+                    onBlur={formikProps.handleBlur("lastname")}
+                    value={formikProps.values.lastname}
+                    multiline={true}
+                    style={styles.textInput}
+                    placeholder={userInfo.lastname}
+                    cursorColor={"#000"}
+                  />
+                </View>
 
-        <View style={styles.btnsBottomContainer}>
-          <Pressable style={styles.btnsTop} onPress={deleteUserAccount}>
-            <Text style={styles.btnsTopText}>Supprimer votre compte</Text>
-          </Pressable>
-          <Pressable style={styles.btnsBottom} onPress={handleDisconnect}>
-            <Text style={styles.btnsBottomText}>Déconnexion</Text>
-          </Pressable>
-        </View>
-      </ScreenContainer>
-    </ScrollView>
+                <View style={styles.inputContainer}>
+                  <Text style={styles.inputTitle}>Description</Text>
+                  <TextInput
+                    onChangeText={formikProps.handleChange("description")}
+                    onBlur={formikProps.handleBlur("description")}
+                    value={formikProps.values.description}
+                    style={styles.textInput}
+                    multiline={true}
+                    placeholder={
+                      userInfo.description
+                        ? decodeText(
+                            userInfo.description.length > 50
+                              ? userInfo.description.substring(0, 50) + "..."
+                              : userInfo.description
+                          )
+                        : "Description"
+                    }
+                    cursorColor={"#000"}
+                  />
+                </View>
+                <View style={styles.inputContainer}>
+                  <Text style={styles.inputTitle}>Ville de naissance</Text>
+                  <TextInput
+                    onChangeText={formikProps.handleChange("cityOfBirth")}
+                    onBlur={formikProps.handleBlur("cityOfBirth")}
+                    value={formikProps.values.cityOfBirth}
+                    style={styles.textInput}
+                    multiline={true}
+                    placeholder={
+                      userInfo.cityOfBirth
+                        ? userInfo.cityOfBirth
+                        : "Ville de naissance"
+                    }
+                    cursorColor={"#000"}
+                  />
+                </View>
+                <View style={styles.inputContainer}>
+                  <Text style={styles.inputTitle}>J'adore</Text>
+                  <TextInput
+                    onChangeText={formikProps.handleChange("iLike")}
+                    onBlur={formikProps.handleBlur("iLike")}
+                    value={formikProps.values.iLike}
+                    style={styles.textInput}
+                    multiline={true}
+                    placeholder={userInfo.iLike ? userInfo.iLike : "J'adore"}
+                    cursorColor={"#000"}
+                  />
+                </View>
+                <View style={styles.inputContainer}>
+                  <Text style={styles.inputTitle}>Séries préférées</Text>
+                  <TextInput
+                    onChangeText={formikProps.handleChange("favoriteShows")}
+                    onBlur={formikProps.handleBlur("favoriteShows")}
+                    value={formikProps.values.favoriteShows}
+                    style={styles.textInput}
+                    multiline={true}
+                    placeholder={
+                      userInfo.favoriteShows
+                        ? userInfo.favoriteShows
+                        : "Séries préférées"
+                    }
+                    cursorColor={"#000"}
+                  />
+                </View>
+                <View style={styles.inputContainer}>
+                  <Text style={styles.inputTitle}>Centre d'intérêt</Text>
+                  <TextInput
+                    onChangeText={formikProps.handleChange("centerOfInterest")}
+                    onBlur={formikProps.handleBlur("centerOfInterest")}
+                    value={formikProps.values.centerOfInterest}
+                    style={styles.textInput}
+                    multiline={true}
+                    placeholder={
+                      userInfo.centerOfInterest
+                        ? userInfo.centerOfInterest
+                        : "Centre d'intérêt"
+                    }
+                    cursorColor={"#000"}
+                  />
+                </View>
+                <View style={styles.inputContainer}>
+                  <Text style={styles.inputTitle}>Signe astrologique</Text>
+                  <TextInput
+                    onChangeText={formikProps.handleChange("astrologicalSign")}
+                    onBlur={formikProps.handleBlur("astrologicalSign")}
+                    value={formikProps.values.astrologicalSign}
+                    style={styles.textInput}
+                    multiline={true}
+                    placeholder={
+                      userInfo.astrologicalSign
+                        ? userInfo.astrologicalSign
+                        : "Signe astrologique"
+                    }
+                    cursorColor={"#000"}
+                  />
+                </View>
+                <View style={styles.inputContainer}>
+                  <Text style={styles.inputTitle}>Artistes préférés</Text>
+                  <TextInput
+                    onChangeText={formikProps.handleChange("favoriteArtists")}
+                    onBlur={formikProps.handleBlur("favoriteArtists")}
+                    value={formikProps.values.favoriteArtists}
+                    style={styles.textInput}
+                    multiline={true}
+                    placeholder={
+                      userInfo.favoriteArtists
+                        ? userInfo.favoriteArtists
+                        : "Artistes préférés"
+                    }
+                    cursorColor={"#000"}
+                  />
+                </View>
+                <View style={styles.inputContainer}>
+                  <Text style={styles.inputTitle}>Activité</Text>
+                  <TextInput
+                    onChangeText={formikProps.handleChange("activity")}
+                    onBlur={formikProps.handleBlur("activity")}
+                    value={formikProps.values.activity}
+                    style={styles.textInput}
+                    multiline={true}
+                    placeholder={
+                      userInfo.activity ? userInfo.activity : "Activité"
+                    }
+                    cursorColor={"#000"}
+                  />
+                </View>
+                <View style={styles.inputContainer}>
+                  <Text style={styles.inputTitle}>Ville de rêve</Text>
+                  <TextInput
+                    onChangeText={formikProps.handleChange("dreamCity")}
+                    onBlur={formikProps.handleBlur("dreamCity")}
+                    value={formikProps.values.dreamCity}
+                    style={styles.textInput}
+                    multiline={true}
+                    placeholder={
+                      userInfo.dreamCity ? userInfo.dreamCity : "Ville de rêve"
+                    }
+                    cursorColor={"#000"}
+                  />
+                </View>
+                <TouchableOpacity
+                  style={[
+                    styles.saveBtn,
+                    (updateUserDataIsPending ||
+                      !(formikProps.isValid && formikProps.dirty)) && {
+                      opacity: 0.5,
+                    },
+                  ]}
+                  onPress={() => formikProps.handleSubmit()}
+                  disabled={
+                    updateUserDataIsPending ||
+                    !(formikProps.isValid && formikProps.dirty)
+                  }
+                >
+                  {updateUserDataIsPending ? (
+                    <ActivityIndicator color="#fff" />
+                  ) : (
+                    <Text style={styles.saveBtnText}>Enregistrer</Text>
+                  )}
+                </TouchableOpacity>
+              </View>
+            </FormikProvider>
+          </View>
+
+          <View style={styles.btnsBottomContainer}>
+            <Pressable style={styles.btnsTop} onPress={deleteUserAccount}>
+              <Text style={styles.btnsTopText}>Supprimer votre compte</Text>
+            </Pressable>
+            <Pressable style={styles.btnsBottom} onPress={handleDisconnect}>
+              <Text style={styles.btnsBottomText}>Déconnexion</Text>
+            </Pressable>
+          </View>
+        </ScreenContainer>
+      </ScrollView>
+    </SafeAreaView>
   );
 }
 

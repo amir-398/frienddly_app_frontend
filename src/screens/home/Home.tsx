@@ -1,8 +1,9 @@
 import COLORS from "@/constants/COLORS";
 import FONTS from "@/constants/FONTS";
+import ROUTES from "@/constants/ROUTES";
 import { useGetCategories } from "@/hooks/categories";
 import { useGetAllPosts } from "@/hooks/posts";
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import {
   FlatList,
   Pressable,
@@ -11,6 +12,7 @@ import {
   Text,
   TouchableOpacity,
 } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import CardsComponent from "./components/CardsComponent";
 import CategoriesComponent from "./components/CategoriesComponent";
 import Header from "./components/Header";
@@ -34,8 +36,9 @@ interface Post {
     }
   ];
 }
-export default function Home() {
+export default function Home({ navigation }: { navigation: any }) {
   const [selectedCategory, setSelectedCategory] = useState<number | null>(null);
+  const searchBarRef = useRef(null);
   const cardsContent = [
     {
       id: 1,
@@ -68,47 +71,64 @@ export default function Home() {
   });
   const { data: categories } = useGetCategories();
 
+  const handleSearchPress = () => {
+    searchBarRef.current?.focus();
+  };
   return (
-    <ScrollView>
-      <Header />
-      <MapComponent
-        selectedCategory={selectedCategory}
-        setSelectedCategory={setSelectedCategory}
-      />
-      <CategoriesComponent
-        selectedCategory={selectedCategory}
-        setSelectedCategory={setSelectedCategory}
-        categories={categories}
-      />
-      <FlatList
-        data={cardsContent}
-        style={{ marginHorizontal: 10, marginBottom: 15 }}
-        horizontal
-        showsHorizontalScrollIndicator={false}
-        keyExtractor={(item) => item.id.toString()}
-        renderItem={({ item }) => <CardsComponent {...item} />}
-      />
-      {postsData?.map((item: Post) => (
-        <PostComponent key={item.id} {...item} />
-      ))}
-      <TouchableOpacity style={styles.searchBtn}>
-        <Text style={styles.searchText}>Recherche</Text>
-      </TouchableOpacity>
-      <Pressable>
-        <Text style={styles.filterText}>
-          VOIR TOUS LES{" "}
-          {selectedCategory
-            ? categories &&
-              categories?.find((item) => item.id == selectedCategory)?.name
-            : categories && categories[0]?.name?.toUpperCase()}
+    <SafeAreaView>
+      <ScrollView>
+        <Header />
+        <MapComponent
+          selectedCategory={selectedCategory}
+          setSelectedCategory={setSelectedCategory}
+          searchBarRef={searchBarRef}
+        />
+        <CategoriesComponent
+          selectedCategory={selectedCategory}
+          setSelectedCategory={setSelectedCategory}
+          categories={categories}
+        />
+        <FlatList
+          data={cardsContent}
+          style={{ marginHorizontal: 10, marginBottom: 15 }}
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          keyExtractor={(item) => item.id.toString()}
+          renderItem={({ item }) => <CardsComponent {...item} />}
+        />
+        {postsData?.map((item: Post) => (
+          <PostComponent key={item.id} {...item} />
+        ))}
+        <TouchableOpacity style={styles.searchBtn} onPress={handleSearchPress}>
+          <Text style={styles.searchText}>Recherche</Text>
+        </TouchableOpacity>
+        <Pressable
+          onPress={() =>
+            navigation.navigate(ROUTES.PostsScreen, {
+              categoryId: selectedCategory,
+              title: selectedCategory
+                ? categories?.find((item) => item.id == selectedCategory)?.name
+                : "Tous les lieux",
+            })
+          }
+        >
+          <Text style={styles.filterText}>
+            {selectedCategory
+              ? categories &&
+                "VOIR TOUS LES " +
+                  categories
+                    ?.find((item) => item.id == selectedCategory)
+                    ?.name.toUpperCase()
+              : "VOIR TOUS LES LIEUX"}
+          </Text>
+        </Pressable>
+        <Text style={styles.infoText}>
+          Profitez d'une remise de 10 à 15% dans nos restaurants partenaires,
+          que ce soit lors de votre visite ou pour une commande à emporter, en
+          utilisant le code "FRIENDDLY" au moment du paiement.
         </Text>
-      </Pressable>
-      <Text style={styles.infoText}>
-        Profitez d'une remise de 10 à 15% dans nos restaurants partenaires, que
-        ce soit lors de votre visite ou pour une commande à emporter, en
-        utilisant le code "FRIENDDLY" au moment du paiement.
-      </Text>
-    </ScrollView>
+      </ScrollView>
+    </SafeAreaView>
   );
 }
 
@@ -129,9 +149,10 @@ const styles = StyleSheet.create({
     marginTop: 3,
   },
   filterText: {
-    fontFamily: FONTS.poppinsMedium,
+    fontFamily: FONTS.poppinsBold,
     alignSelf: "center",
     marginVertical: 15,
+    textDecorationLine: "underline",
   },
   infoText: {
     fontFamily: FONTS.poppinsMedium,

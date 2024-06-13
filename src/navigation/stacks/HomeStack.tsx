@@ -9,6 +9,7 @@ export default function HomeStack() {
   const CustomHeader = () => {
     return null;
   };
+
   return (
     <Stack.Navigator
       initialRouteName={ROUTES.Home}

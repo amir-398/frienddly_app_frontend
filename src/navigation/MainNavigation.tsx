@@ -18,6 +18,7 @@ export default function MainNavigation() {
     (state) => state.bottomBarIsVisible.isVisible
   );
   const { clientIsReady } = useChatClient();
+
   return (
     <Tab.Navigator
       screenOptions={({ route }) => ({

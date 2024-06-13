@@ -15,7 +15,7 @@ export default function CustomListItem(props: any) {
   const userInfo = useAppSelector((state) => state.authSlice.userData);
   const userId = userInfo.id.toString();
   const otherMember = Object.values(channel.state.members).find(
-    (member) => member.user.id !== userId
+    (member: any) => member.user.id !== userId
   );
   const userData = otherMember?.user;
   const userName = userData?.name;

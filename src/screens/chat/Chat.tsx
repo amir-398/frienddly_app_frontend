@@ -8,12 +8,12 @@ import React, { useEffect, useState } from "react";
 import {
   FlatList,
   Image,
-  StatusBar,
   StyleSheet,
   Text,
   TextInput,
   View,
 } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { useChatContext } from "stream-chat-expo";
 import CustomListItem from "./components/CustomListItem";
 export default function Chat({ navigation }: { navigation: any }) {
@@ -81,7 +81,7 @@ export default function Chat({ navigation }: { navigation: any }) {
   });
 
   return (
-    <View>
+    <SafeAreaView>
       <ScreenContainer>
         <View style={styles.header}>
           <Image source={messageLeft} style={styles.headerIcon} />
@@ -90,9 +90,7 @@ export default function Chat({ navigation }: { navigation: any }) {
             <Image source={messageRight2} style={styles.headerIcon} />
           </View>
         </View>
-        <StatusBar backgroundColor={"#fff"} />
         <Text style={styles.title}>Discussions</Text>
-
         <TextInput
           style={styles.searchBar}
           placeholder="Rechercher par nom ou prénom"
@@ -122,7 +120,7 @@ export default function Chat({ navigation }: { navigation: any }) {
           Vous n'avez aucune discussion pour le moment
         </Text>
       )}
-    </View>
+    </SafeAreaView>
   );
 }
 

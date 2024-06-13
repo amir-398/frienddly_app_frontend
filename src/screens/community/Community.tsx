@@ -5,6 +5,7 @@ import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import React, { useEffect, useState } from "react";
 import { FlatList, StyleSheet, Text } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { useChatContext } from "stream-chat-expo";
 import CommunityHeader from "./components/CommunityHeader";
 import CustomListItem from "./components/CustomListItem";
@@ -64,30 +65,32 @@ export default function Community({ navigation }: { navigation: any }) {
   }, []);
 
   return (
-    <ScrollView>
-      <ScreenContainer>
-        <CommunityHeader />
-        <Text style={styles.sugText}>Suggestion d'amis : </Text>
-        <UsersFlatlist />
-        <Text style={styles.sugText}>Groupe à thématiques : </Text>
-        <FlatList
-          data={channels}
-          keyExtractor={(item) => item.id}
-          renderItem={({ item }) => (
-            <CustomListItem
-              channel={item}
-              latestMessagePreview={
-                item.state.messages[item.state.messages.length - 1]
-              }
-              unread={item.countUnread()}
-              navigation={navigation}
-              dispatch={dispatch}
-              userId={userId}
-            />
-          )}
-        />
-      </ScreenContainer>
-    </ScrollView>
+    <SafeAreaView style={{ flex: 1 }}>
+      <ScrollView>
+        <ScreenContainer>
+          <CommunityHeader />
+          <Text style={styles.sugText}>Suggestion d'amis : </Text>
+          <UsersFlatlist />
+          <Text style={styles.sugText}>Groupe à thématiques : </Text>
+          <FlatList
+            data={channels}
+            keyExtractor={(item) => item.id}
+            renderItem={({ item }) => (
+              <CustomListItem
+                channel={item}
+                latestMessagePreview={
+                  item.state.messages[item.state.messages.length - 1]
+                }
+                unread={item.countUnread()}
+                navigation={navigation}
+                dispatch={dispatch}
+                userId={userId}
+              />
+            )}
+          />
+        </ScreenContainer>
+      </ScrollView>
+    </SafeAreaView>
   );
 }
 

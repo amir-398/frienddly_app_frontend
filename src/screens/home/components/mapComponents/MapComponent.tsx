@@ -4,6 +4,7 @@ import * as Location from "expo-location";
 import React, { useEffect, useState } from "react";
 import { StyleSheet, View } from "react-native";
 import MapView, { Marker } from "react-native-maps";
+import FilterModal from "../modals/FilterModal";
 import PostRender from "./PostRender";
 import SearchBar from "./SearchBar";
 interface Post {
@@ -33,15 +34,17 @@ interface Region {
 export default function MapComponent({
   selectedCategory,
   setSelectedCategory,
+  searchBarRef,
 }: {
   selectedCategory: number | null;
   setSelectedCategory: (id: number) => void;
+  searchBarRef: any;
 }) {
   const [region, setRegion] = useState<Region | null>(null);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [postsData, setPostsData] = useState<Post[]>([]);
   const [selectedPost, setSelectedPost] = useState<Post | null>(null);
-
+  const [filterModalVisible, setFilterModalVisible] = useState(false);
   // get user position
   useEffect(() => {
     (async () => {
@@ -140,7 +143,14 @@ export default function MapComponent({
           />
         ))}
       </MapView>
-      <SearchBar />
+      <SearchBar
+        setFilterModalVisible={setFilterModalVisible}
+        searchBarRef={searchBarRef}
+      />
+      <FilterModal
+        visible={filterModalVisible}
+        setVisible={setFilterModalVisible}
+      />
       {selectedPost && <PostRender post={selectedPost} />}
     </View>
   );

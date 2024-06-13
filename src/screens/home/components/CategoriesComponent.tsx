@@ -1,6 +1,8 @@
 import partyIcon from "@/assets/images/party.png";
 import restoIcon from "@/assets/images/resto.png";
 import superIcon from "@/assets/images/supermarché.png";
+import COLORS from "@/constants/COLORS";
+import FONTS from "@/constants/FONTS";
 import React from "react";
 import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
@@ -14,15 +16,28 @@ export default function CategoriesComponent({
   categories,
 }: {
   selectedCategory: number | null;
-  setSelectedCategory: (id: number) => void;
+  setSelectedCategory: (id: number | null) => void;
   categories: Category[];
 }) {
+  console.log(selectedCategory);
+
   return (
     <View style={styles.container}>
       {categories?.map((category: Category) => (
         <TouchableOpacity
-          onPress={() => setSelectedCategory(category.id)}
-          style={styles.category}
+          onPress={() =>
+            selectedCategory === category.id
+              ? setSelectedCategory(null)
+              : setSelectedCategory(category.id)
+          }
+          style={[
+            styles.category,
+            selectedCategory === category.id && {
+              borderColor: COLORS.primaryColor,
+              borderWidth: 2,
+              borderRadius: 10,
+            },
+          ]}
           key={category.id}
         >
           <Image
@@ -35,7 +50,7 @@ export default function CategoriesComponent({
                 : superIcon
             }
           />
-          <Text>{category.name}</Text>
+          <Text style={styles.categoryText}>{category.name}</Text>
         </TouchableOpacity>
       ))}
     </View>
@@ -50,6 +65,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
     borderRadius: 25,
     marginVertical: 20,
+    paddingHorizontal: 10,
   },
   category: {
     width: "33.33%",
@@ -59,5 +75,8 @@ const styles = StyleSheet.create({
   icon: {
     width: 50,
     height: 50,
+  },
+  categoryText: {
+    fontFamily: FONTS.poppinsMedium,
   },
 });

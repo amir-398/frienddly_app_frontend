@@ -31,8 +31,6 @@ interface Post {
 export default function PostRender(post: Post) {
   const navigation = useNavigation();
   const data = post.post;
-  console.log(S3ENDPOINTPOSTIMAGES + data?.images[0]?.url);
-
   return (
     <View style={styles.container}>
       <Pressable

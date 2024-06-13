@@ -7,6 +7,7 @@ interface Filter {
   ltd?: number | string;
   cat?: number | string;
   nb?: 2;
+  q?: string;
 }
 interface PostData {
   id: number;
@@ -73,6 +74,9 @@ interface Post {
   longitude: number;
   category: Category;
   images: Image[];
+  price: number;
+  location: string;
+  grade: number;
 }
 
 export async function getAllPosts(filter: Filter): Promise<Post[]> {
@@ -84,9 +88,10 @@ export async function getAllPosts(filter: Filter): Promise<Post[]> {
   const category = filter.cat ? filter.cat : "";
   const latitude = filter.ltd ? filter.ltd : "";
   const longitude = filter.lgt ? filter.lgt : "";
+  const query = filter.q ? filter.q : "";
   try {
     const response = await ky(
-      `${endpoint}/api/v1/posts?lgt=${longitude}&ltd=${latitude}&cat=${category}&nb=${number}`,
+      `${endpoint}/api/v1/posts?lgt=${longitude}&ltd=${latitude}&cat=${category}&nb=${number}&q=${query}`,
       {
         headers: { Authorization: `Bearer ${token}` },
       }
