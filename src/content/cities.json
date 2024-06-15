@@ -1,0 +1,62 @@
+[
+  {
+    "id": 1,
+    "city": "Paris",
+    "latitude": 48.866667,
+    "longitude": 2.333333
+  },
+  {
+    "id": 2,
+    "city": "Marseille",
+    "latitude": 43.2965,
+    "longitude": 5.3698
+  },
+  {
+    "id": 3,
+    "city": "Lyon",
+    "latitude": 45.764,
+    "longitude": 4.8357
+  },
+  {
+    "id": 4,
+    "city": "Toulouse",
+    "latitude": 43.6047,
+    "longitude": 1.4442
+  },
+  {
+    "id": 5,
+    "city": "Nice",
+    "latitude": 43.7102,
+    "longitude": 7.262
+  },
+  {
+    "id": 6,
+    "city": "Nantes",
+    "latitude": 47.2184,
+    "longitude": -1.5536
+  },
+  {
+    "id": 7,
+    "city": "Montpellier",
+    "latitude": 43.6119,
+    "longitude": 3.8772
+  },
+  {
+    "id": 8,
+    "city": "Strasbourg",
+    "latitude": 48.5734,
+    "longitude": 7.7521
+  },
+  {
+    "id": 9,
+    "city": "Bordeaux",
+    "latitude": 44.8378,
+    "longitude": -0.5792
+  },
+  {
+    "id": 10,
+    "city": "Lille",
+    "latitude": 50.6292,
+    "longitude": 3.0573
+  }
+]
