@@ -1,11 +1,11 @@
 import ScreenContainer from "@/components/ScreenContainer";
-import COLORS from "@/constants/COLORS";
 import FONTS from "@/constants/FONTS";
 import ROUTES from "@/constants/ROUTES";
 import { setUserInfo } from "@/redux/Slices/signUpUserInfoSlice";
 import { useAppDispatch } from "@/redux/hooks";
 import React, { useEffect, useRef, useState } from "react";
 import { StyleSheet, Text, TextInput, View } from "react-native";
+import ScreenBackground from "../components/ScreenBackground";
 import AuthBtn from "./components/AuthBtn";
 import HeaderComponent from "./components/HeaderComponent";
 
@@ -142,59 +142,61 @@ export default function SignUpScreenStep2({ navigation }: { navigation: any }) {
     }
   };
   return (
-    <ScreenContainer>
-      <HeaderComponent title="Quel est ta date de naissance ?" />
+    <ScreenBackground>
+      <ScreenContainer>
+        <HeaderComponent title="Quel est ta date de naissance ?" />
 
-      <View style={styles.inputContainer}>
-        <TextInput
-          ref={input1Ref}
-          placeholder="JJ"
-          style={styles.input}
-          maxLength={2}
-          onChangeText={birthDateDayhandler}
-          cursorColor={"#000"}
-          inputMode="numeric"
-        />
-        <TextInput
-          ref={input2Ref}
-          onFocus={() => focusHander("month")}
-          onKeyPress={(event) => {
-            if (
-              event.nativeEvent.key == "Backspace" &&
-              userBirthDate.month.length == 0
-            ) {
-              changeIput(input1Ref);
-            }
-          }}
-          placeholder="MM"
-          maxLength={2}
-          style={styles.input}
-          onChangeText={birthDateMonthhandler}
-          cursorColor={"#000"}
-          inputMode="numeric"
-        />
-        <TextInput
-          ref={input3Ref}
-          onFocus={() => focusHander("year")}
-          onKeyPress={(event) => {
-            if (
-              event.nativeEvent.key == "Backspace" &&
-              userBirthDate.year.length == 0
-            ) {
-              changeIput(input2Ref);
-            }
-          }}
-          placeholder="AAAA"
-          maxLength={4}
-          style={styles.input}
-          onChangeText={birthDateYearhandler}
-          cursorColor={"#000"}
-          inputMode="numeric"
-        />
-      </View>
-      <Text style={styles.textBirthdayWrong}>{textBirthdayWrong}</Text>
-      <AuthBtn title="Suivant" onPress={onSubmit} disabled={btnDisable} />
-    </ScreenContainer>
+        <View style={styles.inputContainer}>
+          <TextInput
+            ref={input1Ref}
+            placeholder="JJ"
+            style={styles.input}
+            maxLength={2}
+            onChangeText={birthDateDayhandler}
+            cursorColor={"#000"}
+            inputMode="numeric"
+          />
+          <TextInput
+            ref={input2Ref}
+            onFocus={() => focusHander("month")}
+            onKeyPress={(event) => {
+              if (
+                event.nativeEvent.key == "Backspace" &&
+                userBirthDate.month.length == 0
+              ) {
+                changeIput(input1Ref);
+              }
+            }}
+            placeholder="MM"
+            maxLength={2}
+            style={styles.input}
+            onChangeText={birthDateMonthhandler}
+            cursorColor={"#000"}
+            inputMode="numeric"
+          />
+          <TextInput
+            ref={input3Ref}
+            onFocus={() => focusHander("year")}
+            onKeyPress={(event) => {
+              if (
+                event.nativeEvent.key == "Backspace" &&
+                userBirthDate.year.length == 0
+              ) {
+                changeIput(input2Ref);
+              }
+            }}
+            placeholder="AAAA"
+            maxLength={4}
+            style={styles.input}
+            onChangeText={birthDateYearhandler}
+            cursorColor={"#000"}
+            inputMode="numeric"
+          />
+        </View>
+        <Text style={styles.textBirthdayWrong}>{textBirthdayWrong}</Text>
+        <AuthBtn title="Suivant" onPress={onSubmit} disabled={btnDisable} />
+      </ScreenContainer>
+    </ScreenBackground>
   );
 }
 
@@ -206,12 +208,13 @@ const styles = StyleSheet.create({
   input: {
     borderWidth: 2,
     borderRadius: 10,
-    borderColor: COLORS.secondaryColor,
+    borderColor: "#000",
     width: "30%",
     paddingVertical: 10,
     justifyContent: "center",
     textAlign: "center",
     fontFamily: FONTS.poppinsMedium,
+    backgroundColor: "rgba(255,255,255,0.2)",
   },
   textBirthdayWrong: {
     color: "rgba(255, 0, 0, 0.7)",

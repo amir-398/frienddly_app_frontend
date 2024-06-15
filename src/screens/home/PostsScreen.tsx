@@ -28,7 +28,12 @@ export default function PostsScreen({
 }) {
   const dispatch = useAppDispatch();
   const { categoryId, title, q, ltd, lgt } = route.params;
-  const { data: postsData } = useGetAllPosts({ cat: categoryId, q, ltd, lgt });
+  const { data: postsData } = useGetAllPosts({
+    cat: categoryId,
+    q,
+    ltd,
+    lgt,
+  });
 
   // hide bottom bar on first render
   useEffect(() => {
@@ -53,7 +58,7 @@ export default function PostsScreen({
           </View>
           <Text style={styles.screenTitle}>{title} </Text>
         </View>
-        {postsData?.length > 0 ? (
+        {postsData && postsData?.length > 0 ? (
           <FlatList
             data={postsData}
             keyExtractor={(item) => item.id.toString()}

@@ -6,7 +6,7 @@ import { useFriendsSuggestion, useSendFriendRequest } from "@/hooks/friends";
 import { setUserInvitedFriend } from "@/redux/Slices/userInvitedFriends";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import { useNavigation } from "@react-navigation/native";
-import React, { useState } from "react";
+import React from "react";
 import {
   FlatList,
   Image,
@@ -18,7 +18,7 @@ import {
 } from "react-native";
 
 export default function UsersFlatlist() {
-  const navigation = useNavigation();
+  const navigation = useNavigation() as any;
   const dispatch = useAppDispatch();
   const sendedInvitations = useAppSelector(
     (state) => state.userInvitedFriends.usersId

@@ -1,3 +1,4 @@
+import MapSkeleton from "@/components/skeletons/MapSkeleton";
 import COLORS from "@/constants/COLORS";
 import { useGetAllPosts } from "@/hooks/posts";
 import * as Location from "expo-location";
@@ -7,6 +8,7 @@ import MapView, { Marker } from "react-native-maps";
 import FilterModal from "../modals/FilterModal";
 import PostRender from "./PostRender";
 import SearchBar from "./SearchBar";
+import { PostsProps } from "@/types/posts";
 interface Post {
   id: number;
   title: string;
@@ -42,14 +44,20 @@ export default function MapComponent({
 }) {
   const [region, setRegion] = useState<Region | null>(null);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
-  const [postsData, setPostsData] = useState<Post[]>([]);
-  const [selectedPost, setSelectedPost] = useState<Post | null>(null);
+  const [postsData, setPostsData] = useState<PostsProps[]>([]);
+  const [selectedPost, setSelectedPost] = useState<PostsProps | null>(null);
   const [filterModalVisible, setFilterModalVisible] = useState(false);
   // get user position
   useEffect(() => {
     (async () => {
       let { status } = await Location.requestForegroundPermissionsAsync();
       if (status !== "granted") {
+        setRegion({
+          latitude: 48.866667,
+          longitude: 2.333333,
+          latitudeDelta: 0.0922,
+          longitudeDelta: 0.0421,
+        });
         setErrorMsg("Permission to access location was denied");
         return;
       }
@@ -73,76 +81,82 @@ export default function MapComponent({
 
   // add new posts to the postsData
   useEffect(() => {
-    if (posts && (posts as Post[]).length > 0) {
+    if (posts && (posts as PostsProps[]).length > 0) {
       if (!selectedCategory) {
         setPostsData((prev) => {
           // Filtre les posts pour n'ajouter que ceux qui n'existent pas déjà
-          const newPosts = (posts as Post[]).filter(
-            (post: Post) =>
-              !prev?.some((existingPost: Post) => existingPost.id === post.id)
+          const newPosts = (posts as PostsProps[]).filter(
+            (post: PostsProps) =>
+              !prev?.some(
+                (existingPost: PostsProps) => existingPost.id === post.id
+              )
           );
 
           return [...prev, ...newPosts];
         });
       } else {
-        setPostsData(posts as Post[]);
+        setPostsData(posts as PostsProps[]);
       }
     }
   }, [posts]);
 
   return (
     <View style={styles.container}>
-      <MapView
-        initialRegion={{
-          latitude: region?.latitude ?? 46.603354,
-          longitude: region?.longitude ?? 1.888334,
-          latitudeDelta: 5,
-          longitudeDelta: 5,
-        }}
-        onRegionChangeComplete={(region) => {
-          setRegion({
-            latitude: region.latitude,
-            longitude: region.longitude,
-            latitudeDelta: region.latitudeDelta,
-            longitudeDelta: region.longitudeDelta,
-          });
-        }}
-        style={styles.map}
-        showsUserLocation={true}
-        loadingEnabled={true}
-        loadingIndicatorColor={COLORS.secondaryColor}
-        onMarkerDeselect={() => setSelectedPost(null)}
-        showsPointsOfInterest={false}
-        showsCompass={false}
-        showsBuildings={false}
-        showsTraffic={false}
-        showsIndoors={false}
-        showsMyLocationButton={false}
-      >
-        {postsData?.map((post: Post) => (
-          <Marker
-            key={post.id}
-            onSelect={() => setSelectedPost(post)}
-            coordinate={{
-              latitude: post.latitude,
-              longitude: post.longitude,
-            }}
-            image={
-              post?.category.id == 1
-                ? selectedPost?.id == post.id
-                  ? require("@/assets/mapIcons/restaurant_selected.png")
-                  : require("@/assets/mapIcons/restaurant.png")
-                : post?.category.id == 2
-                ? selectedPost?.id == post.id
-                  ? require("@/assets/mapIcons/party_selected.png")
-                  : require("@/assets/mapIcons/party.png")
-                : selectedPost?.id == post.id
-                ? require("@/assets/mapIcons/super_selected.png")
-                : require("@/assets/mapIcons/super.png")
-            }
-          />
-        ))}
-      </MapView>
+      {region ? (
+        <MapView
+          initialRegion={{
+            latitude: region?.latitude,
+            longitude: region?.longitude,
+            latitudeDelta: 0.1,
+            longitudeDelta: 0.1,
+          }}
+          onRegionChangeComplete={(region) => {
+            setRegion({
+              latitude: region.latitude,
+              longitude: region.longitude,
+              latitudeDelta: region.latitudeDelta,
+              longitudeDelta: region.longitudeDelta,
+            });
+          }}
+          style={styles.map}
+          showsUserLocation={true}
+          loadingEnabled={true}
+          loadingIndicatorColor={COLORS.secondaryColor}
+          onMarkerDeselect={() => setSelectedPost(null)}
+          showsPointsOfInterest={false}
+          showsCompass={false}
+          showsBuildings={false}
+          showsTraffic={false}
+          showsIndoors={false}
+          showsMyLocationButton={false}
+        >
+          {postsData?.map((post: PostsProps) => (
+            <Marker
+              key={post.id}
+              onSelect={() => setSelectedPost(post)}
+              coordinate={{
+                latitude: post.latitude,
+                longitude: post.longitude,
+              }}
+              image={
+                post?.category.id == 1
+                  ? selectedPost?.id == post.id
+                    ? require("@/assets/mapIcons/restaurant_selected.png")
+                    : require("@/assets/mapIcons/restaurant.png")
+                  : post?.category.id == 2
+                  ? selectedPost?.id == post.id
+                    ? require("@/assets/mapIcons/party_selected.png")
+                    : require("@/assets/mapIcons/party.png")
+                  : selectedPost?.id == post.id
+                  ? require("@/assets/mapIcons/super_selected.png")
+                  : require("@/assets/mapIcons/super.png")
+              }
+            />
+          ))}
+        </MapView>
+      ) : (
+        <MapSkeleton />
+      )}
       <SearchBar
         setFilterModalVisible={setFilterModalVisible}
         searchBarRef={searchBarRef}
@@ -159,7 +173,7 @@ export default function MapComponent({
 const styles = StyleSheet.create({
   container: {
     height: 400,
-    width: "95%",
+    width: "100%",
     alignSelf: "center",
     borderRadius: 25,
     overflow: "hidden",

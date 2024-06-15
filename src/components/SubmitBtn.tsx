@@ -38,13 +38,16 @@ export default function SubmitBtn({
 const width = Dimensions.get("window").width;
 const styles = StyleSheet.create({
   btn: {
-    backgroundColor: COLORS.secondaryColor,
+    backgroundColor: COLORS.primaryColor,
     alignItems: "center",
     justifyContent: "center",
     borderRadius: 10,
     paddingVertical: 15,
     width: width - 40,
     alignSelf: "center",
+    borderColor: "#fff",
+    borderWidth: 2,
+    elevation: 5,
   },
   btnDisabled: {
     opacity: 0.4,

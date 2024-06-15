@@ -1,12 +1,12 @@
 import ScreenContainer from "@/components/ScreenContainer";
 import ImagePickerComponent from "@/components/modals/ImagePickerComponent";
-import COLORS from "@/constants/COLORS";
 import FONTS from "@/constants/FONTS";
 import { useRegister } from "@/hooks/auth";
 import { useTokenEffect } from "@/hooks/useTokenEffect";
 import { useAppSelector } from "@/redux/hooks";
 import React, { useEffect, useState } from "react";
 import { Image, StyleSheet, Text, TouchableOpacity } from "react-native";
+import ScreenBackground from "../components/ScreenBackground";
 import AuthBtn from "./components/AuthBtn";
 import HeaderComponent from "./components/HeaderComponent";
 type ImageInfo = {
@@ -17,9 +17,7 @@ export default function SignUpScreenStep6({ navigation }: { navigation: any }) {
     (state) => state.signUpUserInfoSlice.userInfo
   );
   const { storeToken } = useTokenEffect();
-
   const [image, setImage] = useState<ImageInfo | null>(null);
-
   const [imageError, setImageError] = useState("");
   const [imagePickerIsVisible, setImagePickerIsVisible] = useState(false);
   const [btnDisabled, setBtnDisabled] = useState(true);
@@ -59,57 +57,56 @@ export default function SignUpScreenStep6({ navigation }: { navigation: any }) {
     userRegister(formData, {
       onSuccess: (data) => {
         const token = data.token.token;
-        const streamtoken = data.streamtoken;
+        const streamtoken = data.streamToken;
         storeToken(token, streamtoken);
       },
       onError: (error) => {
-        console.error("Registration failed", error);
+        console.error("Registration failed", error.message);
       },
     });
   };
   return (
-    <ScreenContainer>
-      <ImagePickerComponent
-        isVisible={imagePickerIsVisible}
-        setIsVisible={setImagePickerIsVisible}
-        setImage={setImage}
-        setImageError={setImageError}
-      />
-      <HeaderComponent title="Ajouter votre photo de profil" />
-      {image ? (
-        <TouchableOpacity
-          style={styles.wrapperImagePicker}
-          onPress={() => setImagePickerIsVisible(true)}
-        >
-          <Image
-            source={{ uri: image?.uri as string }}
-            style={styles.imagePicked}
-          />
-        </TouchableOpacity>
-      ) : (
-        <TouchableOpacity
-          style={styles.wrapperImagePicker}
-          onPress={() => setImagePickerIsVisible(true)}
-        >
-          <Text style={styles.plus}>+</Text>
-          <Text style={styles.addPhoto}>Photo de profil</Text>
-        </TouchableOpacity>
-      )}
-      <Text style={styles.imageError}>{imageError}</Text>
-      <AuthBtn
-        title="Terminer"
-        onPress={onSubmit}
-        loading={UserRegisterIsPending}
-        disabled={btnDisabled}
-      />
-    </ScreenContainer>
+    <ScreenBackground>
+      <ScreenContainer>
+        <ImagePickerComponent
+          isVisible={imagePickerIsVisible}
+          setIsVisible={setImagePickerIsVisible}
+          setImage={setImage}
+          setImageError={setImageError}
+        />
+        <HeaderComponent title="Ajouter votre photo de profil" />
+        {image ? (
+          <TouchableOpacity onPress={() => setImagePickerIsVisible(true)}>
+            <Image
+              source={{ uri: image?.uri as string }}
+              style={styles.imagePicked}
+            />
+          </TouchableOpacity>
+        ) : (
+          <TouchableOpacity
+            style={styles.wrapperImagePicker}
+            onPress={() => setImagePickerIsVisible(true)}
+          >
+            <Text style={styles.plus}>+</Text>
+            <Text style={styles.addPhoto}>Photo de profil</Text>
+          </TouchableOpacity>
+        )}
+        <Text style={styles.imageError}>{imageError}</Text>
+        <AuthBtn
+          title="Terminer"
+          onPress={onSubmit}
+          loading={UserRegisterIsPending}
+          disabled={btnDisabled}
+        />
+      </ScreenContainer>
+    </ScreenBackground>
   );
 }
 
 const styles = StyleSheet.create({
   wrapperImagePicker: {
-    height: 150,
-    borderColor: COLORS.secondaryColor,
+    height: 200,
+    borderColor: "#000",
     borderWidth: 2,
     borderRadius: 15,
     borderStyle: "dashed",
@@ -117,10 +114,13 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginTop: 30,
   },
+
   imagePicked: {
-    width: 150,
-    height: 150,
+    aspectRatio: 1,
+    height: 200,
     borderRadius: 15,
+    alignSelf: "center",
+    marginTop: 30,
   },
   plus: {
     color: "#000",

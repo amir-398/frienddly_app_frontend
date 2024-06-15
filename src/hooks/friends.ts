@@ -18,7 +18,7 @@ async function acceptFriendRequestNotification(
         headers: { Authorization: `Bearer ${token}` },
       })
       .json();
-  } catch (error) {
+  } catch (error: any) {
     const errorResponse = await error.response.json();
     throw new Error(errorResponse.message || "Something went wrong");
   }
@@ -39,7 +39,7 @@ async function refuseFriendRequestNotification(
         headers: { Authorization: `Bearer ${token}` },
       })
       .json();
-  } catch (error) {
+  } catch (error: any) {
     const errorResponse = await error.response.json();
     throw new Error(errorResponse.message || "Something went wrong");
   }
@@ -56,7 +56,7 @@ async function friendsSuggestion(): Promise<any> {
       headers: { Authorization: `Bearer ${token}` },
     }).json();
     return reponse;
-  } catch (error) {
+  } catch (error: any) {
     const errorResponse = await error.response.json();
     throw new Error(errorResponse.message || "Something went wrong");
   }
@@ -73,7 +73,7 @@ async function sendFriendRequest(userId: number): Promise<void> {
         headers: { Authorization: `Bearer ${token}` },
       })
       .json();
-  } catch (error) {
+  } catch (error: any) {
     const errorResponse = await error.response.json();
     throw new Error(errorResponse.message || "Something went wrong");
   }

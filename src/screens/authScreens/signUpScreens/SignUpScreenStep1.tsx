@@ -7,6 +7,7 @@ import { Field, Formik } from "formik";
 import React from "react";
 import { StyleSheet } from "react-native";
 import * as Yup from "yup";
+import ScreenBackground from "../components/ScreenBackground";
 import AuthBtn from "./components/AuthBtn";
 import HeaderComponent from "./components/HeaderComponent";
 
@@ -23,8 +24,8 @@ const validationSchema = Yup.object().shape({
     .required("Champ requis")
     .trim(),
   lastname: Yup.string()
-    .min(3)
-    .max(50)
+    .min(3, "Minimum 3 caractères")
+    .max(50, "Maximum 50 caractères")
     .matches(/^[a-zA-Z\sé]+$/, "Seulement des lettres")
     .required("Champ requis")
     .trim(),
@@ -43,38 +44,40 @@ export default function SignUpScreenStep1({ navigation }: { navigation: any }) {
   };
 
   return (
-    <ScreenContainer>
-      <HeaderComponent title="Quel est ton nom et prénom ?" />
-      <Formik
-        initialValues={{
-          firstname: "",
-          lastname: "",
-        }}
-        validationSchema={validationSchema}
-        onSubmit={onSubmit}
-      >
-        {({ handleSubmit, isValid, dirty }) => (
-          <>
-            <Field
-              name="lastname"
-              component={CustomInput}
-              placeholder="Ton nom"
-              inputStyle={{ marginBottom: 20 }}
-            />
-            <Field
-              name="firstname"
-              component={CustomInput}
-              placeholder="Ton prénom"
-            />
-            <AuthBtn
-              title="Suivant"
-              onPress={handleSubmit}
-              disabled={!(isValid && dirty)}
-            />
-          </>
-        )}
-      </Formik>
-    </ScreenContainer>
+    <ScreenBackground>
+      <ScreenContainer>
+        <HeaderComponent title="Quel est ton nom et prénom ?" />
+        <Formik
+          initialValues={{
+            firstname: "",
+            lastname: "",
+          }}
+          validationSchema={validationSchema}
+          onSubmit={onSubmit}
+        >
+          {({ handleSubmit, isValid, dirty }) => (
+            <>
+              <Field
+                name="lastname"
+                component={CustomInput}
+                placeholder="Ton nom"
+                inputStyle={{ marginBottom: 20 }}
+              />
+              <Field
+                name="firstname"
+                component={CustomInput}
+                placeholder="Ton prénom"
+              />
+              <AuthBtn
+                title="Suivant"
+                onPress={handleSubmit}
+                disabled={!(isValid && dirty)}
+              />
+            </>
+          )}
+        </Formik>
+      </ScreenContainer>
+    </ScreenBackground>
   );
 }
 

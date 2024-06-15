@@ -1,11 +1,11 @@
 import logo from "@/assets/logo/logo_2.png";
 import COLORS from "@/constants/COLORS";
 import FONTS from "@/constants/FONTS";
-import { NotificationProps } from "@/enums/notification";
 import {
   useAcceptFriendRequestNotification,
   useRefuseFriendRequestNotification,
 } from "@/hooks/friends";
+import { NotificationProps } from "@/types/notification";
 import { formatNotificationDate } from "@/utils/notificationsUtils/formatNotificationDate";
 import React from "react";
 import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";

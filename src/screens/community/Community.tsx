@@ -3,7 +3,7 @@ import COLORS from "@/constants/COLORS";
 import FONTS from "@/constants/FONTS";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import React, { useEffect, useState } from "react";
-import { FlatList, StyleSheet, Text } from "react-native";
+import { StyleSheet, Text } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useChatContext } from "stream-chat-expo";
@@ -24,7 +24,7 @@ export default function Community({ navigation }: { navigation: any }) {
     channelType: "group",
   };
 
-  const sort = {
+  const sort: any = {
     last_message_at: -1,
   };
 
@@ -72,22 +72,23 @@ export default function Community({ navigation }: { navigation: any }) {
           <Text style={styles.sugText}>Suggestion d'amis : </Text>
           <UsersFlatlist />
           <Text style={styles.sugText}>Groupe à thématiques : </Text>
-          <FlatList
-            data={channels}
-            keyExtractor={(item) => item.id}
-            renderItem={({ item }) => (
-              <CustomListItem
-                channel={item}
-                latestMessagePreview={
-                  item.state.messages[item.state.messages.length - 1]
-                }
-                unread={item.countUnread()}
-                navigation={navigation}
-                dispatch={dispatch}
-                userId={userId}
-              />
-            )}
-          />
+          {channels.map((channel) => {
+            if (channel.data?.name) {
+              return (
+                <CustomListItem
+                  channel={channel}
+                  key={channel.id}
+                  latestMessagePreview={
+                    channel.state.messages[channel.state.messages.length - 1]
+                  }
+                  unread={channel.countUnread()}
+                  navigation={navigation}
+                  dispatch={dispatch}
+                  userId={userId}
+                />
+              );
+            }
+          })}
         </ScreenContainer>
       </ScrollView>
     </SafeAreaView>

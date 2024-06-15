@@ -2,6 +2,7 @@ import COLORS from "@/constants/COLORS";
 import FONTS from "@/constants/FONTS";
 import ROUTES from "@/constants/ROUTES";
 import { S3ENDPOINTPOSTIMAGES } from "@/constants/S3Endpoint";
+import { PostsProps } from "@/types/posts";
 import { useNavigation } from "@react-navigation/native";
 import { Icon } from "@rneui/base";
 import { LinearGradient } from "expo-linear-gradient";
@@ -28,8 +29,8 @@ interface Post {
     };
   };
 }
-export default function PostRender(post: Post) {
-  const navigation = useNavigation();
+export default function PostRender(post: { post: PostsProps }) {
+  const navigation = useNavigation() as any;
   const data = post.post;
   return (
     <View style={styles.container}>

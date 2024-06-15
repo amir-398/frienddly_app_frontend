@@ -15,9 +15,28 @@ export default function HomeStack() {
       initialRouteName={ROUTES.Home}
       screenOptions={{ header: CustomHeader }}
     >
-      <Stack.Screen name={ROUTES.Home} component={Home} />
-      <Stack.Screen name={ROUTES.PostScreen} component={PostScreen} />
-      <Stack.Screen name={ROUTES.PostsScreen} component={PostsScreen} />
+      <Stack.Screen
+        name={ROUTES.Home}
+        component={Home}
+        options={{
+          statusBarColor: "#fff",
+        }}
+      />
+      <Stack.Screen
+        name={ROUTES.PostScreen}
+        component={PostScreen}
+        options={{
+          statusBarColor: "transparent",
+          statusBarHidden: true,
+        }}
+      />
+      <Stack.Screen
+        name={ROUTES.PostsScreen}
+        component={PostsScreen}
+        options={{
+          statusBarColor: "#fff",
+        }}
+      />
     </Stack.Navigator>
   );
 }

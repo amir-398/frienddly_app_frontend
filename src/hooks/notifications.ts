@@ -1,4 +1,4 @@
-import { NotificationProps } from "@/enums/notification";
+import { NotificationProps } from "@/types/notification";
 import { useQuery } from "@tanstack/react-query";
 import * as SecureStore from "expo-secure-store";
 import ky from "ky";
@@ -15,7 +15,7 @@ export async function getAllNotification(): Promise<NotificationProps[]> {
       headers: { Authorization: `Bearer ${token}` },
     }).json();
     return reponse as NotificationProps[];
-  } catch (error) {
+  } catch (error: any) {
     const errorResponse = await error.response.json();
     throw new Error(errorResponse.message || "Something went wrong");
   }

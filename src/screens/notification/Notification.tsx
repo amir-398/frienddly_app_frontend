@@ -1,10 +1,10 @@
 import InteractiveIcon from "@/components/InteractiveIcon";
 import ScreenContainer from "@/components/ScreenContainer";
 import FONTS from "@/constants/FONTS";
-import { NotificationProps } from "@/enums/notification";
 import { useGetAllNotification } from "@/hooks/notifications";
 import { useAppSelector } from "@/redux/hooks";
 import socketService from "@/services/socket";
+import { NotificationProps } from "@/types/notification";
 import React, { useEffect, useState } from "react";
 import { FlatList, Modal, StyleSheet, Text, View } from "react-native";
 import InvitationNotif from "./components/InvitationNotif";

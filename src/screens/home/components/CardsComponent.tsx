@@ -20,7 +20,7 @@ interface CardsComponentProps {
   type: string;
 }
 export default function CardsComponent(props: CardsComponentProps) {
-  const navigation = useNavigation();
+  const navigation = useNavigation() as any;
   const { id, title, btnText, image, color, type } = props;
 
   return (
@@ -52,7 +52,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "center",
     alignItems: "center",
-    width: width - 20,
+    width: width - 80,
     height: 170,
     marginRight: 10,
     borderRadius: 20,
@@ -60,7 +60,7 @@ const styles = StyleSheet.create({
   left: {
     width: "60%",
     height: "100%",
-    alignItems: "center",
+    paddingLeft: 10,
     justifyContent: "space-between",
     paddingVertical: 10,
     borderTopLeftRadius: 20,
@@ -68,7 +68,7 @@ const styles = StyleSheet.create({
   },
   title: {
     color: "#000",
-    fontSize: 17,
+    fontSize: 15,
     fontWeight: "bold",
     width: "80%",
 
@@ -84,9 +84,9 @@ const styles = StyleSheet.create({
     borderRadius: 20,
   },
   btnText: {
-    fontSize: 11,
+    fontSize: 9,
     fontFamily: FONTS.poppinsMedium,
-    marginTop: 3,
+    marginTop: 2,
   },
   right: {
     width: "40%",

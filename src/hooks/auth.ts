@@ -16,7 +16,7 @@ const register = async (data: FormData) => {
       })
       .json();
     return response;
-  } catch (error) {
+  } catch (error: any) {
     const errorResponse = await error.response.json();
     throw new Error(errorResponse.message || "Something went wrong");
   }
@@ -28,7 +28,7 @@ const login = async (data: { email: string; password: string }) => {
       .post(`${endpoint}/api/v1/auth/login`, { json: data })
       .json();
     return response;
-  } catch (error) {
+  } catch (error: any) {
     const errorResponse = await error.response.json();
     throw new Error(errorResponse.message || "Something went wrong");
   }
@@ -41,7 +41,7 @@ const verifyEmail = async (data: string) => {
       })
       .json();
     return response;
-  } catch (error) {
+  } catch (error: any) {
     const errorResponse = await error.response.json();
     throw new Error(errorResponse.message || "Something went wrong");
   }

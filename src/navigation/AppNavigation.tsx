@@ -5,7 +5,6 @@ import LoadingScreen from "@/screens/loadingScreen/LoadingScreen";
 import { useNavigationState } from "@react-navigation/native";
 import { useEffect } from "react";
 
-import { StatusBar } from "expo-status-bar";
 import AuthNavigation from "./AuthNavigation";
 import MainNavigation from "./MainNavigation";
 export default function AppNavigation() {
@@ -21,7 +20,6 @@ export default function AppNavigation() {
 
   return (
     <>
-      <StatusBar style="auto" />
       {loading ? (
         <LoadingScreen />
       ) : isConnected && userData ? (

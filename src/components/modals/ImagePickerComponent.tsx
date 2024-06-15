@@ -43,8 +43,8 @@ export default function ImagePickerComponent({
         const imageSize = resultData.fileSize;
         const imageMimeType = resultData.mimeType;
         const imageExtension = imageMimeType?.split("/")[1];
-        const allowedExtensions = ["jpg", "jpeg", "png", "gif"];
-        const maxFileSize = 1024 * 1024 * 20;
+        const allowedExtensions = ["jpg", "jpeg", "png", "gif", "webp"];
+        const maxFileSize = 1024 * 1024 * 10;
         if (
           imageSize &&
           allowedExtensions.includes(imageExtension ?? "") &&
@@ -144,10 +144,10 @@ const styles = StyleSheet.create({
   },
   pickContainer: {
     alignItems: "center",
-    borderColor: COLORS.secondaryColor,
-    borderWidth: 1,
+    borderColor: COLORS.primaryColor,
+    borderWidth: 2,
     padding: 10,
-    borderRadius: 15,
+    borderRadius: 10,
     width: "40%",
   },
 });

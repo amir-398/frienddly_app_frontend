@@ -32,7 +32,7 @@ export default function Chat({ navigation }: { navigation: any }) {
     channelType: "private",
   };
 
-  const sort = {
+  const sort: any = {
     last_message_at: -1,
   };
 
@@ -98,28 +98,30 @@ export default function Chat({ navigation }: { navigation: any }) {
           onChangeText={setSearchQuery}
         />
       </ScreenContainer>
-      {filteredChannels.length > 0 ? (
-        <FlatList
-          data={filteredChannels}
-          keyExtractor={(item) => item.id}
-          renderItem={({ item }) => (
-            <CustomListItem
-              channel={item}
-              latestMessagePreview={
-                item.state.messages[item.state.messages.length - 1]
-              }
-              unread={item.countUnread()}
-              navigation={navigation}
-              dispatch={dispatch}
-              userId={userId}
-            />
-          )}
-        />
-      ) : (
-        <Text style={styles.noneChatText}>
-          Vous n'avez aucune discussion pour le moment
-        </Text>
-      )}
+      <View style={styles.chatListContainer}>
+        {filteredChannels.length > 0 ? (
+          <FlatList
+            data={filteredChannels}
+            keyExtractor={(item) => item.id}
+            renderItem={({ item }) => (
+              <CustomListItem
+                channel={item}
+                latestMessagePreview={
+                  item.state.messages[item.state.messages.length - 1]
+                }
+                unread={item.countUnread()}
+                navigation={navigation}
+                dispatch={dispatch}
+                userId={userId}
+              />
+            )}
+          />
+        ) : (
+          <Text style={styles.noneChatText}>
+            Vous n'avez aucune discussion pour le moment
+          </Text>
+        )}
+      </View>
     </SafeAreaView>
   );
 }
@@ -158,5 +160,8 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontFamily: FONTS.poppinsMedium,
     marginTop: 20,
+  },
+  chatListContainer: {
+    marginTop: 120,
   },
 });

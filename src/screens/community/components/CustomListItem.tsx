@@ -14,7 +14,7 @@ import {
 export default function CustomListItem(props: any) {
   const { channel } = props;
   const { setChannel } = useAppContext();
-  const navigation = useNavigation();
+  const navigation = useNavigation() as any;
 
   // get channel name
   const channelName: string = channel.data.name;

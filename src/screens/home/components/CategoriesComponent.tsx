@@ -3,13 +3,10 @@ import restoIcon from "@/assets/images/resto.png";
 import superIcon from "@/assets/images/supermarché.png";
 import COLORS from "@/constants/COLORS";
 import FONTS from "@/constants/FONTS";
+import { CategoriesProps } from "@/types/categories";
 import React from "react";
 import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
-interface Category {
-  id: number;
-  name: string;
-}
 export default function CategoriesComponent({
   selectedCategory,
   setSelectedCategory,
@@ -17,13 +14,11 @@ export default function CategoriesComponent({
 }: {
   selectedCategory: number | null;
   setSelectedCategory: (id: number | null) => void;
-  categories: Category[];
+  categories: CategoriesProps[] | undefined;
 }) {
-  console.log(selectedCategory);
-
   return (
     <View style={styles.container}>
-      {categories?.map((category: Category) => (
+      {categories?.map((category: CategoriesProps) => (
         <TouchableOpacity
           onPress={() =>
             selectedCategory === category.id
@@ -62,10 +57,9 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignSelf: "center",
-    backgroundColor: "#fff",
     borderRadius: 25,
     marginVertical: 20,
-    paddingHorizontal: 10,
+    height: 100,
   },
   category: {
     width: "33.33%",

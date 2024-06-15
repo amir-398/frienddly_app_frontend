@@ -1,10 +1,9 @@
-import google_logo from "@/assets/images/logo-google.png";
 import logo_image from "@/assets/logo/logo.png";
 import CustomInput from "@/components/CustomInput";
 import ScreenContainer from "@/components/ScreenContainer";
 import SubmitBtn from "@/components/SubmitBtn";
-import COLORS from "@/constants/COLORS";
 import FONTS from "@/constants/FONTS";
+import ROUTES from "@/constants/ROUTES";
 import { useLogin } from "@/hooks/auth";
 import { useTokenEffect } from "@/hooks/useTokenEffect";
 import { Icon } from "@rneui/themed";
@@ -16,15 +15,13 @@ import {
   Pressable,
   StyleSheet,
   Text,
-  TouchableOpacity,
   View,
 } from "react-native";
 import * as Yup from "yup";
+import ScreenBackground from "../components/ScreenBackground";
 const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 const validationSchema = Yup.object({
   email: Yup.string()
-    .min(1)
-    .max(50)
     .matches(emailRegex, "Email invalide")
     .email()
     .required("Champ requis")
@@ -37,7 +34,7 @@ interface FormValues {
   email: string;
   password: string;
 }
-export default function SignInScreen() {
+export default function SignInScreen({ navigation }: { navigation: any }) {
   const { mutate: userLogin, isPending } = useLogin();
   const [error, setError] = useState(false);
   const { storeToken } = useTokenEffect();
@@ -62,97 +59,101 @@ export default function SignInScreen() {
     );
   };
   return (
-    <ScreenContainer>
-      <View style={styles.container}>
-        <Image source={logo_image} style={styles.logo} />
-        <Text style={styles.title}>Content de te revoir</Text>
-        <Text style={styles.subTitle}>
-          Connectez-vous à votre compte Frienddly
-        </Text>
-
-        <Formik
-          initialValues={{
-            email: "",
-            password: "",
-          }}
-          validationSchema={validationSchema}
-          onSubmit={onSubmit}
-        >
-          {({ handleSubmit, isValid, dirty }) => (
-            <View style={styles.fieldsContainer}>
-              {error && (
-                <View style={styles.errorMessageContainer}>
-                  <Icon name="warning" type="ionicon" color={"red"} size={20} />
-
-                  <Text style={styles.errorMessage}>
-                    Email ou mot de passe incorrect
-                  </Text>
-                </View>
-              )}
-              <Field
-                name="email"
-                component={CustomInput}
-                placeholder="Email"
-                inputStyle={{ marginBottom: 5 }}
-              />
-              <Field
-                name="password"
-                component={CustomInput}
-                placeholder="Confirmer le mot de passe"
-                secureTextEntry={true}
-              />
-              <Text style={styles.passwordForgetText}>
-                Mot de passe oublié ?{" "}
-                <Text
-                  style={{
-                    fontWeight: "bold",
-                    textDecorationLine: "underline",
-                  }}
-                >
-                  Réinitiliser votre mot de passe
-                </Text>
-              </Text>
-              <SubmitBtn
-                title="Se connecter"
-                onPress={handleSubmit}
-                disabled={!(isValid && dirty)}
-                loading={isPending}
-              />
-            </View>
-          )}
-        </Formik>
-        <View style={styles.separatorContainer}>
-          <View style={styles.line}></View>
-          <Text style={styles.separatorText}>Ou</Text>
-          <View style={styles.line}></View>
-        </View>
-        <TouchableOpacity
-          style={styles.googleBtn}
-          onPress={() => console.log("google")}
-        >
-          <Image source={google_logo} style={{ width: 30, height: 30 }} />
-          <Text style={styles.googleTextBtn}>Continuer avec Google</Text>
-        </TouchableOpacity>
-        <View style={styles.inscriptionTextContainer}>
-          <Text style={styles.inscriptionText}>
-            Vous n'avez pas encore de compte ?{" "}
+    <ScreenBackground>
+      <ScreenContainer>
+        <View style={styles.container}>
+          <View style={styles.logoContainer}>
+            <Image source={logo_image} style={styles.logo} />
+          </View>
+          <Text style={styles.title}>Content de te revoir</Text>
+          <Text style={styles.subTitle}>
+            Connectez-vous à votre compte Frienddly
           </Text>
-          <Pressable>
-            <Text
-              style={[
-                styles.inscriptionText,
-                {
-                  fontFamily: FONTS.poppinsBold,
-                  textDecorationLine: "underline",
-                },
-              ]}
-            >
-              S'inscrire
+
+          <Formik
+            initialValues={{
+              email: "",
+              password: "",
+            }}
+            validationSchema={validationSchema}
+            onSubmit={onSubmit}
+          >
+            {({ handleSubmit, isValid, dirty }) => (
+              <View style={styles.fieldsContainer}>
+                {error && (
+                  <View style={styles.errorMessageContainer}>
+                    <Icon
+                      name="warning"
+                      type="ionicon"
+                      color={"red"}
+                      size={20}
+                    />
+                    <Text style={styles.errorMessage}>
+                      Email ou mot de passe incorrect
+                    </Text>
+                  </View>
+                )}
+                <Field
+                  name="email"
+                  component={CustomInput}
+                  placeholder="Email"
+                  inputStyle={{ marginBottom: 5 }}
+                />
+                <Field
+                  name="password"
+                  component={CustomInput}
+                  placeholder="Confirmer le mot de passe"
+                  secureTextEntry={true}
+                />
+                <Text style={styles.passwordForgetText}>
+                  Mot de passe oublié ?{" "}
+                  <Text
+                    style={{
+                      fontWeight: "bold",
+                      textDecorationLine: "underline",
+                    }}
+                  >
+                    Réinitiliser votre mot de passe
+                  </Text>
+                </Text>
+                <SubmitBtn
+                  title="Se connecter"
+                  onPress={handleSubmit}
+                  disabled={!(isValid && dirty)}
+                  loading={isPending}
+                />
+              </View>
+            )}
+          </Formik>
+          <View style={styles.separatorContainer}>
+            <View style={styles.line}></View>
+            <Text style={styles.separatorText}>Ou</Text>
+            <View style={styles.line}></View>
+          </View>
+
+          <View style={styles.inscriptionTextContainer}>
+            <Text style={styles.inscriptionText}>
+              Vous n'avez pas encore de compte ?{" "}
             </Text>
-          </Pressable>
+            <Pressable
+              onPress={() => navigation.navigate(ROUTES.SignUpScreenStep1)}
+            >
+              <Text
+                style={[
+                  styles.inscriptionText,
+                  {
+                    fontFamily: FONTS.poppinsBold,
+                    textDecorationLine: "underline",
+                  },
+                ]}
+              >
+                S'inscrire
+              </Text>
+            </Pressable>
+          </View>
         </View>
-      </View>
-    </ScreenContainer>
+      </ScreenContainer>
+    </ScreenBackground>
   );
 }
 const width = Dimensions.get("window").width;
@@ -163,18 +164,28 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     height: height,
   },
+  logoContainer: {
+    justifyContent: "center",
+    backgroundColor: "rgba(0, 0, 0, 0.3)",
+    borderRadius: 10,
+    width: 300,
+    height: 100,
+    marginBottom: 50,
+  },
   logo: {
-    width: "60%",
+    width: "80%",
     resizeMode: "contain",
+    alignSelf: "center",
   },
   title: {
     fontSize: 25,
     fontFamily: FONTS.poppinsBold,
-    color: COLORS.secondaryColor,
+    color: "#000",
   },
   subTitle: {
     fontSize: 15,
     fontFamily: FONTS.poppinsMedium,
+    textAlign: "center",
   },
   errorMessageContainer: {
     flexDirection: "row",
@@ -205,29 +216,14 @@ const styles = StyleSheet.create({
   line: {
     flex: 1,
     height: 1,
-    backgroundColor: COLORS.primaryColor,
+    backgroundColor: "#000",
   },
   separatorText: {
     marginHorizontal: 10,
-    color: COLORS.secondaryColor,
+    color: "#000",
     fontFamily: FONTS.poppinsMedium,
   },
-  googleBtn: {
-    paddingVertical: 15,
-    borderRadius: 10,
-    marginTop: 20,
-    borderWidth: 1,
-    borderColor: COLORS.primaryColor,
-    width: width - 40,
-    alignItems: "center",
-    flexDirection: "row",
-    justifyContent: "center",
-  },
-  googleTextBtn: {
-    fontFamily: FONTS.poppinsMedium,
-    fontSize: 15,
-    marginLeft: 10,
-  },
+
   inscriptionTextContainer: {
     alignItems: "center",
     justifyContent: "center",

@@ -1,9 +1,11 @@
+import InteractiveIcon from "@/components/InteractiveIcon";
 import ScreenContainer from "@/components/ScreenContainer";
 import COLORS from "@/constants/COLORS";
 import FONTS from "@/constants/FONTS";
 import ROUTES from "@/constants/ROUTES";
 import { S3ENDPOINTUSERIMAGES } from "@/constants/S3Endpoint";
 import { useSearchUsers } from "@/hooks/userData";
+import { SearchUserPros } from "@/types/users";
 import { useNavigation } from "@react-navigation/native";
 import { Icon } from "@rneui/themed";
 import { StatusBar } from "expo-status-bar";
@@ -32,10 +34,12 @@ export default function SearchUserModal({
   visible: boolean;
   setIsVisible: any;
 }) {
-  const navigation = useNavigation();
+  const navigation = useNavigation() as any;
   const { mutate: searchUsers, isPending: searchUsersIsPending } =
     useSearchUsers();
-  const [searchResults, setSearchResults] = useState<[] | undefined>(undefined);
+  const [searchResults, setSearchResults] = useState<
+    SearchUserPros[] | undefined
+  >(undefined);
 
   const handleSubmit = (values: { search: string }) => {
     const query = values.search;
@@ -64,6 +68,13 @@ export default function SearchUserModal({
       <StatusBar backgroundColor="#fff" />
       <ScreenContainer>
         <View style={styles.header}>
+          <InteractiveIcon
+            name="arrow-back"
+            type="ionicon"
+            onPress={() => setIsVisible(false)}
+            color="#000"
+            padding={5}
+          />
           <Formik
             initialValues={{
               search: "",
@@ -135,10 +146,11 @@ export default function SearchUserModal({
 const width = Dimensions.get("window").width;
 const styles = StyleSheet.create({
   header: {
+    flexDirection: "row",
+    alignItems: "center",
     borderBottomColor: COLORS.primaryColor,
     borderBottomWidth: 2,
-    padding: 10,
-    paddingBottom: 20,
+    paddingVertical: 15,
   },
   textInputContainer: {
     flexDirection: "row",
@@ -147,9 +159,10 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     borderRadius: 5,
     paddingLeft: 10,
+    marginLeft: 10,
   },
   input: {
-    flex: 1,
+    width: "80%",
     marginLeft: 10,
     height: 40,
     fontFamily: FONTS.poppinsMedium,
@@ -159,6 +172,7 @@ const styles = StyleSheet.create({
     marginTop: 20,
   },
   noneResult: {
+    textAlign: "center",
     fontFamily: FONTS.poppinsMedium,
     fontSize: 16,
     color: "rgba(0,0,0,0.4)",

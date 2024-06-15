@@ -54,7 +54,8 @@
     "socket.io-client": "^4.7.5",
     "stream-chat-expo": "^5.31.1",
     "yup": "^1.4.0",
-    "@react-native-picker/picker": "2.7.5"
+    "@react-native-picker/picker": "2.7.5",
+    "expo-blur": "~13.0.2"
   },
   "imports": {
     "#assets/*": "@/assets/*"

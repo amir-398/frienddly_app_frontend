@@ -15,10 +15,9 @@ export default function ChatScreen() {
       dispatch(setBottomBarIsVisible(true));
     };
   }, []);
-  // const channel = useAppSelector((state) => state.chatSlice.channel);
 
   return (
-    <Channel channel={channel}>
+    <Channel channel={channel as any}>
       <SafeAreaView style={{ flex: 1 }}>
         <CustomChannelHeader />
         <MessageList />

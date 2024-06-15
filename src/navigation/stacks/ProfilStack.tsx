@@ -13,8 +13,22 @@ export default function ProfilStack() {
       initialRouteName={ROUTES.ProfilScreen}
       screenOptions={{ header: CustomHeader }}
     >
-      <Stack.Screen name={ROUTES.ProfilScreen} component={ProfilScreen} />
-      <Stack.Screen name={ROUTES.EditProfilData} component={EditProfilData} />
+      <Stack.Screen
+        name={ROUTES.ProfilScreen}
+        component={ProfilScreen}
+        options={{
+          statusBarColor: "transparent",
+          statusBarHidden: true,
+        }}
+      />
+      <Stack.Screen
+        name={ROUTES.EditProfilData}
+        component={EditProfilData}
+        options={{
+          statusBarColor: "transparent",
+          statusBarHidden: true,
+        }}
+      />
     </Stack.Navigator>
   );
 }

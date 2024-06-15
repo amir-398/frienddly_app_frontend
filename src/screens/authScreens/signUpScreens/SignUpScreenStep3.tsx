@@ -8,6 +8,7 @@ import { Field, Formik, FormikHelpers } from "formik";
 import React from "react";
 import { StyleSheet } from "react-native";
 import * as Yup from "yup";
+import ScreenBackground from "../components/ScreenBackground";
 import AuthBtn from "./components/AuthBtn";
 import HeaderComponent from "./components/HeaderComponent";
 
@@ -17,8 +18,6 @@ interface FormProps {
 const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 const validationSchema = Yup.object().shape({
   email: Yup.string()
-    .min(1)
-    .max(50)
     .matches(emailRegex, "Email invalide")
     .email()
     .required("Champ requis")
@@ -53,33 +52,35 @@ export default function SignUpScreenStep3({ navigation }: { navigation: any }) {
   };
 
   return (
-    <ScreenContainer>
-      <HeaderComponent title="Indiquez votre adresse email" />
-      <Formik
-        initialValues={{
-          email: "",
-        }}
-        validationSchema={validationSchema}
-        onSubmit={onSubmit}
-      >
-        {({ handleSubmit, isValid, dirty }) => (
-          <>
-            <Field
-              name="email"
-              component={CustomInput}
-              placeholder="Ton e-email"
-              inputStyle={{ marginBottom: 20 }}
-            />
-            <AuthBtn
-              title="Suivant"
-              onPress={handleSubmit}
-              disabled={!(isValid && dirty)}
-              loading={VerifyEmailPending}
-            />
-          </>
-        )}
-      </Formik>
-    </ScreenContainer>
+    <ScreenBackground>
+      <ScreenContainer>
+        <HeaderComponent title="Indiquez votre adresse email" />
+        <Formik
+          initialValues={{
+            email: "",
+          }}
+          validationSchema={validationSchema}
+          onSubmit={onSubmit}
+        >
+          {({ handleSubmit, isValid, dirty }) => (
+            <>
+              <Field
+                name="email"
+                component={CustomInput}
+                placeholder="Ton e-email"
+                inputStyle={{ marginBottom: 20 }}
+              />
+              <AuthBtn
+                title="Suivant"
+                onPress={handleSubmit}
+                disabled={!(isValid && dirty)}
+                loading={VerifyEmailPending}
+              />
+            </>
+          )}
+        </Formik>
+      </ScreenContainer>
+    </ScreenBackground>
   );
 }
 

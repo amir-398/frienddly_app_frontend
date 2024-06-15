@@ -1,6 +1,7 @@
 import FONTS from "@/constants/FONTS";
 import ROUTES from "@/constants/ROUTES";
 import { S3ENDPOINTPOSTIMAGES } from "@/constants/S3Endpoint";
+import { PostProps } from "@/enums/posts";
 import { useNavigation } from "@react-navigation/native";
 import React from "react";
 import {
@@ -12,19 +13,9 @@ import {
   View,
 } from "react-native";
 
-interface PostComponentProps {
-  title: string;
-  images: [
-    {
-      url: string;
-      postId: number;
-      id: number;
-    }
-  ];
-}
-export default function PostComponent(item: PostComponentProps) {
-  const navigation = useNavigation();
-  const { images, title } = item;
+export default function PostComponent(item: PostProps) {
+  const navigation = useNavigation() as any;
+  const { images, title, grade, location } = item;
 
   return (
     <Pressable
@@ -40,13 +31,10 @@ export default function PostComponent(item: PostComponentProps) {
       <View style={styles.header}>
         <Text style={styles.title}>{title}</Text>
         <View style={styles.noteContainer}>
-          <Text style={styles.note}>4;5</Text>
+          <Text style={styles.note}>{grade}</Text>
         </View>
       </View>
-      <View style={styles.bottom}>
-        <Text style={styles.bottomText}>20-10 min</Text>
-        <Text style={styles.bottomText}> 0.2mil </Text>
-      </View>
+      <Text style={styles.bottomText}> {location}</Text>
     </Pressable>
   );
 }
@@ -54,17 +42,17 @@ const width = Dimensions.get("window").width;
 const styles = StyleSheet.create({
   container: {
     alignSelf: "center",
-    marginTop: 10,
+    marginVertical: 10,
+    width: width - 20,
   },
   image: {
-    width: width - 40,
     height: 200,
     borderRadius: 20,
   },
   header: {
     flexDirection: "row",
     justifyContent: "space-between",
-    marginHorizontal: 10,
+    marginHorizontal: 5,
     marginTop: 5,
   },
   title: {
@@ -87,14 +75,12 @@ const styles = StyleSheet.create({
     marginTop: 3,
     lineHeight: 20,
   },
-  bottom: {
-    flexDirection: "row",
-    marginHorizontal: 10,
-  },
+
   bottomText: {
     fontSize: 11,
     fontFamily: FONTS.poppinsMedium,
     color: "grey",
     marginRight: 10,
+    marginLeft: 2,
   },
 });

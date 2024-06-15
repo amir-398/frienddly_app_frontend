@@ -17,7 +17,7 @@ export default function SearchBar({
   setFilterModalVisible: (visible: boolean) => void;
   searchBarRef: any;
 }) {
-  const navigation = useNavigation();
+  const navigation = useNavigation() as any;
   const handleSubmit = (values: { search: string }) => {
     navigation.navigate(ROUTES.PostsScreen, {
       q: values.search,

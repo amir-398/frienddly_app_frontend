@@ -97,6 +97,7 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontFamily: FONTS.poppinsMedium,
     paddingLeft: 10,
+    backgroundColor: "rgba(255,255,255,0.2)",
   },
   errorInput: {
     borderColor: "rgba(255,0,0,0.8)",

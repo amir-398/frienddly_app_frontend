@@ -1,3 +1,5 @@
+import { PostsProps } from "@/types/posts";
+import { PostProps } from "@/types/post";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import * as SecureStore from "expo-secure-store";
 import ky from "ky";
@@ -9,77 +11,8 @@ interface Filter {
   nb?: 2;
   q?: string;
 }
-interface PostData {
-  id: number;
-  title: string;
-  description: string;
-  price: number;
-  location: string;
-  images: [
-    {
-      url: string;
-      postId: number;
-      id: number;
-    }
-  ];
-  grade: number;
-  grades: [
-    {
-      id: number;
-      userId: number;
-      postId: number;
-      grade: number;
-      createdAt: string;
-      updatedAt: string;
-      user: {
-        firstname: string;
-        lastname: string;
-        profilImage: string;
-        isAdmin: boolean;
-      };
-    }
-  ];
-  comments: [
-    {
-      id: number;
-      userId: number;
-      postId: number;
-      content: string;
-      createdAt: string;
-      updatedAt: string;
-      user: {
-        firstname: string;
-        lastname: string;
-        profilImage: string;
-        isAdmin: boolean;
-      };
-    }
-  ];
-}
-interface Category {
-  id: number;
-  name: string;
-}
 
-interface Image {
-  id: number;
-  url: string;
-  postId: number;
-}
-
-interface Post {
-  id: number;
-  title: string;
-  latitude: number;
-  longitude: number;
-  category: Category;
-  images: Image[];
-  price: number;
-  location: string;
-  grade: number;
-}
-
-export async function getAllPosts(filter: Filter): Promise<Post[]> {
+export async function getAllPosts(filter: Filter): Promise<PostsProps[]> {
   const token = await SecureStore.getItemAsync("token");
   if (!token) {
     throw new Error("No token found");
@@ -96,15 +29,15 @@ export async function getAllPosts(filter: Filter): Promise<Post[]> {
         headers: { Authorization: `Bearer ${token}` },
       }
     ).json();
-    return response as Post[];
-  } catch (error) {
+    return response as PostsProps[];
+  } catch (error: any) {
     const errorResponse = await error.response.json();
     throw new Error(errorResponse.message || "Something went wrong");
   }
 }
 
 // get post by id
-export async function getPostById(id: number): Promise<PostData> {
+export async function getPostById(id: number): Promise<PostProps> {
   const token = await SecureStore.getItemAsync("token");
   if (!token) {
     throw new Error("No token found");
@@ -113,8 +46,8 @@ export async function getPostById(id: number): Promise<PostData> {
     const response = await ky(`${endpoint}/api/v1/posts/${id}`, {
       headers: { Authorization: `Bearer ${token}` },
     }).json();
-    return response as PostData;
-  } catch (error) {
+    return response as PostProps;
+  } catch (error: any) {
     const errorResponse = await error.response.json();
     throw new Error(errorResponse.message || "Something went wrong");
   }
@@ -136,7 +69,7 @@ async function sendCommentToPost(data: { postId: number; content: string }) {
       })
       .json();
     return response;
-  } catch (error) {
+  } catch (error: any) {
     const errorResponse = await error.response.json();
     throw new Error(errorResponse.message || "Something went wrong");
   }
@@ -159,7 +92,7 @@ async function sendGradeToPost(data: { postId: number; grade: number }) {
       })
       .json();
     return response;
-  } catch (error) {
+  } catch (error: any) {
     const errorResponse = await error.response.json();
     throw new Error(errorResponse.message || "Something went wrong");
   }

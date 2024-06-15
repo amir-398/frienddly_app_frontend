@@ -4,17 +4,18 @@ import ROUTES from "@/constants/ROUTES";
 import { useAppContext } from "@/context/AppProvider";
 import { useAppSelector } from "@/redux/hooks";
 import { useNavigation } from "@react-navigation/native";
-import { DateTime } from "luxon";
+import { DateTime, Settings } from "luxon";
 import React from "react";
 import { Image, Pressable, StyleSheet, Text, View } from "react-native";
-
+Settings.defaultLocale = "fr";
 export default function CustomListItem(props: any) {
   const { unread, channel, latestMessagePreview } = props;
   const { setChannel } = useAppContext();
-  const navigation = useNavigation();
+  const navigation = useNavigation() as any;
   const userInfo = useAppSelector((state) => state.authSlice.userData);
   const userId = userInfo.id.toString();
-  const otherMember = Object.values(channel.state.members).find(
+
+  const otherMember: any = Object.values(channel.state.members).find(
     (member: any) => member.user.id !== userId
   );
   const userData = otherMember?.user;
@@ -45,10 +46,10 @@ export default function CustomListItem(props: any) {
       displayTime = messageDate.toLocaleString(DateTime.TIME_SIMPLE);
     } else if (messageDate.plus({ days: 1 }).hasSame(now, "day")) {
       displayTime = `Hier, ${messageDate.toLocaleString(DateTime.TIME_SIMPLE)}`;
+    } else if (messageDate.hasSame(now, "week")) {
+      displayTime = messageDate.toFormat("ccc"); // Affiche le jour de la semaine (e.g., "Mer" pour mercredi)
     } else {
-      displayTime = messageDate.toLocaleString(
-        DateTime.DATETIME_MED_WITH_WEEKDAY
-      );
+      displayTime = messageDate.toFormat("d MMM"); // Affiche le jour et le mois (e.g., "2 juin")
     }
   }
 

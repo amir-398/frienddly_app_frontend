@@ -34,14 +34,27 @@ export default function CommunityStack() {
               initialRouteName={ROUTES.Community}
               screenOptions={{ header: CustomHeader }}
             >
-              <Stack.Screen name={ROUTES.Community} component={Community} />
+              <Stack.Screen
+                name={ROUTES.Community}
+                component={Community}
+                options={{
+                  statusBarColor: "#fff",
+                }}
+              />
               <Stack.Screen
                 name={ROUTES.CommunityChat}
                 component={CommunityChat}
+                options={{
+                  statusBarColor: "#fff",
+                }}
               />
               <Stack.Screen
                 name={ROUTES.ProfilScreen}
                 component={ProfilScreen}
+                options={{
+                  statusBarColor: "transparent",
+                  statusBarHidden: true,
+                }}
               />
             </Stack.Navigator>
           </Chat>
