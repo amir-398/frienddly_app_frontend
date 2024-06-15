@@ -1,4 +1,3 @@
-import COLORS from "@/constants/COLORS";
 import FONTS from "@/constants/FONTS";
 import React, { useState } from "react";
 import { StyleSheet, Text, TextInput, View } from "react-native";
@@ -22,20 +21,19 @@ export default function CustomInput(props) {
   };
 
   return (
-    <>
-      <View style={[styles.inputContainer, inputStyle]}>
+    <View style={inputStyle}>
+      <View style={styles.inputContainer}>
         <TextInput
           style={[
             styles.textInput,
             hasError && styles.errorInput,
             {
-              paddingRight: secureTextEntry && iconName && iconType ? 60 : 35,
+              paddingRight: secureTextEntry ? 60 : 35,
             },
-            { paddingLeft: iconName && iconType ? 30 : 10 },
           ]}
           value={value}
           onChangeText={(text) => onChange(name)(text)}
-          placeholderTextColor={"#333333"}
+          placeholderTextColor={"rgba(0,0,0,0.5)"}
           secureTextEntry={isSecureEntry}
           cursorColor={"#000"}
           onBlur={() => {
@@ -44,11 +42,12 @@ export default function CustomInput(props) {
           }}
           {...inputProps}
         />
+
         {value && (
           <View
             style={[
               styles.rightIconContainer,
-              { right: secureTextEntry ? 30 : 10 },
+              { right: secureTextEntry ? 35 : 10 },
             ]}
           >
             <InteractiveIcon
@@ -61,6 +60,7 @@ export default function CustomInput(props) {
             />
           </View>
         )}
+
         {secureTextEntry && (
           <View style={styles.rightIconContainer}>
             <InteractiveIcon
@@ -69,16 +69,15 @@ export default function CustomInput(props) {
               color="#000"
               onPress={() => setIsSecureEntry(!isSecureEntry)}
               size={20}
+              padding={1}
             />
           </View>
         )}
       </View>
-      {hasError && (
-        <View style={styles.errorContainer}>
-          <Text style={styles.errorText}>{errors[name]}</Text>
-        </View>
-      )}
-    </>
+      <View style={styles.errorContainer}>
+        {hasError && <Text style={styles.errorText}>{errors[name]}</Text>}
+      </View>
+    </View>
   );
 }
 
@@ -87,25 +86,31 @@ const styles = StyleSheet.create({
     position: "relative",
     justifyContent: "center",
     alignItems: "center",
+    zIndex: 1,
   },
   textInput: {
-    borderColor: COLORS.secondaryColor,
+    borderColor: "#000",
     borderWidth: 2,
     borderRadius: 10,
     paddingVertical: 10,
     width: "100%",
     fontSize: 14,
     fontFamily: FONTS.poppinsMedium,
+    paddingLeft: 10,
+    backgroundColor: "rgba(255,255,255,0.2)",
   },
   errorInput: {
-    borderColor: "red",
+    borderColor: "rgba(255,0,0,0.8)",
+  },
+  errorContainer: {
+    width: "100%",
+    justifyContent: "center",
+    height: 17,
   },
   errorText: {
-    color: "red",
+    color: "rgba(255,0,0,0.8)",
     fontFamily: FONTS.poppinsMedium,
     fontSize: 12,
-    marginTop: -15,
-    textAlign: "center",
   },
   rightIconContainer: {
     position: "absolute",

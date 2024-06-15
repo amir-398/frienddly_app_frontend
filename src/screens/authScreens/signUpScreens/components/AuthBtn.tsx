@@ -1,26 +1,28 @@
+import SubmitBtn from "@/components/SubmitBtn";
 import COLORS from "@/constants/COLORS";
 import FONTS from "@/constants/FONTS";
 import React from "react";
-import {
-  Dimensions,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { Dimensions, StyleSheet, View } from "react-native";
 
 export default function AuthBtn({
   title,
   onPress,
+  disabled,
+  loading,
 }: {
   title: string;
   onPress: () => void;
+  disabled?: boolean;
+  loading?: boolean;
 }) {
   return (
     <View style={styles.containerBtn}>
-      <TouchableOpacity style={styles.btn} onPress={onPress}>
-        <Text style={styles.text}>{title}</Text>
-      </TouchableOpacity>
+      <SubmitBtn
+        title={title}
+        onPress={onPress}
+        disabled={disabled}
+        loading={loading}
+      />
     </View>
   );
 }
@@ -32,9 +34,8 @@ const styles = StyleSheet.create({
     height: height,
     width: "100%",
     justifyContent: "flex-end",
-    zIndex: -1,
     position: "absolute",
-    paddingBottom: 20,
+    paddingBottom: height * 0.08,
     paddingHorizontal: 20,
   },
   btn: {
@@ -45,6 +46,9 @@ const styles = StyleSheet.create({
     paddingVertical: 15,
     width: width - 40,
     alignSelf: "center",
+  },
+  btnDisabled: {
+    opacity: 0.4,
   },
   text: {
     color: "#fff",

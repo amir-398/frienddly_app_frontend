@@ -4,7 +4,7 @@ import { Pressable, StyleSheet } from "react-native";
 interface InteractiveIconProps {
   style?: any;
   onPress: () => void;
-  size: number;
+  size?: number;
   name: string;
   type: string;
   color?: string;
