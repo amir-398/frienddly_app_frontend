@@ -1,0 +1,32 @@
+{
+  "cli": {
+    "version": ">= 9.2.0"
+  },
+  "build": {
+    "development": {
+      "developmentClient": true,
+      "distribution": "internal",
+      "env": {
+        "EXPO_PUBLIC_ENDPONT_HOME": "http://192.168.1.81:3333",
+        "EXPO_PUBLIC_ENDPONT_SCHOOL": "http://10.120.133.1:3333",
+        "EXPO_PUBLIC_STREAM_API_KEY": "u4b9rc46uk2g"
+      }
+    },
+    "preview": {
+      "distribution": "internal",
+      "android": {
+        "buildType": "apk"
+      }
+    },
+    "production": {
+      "env": {
+        "EXPO_PUBLIC_ENDPONT_HOME": "http://192.168.1.81:3333",
+        "EXPO_PUBLIC_ENDPONT_SCHOOL": "http://10.120.133.1:3333",
+        "EXPO_PUBLIC_STREAM_API_KEY": "u4b9rc46uk2g"
+      }
+    }
+  },
+  "submit": {
+    "production": {}
+  }
+}
