@@ -1,5 +1,6 @@
 import InteractiveIcon from "@/components/InteractiveIcon";
 import ScreenContainer from "@/components/ScreenContainer";
+import COLORS from "@/constants/COLORS";
 import FONTS from "@/constants/FONTS";
 import ROUTES from "@/constants/ROUTES";
 import { S3ENDPOINTPOSTIMAGES } from "@/constants/S3Endpoint";
@@ -9,11 +10,11 @@ import { useAppDispatch } from "@/redux/hooks";
 import { Icon } from "@rneui/base";
 import React, { useEffect } from "react";
 import {
+  ActivityIndicator,
   FlatList,
   Image,
   Pressable,
   SafeAreaView,
-  StatusBar,
   StyleSheet,
   Text,
   View,
@@ -28,7 +29,7 @@ export default function PostsScreen({
 }) {
   const dispatch = useAppDispatch();
   const { categoryId, title, q, ltd, lgt } = route.params;
-  const { data: postsData } = useGetAllPosts({
+  const { data: postsData, isLoading } = useGetAllPosts({
     cat: categoryId,
     q,
     ltd,
@@ -45,7 +46,6 @@ export default function PostsScreen({
   return (
     <SafeAreaView style={styles.container}>
       <ScreenContainer>
-        <StatusBar backgroundColor="#fff" />
         <View style={styles.screenHeader}>
           <View style={styles.iconContainer}>
             <InteractiveIcon
@@ -58,7 +58,9 @@ export default function PostsScreen({
           </View>
           <Text style={styles.screenTitle}>{title} </Text>
         </View>
-        {postsData && postsData?.length > 0 ? (
+        {isLoading ? (
+          <ActivityIndicator color={COLORS.primaryColor} size={30} />
+        ) : postsData && postsData?.length > 0 ? (
           <FlatList
             data={postsData}
             keyExtractor={(item) => item.id.toString()}
@@ -97,7 +99,6 @@ export default function PostsScreen({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingBottom: 40,
   },
   screenHeader: {
     flexDirection: "row",
@@ -132,6 +133,7 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 20,
     fontFamily: FONTS.poppinsBold,
+    width: "80%",
   },
   gradeContainer: {
     flexDirection: "row",
