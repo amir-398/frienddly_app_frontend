@@ -43,6 +43,7 @@ npm start
 ```
 
 4. Structure du Projet :
+```bash
    /frienddly
 |-- App.tsx
 |--src              # Point d'entrée de l'application
@@ -51,4 +52,4 @@ npm start
  |-- /navigation           # Configuration de la navigation
  |-- /services             # Services pour les API et la logique métier
  |-- /assets               # Assets tels que les images et les fonts
-
+```
