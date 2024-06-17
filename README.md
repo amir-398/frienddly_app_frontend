@@ -29,3 +29,26 @@ Pour lancer Frienddly localement, suivez ces étapes :
 ```bash
 git clone https://github.com/ton_nom_utilisateur/frienddly.git
 cd frienddly
+```
+2. Installez les dépendances :
+   
+```bash
+npm install
+```
+
+3. Lancez l'application Expo :
+
+```bash
+npm start
+```
+
+4. Structure du Projet :
+   /frienddly
+|-- App.tsx
+|--src              # Point d'entrée de l'application
+ |-- /components           # Composants réutilisables
+ |-- /screens              # Écrans de l'application
+ |-- /navigation           # Configuration de la navigation
+ |-- /services             # Services pour les API et la logique métier
+ |-- /assets               # Assets tels que les images et les fonts
+
