@@ -1,6 +1,4 @@
-import messageRight1 from "@/assets/icons/message_right_icon_1.png";
-import messageRight2 from "@/assets/icons/messages_right_icon_2.png";
-import messageLeft from "@/assets/icons/messges_left_icon.png";
+import logo from "@/assets/logo/logo.png";
 import ScreenContainer from "@/components/ScreenContainer";
 import FONTS from "@/constants/FONTS";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
@@ -13,7 +11,6 @@ import {
   TextInput,
   View,
 } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
 import { useChatContext } from "stream-chat-expo";
 import CustomListItem from "./components/CustomListItem";
 export default function Chat({ navigation }: { navigation: any }) {
@@ -81,14 +78,10 @@ export default function Chat({ navigation }: { navigation: any }) {
   });
 
   return (
-    <SafeAreaView>
+    <View style={{ flex: 1 }}>
       <ScreenContainer>
         <View style={styles.header}>
-          <Image source={messageLeft} style={styles.headerIcon} />
-          <View style={styles.headerRight}>
-            <Image source={messageRight1} style={styles.headerIcon} />
-            <Image source={messageRight2} style={styles.headerIcon} />
-          </View>
+          <Image source={logo} style={styles.logoImg} />
         </View>
         <Text style={styles.title}>Discussions</Text>
         <TextInput
@@ -122,7 +115,7 @@ export default function Chat({ navigation }: { navigation: any }) {
           </Text>
         )}
       </View>
-    </SafeAreaView>
+    </View>
   );
 }
 
@@ -133,15 +126,10 @@ const styles = StyleSheet.create({
     alignItems: "center",
     height: 60,
   },
-  headerRight: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    width: 80,
-    marginRight: 10,
-  },
-  headerIcon: {
-    width: 30,
-    height: 30,
+
+  logoImg: {
+    width: 150,
+    objectFit: "contain",
   },
   title: {
     fontSize: 24,
@@ -162,6 +150,17 @@ const styles = StyleSheet.create({
     marginTop: 20,
   },
   chatListContainer: {
-    marginTop: 120,
+    flex: 1,
+    padding: 10,
+    position: "absolute",
+    top: 150,
+    width: "100%",
+  },
+  skeleton: {
+    height: 90,
+    width: "100%",
+    marginBottom: 15,
+    borderRadius: 20,
+    overflow: "hidden",
   },
 });

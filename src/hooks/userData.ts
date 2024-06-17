@@ -2,7 +2,7 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 import * as SecureStore from "expo-secure-store";
 import ky from "ky";
 
-const endpoint = process.env.EXPO_PUBLIC_ENDPONT_HOME;
+const endpoint = process.env.EXPO_PUBLIC_ENDPONT_WORK;
 
 export const getUserData = async () => {
   const token = await SecureStore.getItemAsync("token");
@@ -76,6 +76,30 @@ const updateUserData = async (data: any) => {
   }
 };
 
+const updatePassword = async (data: {
+  newPassword: string;
+  oldPassword: string;
+}) => {
+  const token = await SecureStore.getItemAsync("token");
+  if (!token) {
+    throw new Error("No token found");
+  }
+
+  try {
+    const response = await ky
+      .put(`${endpoint}/api/v1/user/updatePassword`, {
+        json: data,
+        headers: { Authorization: `Bearer ${token}` },
+      })
+      .json();
+    return response;
+  } catch (error: any) {
+    console.log(error);
+
+    const errorResponse = await error.response.json();
+    throw new Error(errorResponse.message || "Something went wrong");
+  }
+};
 const deleteUserData = async () => {
   const token = await SecureStore.getItemAsync("token");
   if (!token) {
@@ -123,7 +147,12 @@ export function useUpdateUserData() {
     mutationFn: updateUserData,
   });
 }
-
+export function useUpdatePassword() {
+  return useMutation({
+    mutationKey: ["updatePassword"],
+    mutationFn: updatePassword,
+  });
+}
 export function useDeleteUserData() {
   return useMutation({
     mutationKey: ["deleteUserData"],

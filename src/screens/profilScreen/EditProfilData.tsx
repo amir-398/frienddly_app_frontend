@@ -5,8 +5,8 @@ import COLORS from "@/constants/COLORS";
 import FONTS from "@/constants/FONTS";
 import { S3ENDPOINTUSERIMAGES } from "@/constants/S3Endpoint";
 import { useTokenEffect } from "@/hooks/useTokenEffect";
-import { useDeleteUserData, useUpdateUserData } from "@/hooks/userData";
-import { deleteToken, setUserData } from "@/redux/Slices/authSlice";
+import { useUpdateUserData } from "@/hooks/userData";
+import { setUserData } from "@/redux/Slices/authSlice";
 import { setBottomBarIsVisible } from "@/redux/Slices/bottomBarIsVisible";
 import { useAppDispatch } from "@/redux/hooks";
 import { decodeText } from "@/utils/decodes/decodeText";
@@ -23,9 +23,9 @@ import {
   View,
 } from "react-native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
-import { SafeAreaView } from "react-native-safe-area-context";
 import * as Yup from "yup";
 import ScreenBackground from "../authScreens/components/ScreenBackground";
+import ConfimDeleteAccountModal from "./components/ConfimDeleteAccountModal";
 
 const atLeastOneFieldRequired = (fields: string[], message: string) => {
   return Yup.mixed().test({
@@ -98,11 +98,9 @@ export default function EditProfilData({
   const [image, setImage] = useState<ImageInfo | null>(null);
   const [imageError, setImageError] = useState("");
   const [imagePickerIsVisible, setImagePickerIsVisible] = useState(false);
-
+  const [isDeleteModalVisible, setIsDeleteModalVisible] = useState(false);
   const { mutate: updateUserData, isPending: updateUserDataIsPending } =
     useUpdateUserData();
-
-  const { mutate: deleteUser, isSuccess } = useDeleteUserData();
 
   const formikProps = useFormik({
     initialValues: {
@@ -175,17 +173,13 @@ export default function EditProfilData({
     removeToken();
   };
 
-  const deleteUserAccount = () => {
-    try {
-      deleteUser();
-      deleteToken();
-    } catch (error: any) {
-      console.log(error.message);
-    }
-  };
   return (
-    <SafeAreaView style={{ flex: 1 }}>
+    <View style={{ flex: 1 }}>
       <ScreenBackground>
+        <ConfimDeleteAccountModal
+          visible={isDeleteModalVisible}
+          setVisible={setIsDeleteModalVisible}
+        />
         <KeyboardAwareScrollView
           style={styles.container}
           contentContainerStyle={{ paddingBottom: 20 }}
@@ -424,7 +418,7 @@ export default function EditProfilData({
             <View style={styles.btnsBottomContainer}>
               <TouchableOpacity
                 style={styles.btnsTop}
-                onPress={deleteUserAccount}
+                onPress={() => setIsDeleteModalVisible(true)}
               >
                 <Text style={styles.btnsTopText}>Supprimer votre compte</Text>
               </TouchableOpacity>
@@ -438,7 +432,7 @@ export default function EditProfilData({
           </ScreenContainer>
         </KeyboardAwareScrollView>
       </ScreenBackground>
-    </SafeAreaView>
+    </View>
   );
 }
 

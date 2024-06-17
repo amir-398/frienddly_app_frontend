@@ -1,11 +1,13 @@
 import { useMutation } from "@tanstack/react-query";
 import ky from "ky";
 
-const endpoint = process.env.EXPO_PUBLIC_ENDPONT_HOME;
+const endpoint = process.env.EXPO_PUBLIC_ENDPONT_WORK;
 
 // Typage pour les informations de l'utilisateur
 import * as SecureStore from "expo-secure-store";
 const register = async (data: FormData) => {
+  console.log("register fonction");
+
   try {
     const response = await ky
       .post(`${endpoint}/api/v1/auth/register`, {

@@ -38,5 +38,6 @@ const styles = StyleSheet.create({
     fontFamily: FONTS.poppinsMedium,
     color: "#000",
     marginTop: -25,
+    textAlign: "center",
   },
 });

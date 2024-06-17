@@ -27,7 +27,7 @@ export default function HomeStack() {
         component={PostScreen}
         options={{
           statusBarColor: "transparent",
-          statusBarHidden: true,
+          statusBarTranslucent: true,
         }}
       />
       <Stack.Screen

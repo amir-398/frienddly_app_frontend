@@ -1,9 +1,10 @@
 import ScreenContainer from "@/components/ScreenContainer";
+import MapSkeleton from "@/components/skeletons/MapSkeleton";
 import COLORS from "@/constants/COLORS";
 import FONTS from "@/constants/FONTS";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import React, { useEffect, useState } from "react";
-import { StyleSheet, Text } from "react-native";
+import { StyleSheet, Text, View } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useChatContext } from "stream-chat-expo";
@@ -69,26 +70,43 @@ export default function Community({ navigation }: { navigation: any }) {
       <ScrollView>
         <ScreenContainer>
           <CommunityHeader />
-          <Text style={styles.sugText}>Suggestion d'amis : </Text>
+          <Text style={styles.sugText}>Suggestions d'amis : </Text>
           <UsersFlatlist />
-          <Text style={styles.sugText}>Groupe à thématiques : </Text>
-          {channels.map((channel) => {
-            if (channel.data?.name) {
-              return (
-                <CustomListItem
-                  channel={channel}
-                  key={channel.id}
-                  latestMessagePreview={
-                    channel.state.messages[channel.state.messages.length - 1]
-                  }
-                  unread={channel.countUnread()}
-                  navigation={navigation}
-                  dispatch={dispatch}
-                  userId={userId}
-                />
-              );
-            }
-          })}
+          <Text style={styles.sugText}>Groupes à thématiques : </Text>
+          {channels.length > 0 ? (
+            channels.map((channel) => {
+              if (channel.data?.name) {
+                return (
+                  <CustomListItem
+                    channel={channel}
+                    key={channel.id}
+                    latestMessagePreview={
+                      channel.state.messages[channel.state.messages.length - 1]
+                    }
+                    unread={channel.countUnread()}
+                    navigation={navigation}
+                    dispatch={dispatch}
+                    userId={userId}
+                  />
+                );
+              }
+            })
+          ) : (
+            <View>
+              <View style={styles.skeleton}>
+                <MapSkeleton />
+              </View>
+              <View style={styles.skeleton}>
+                <MapSkeleton />
+              </View>
+              <View style={styles.skeleton}>
+                <MapSkeleton />
+              </View>
+              <View style={styles.skeleton}>
+                <MapSkeleton />
+              </View>
+            </View>
+          )}
         </ScreenContainer>
       </ScrollView>
     </SafeAreaView>
@@ -102,5 +120,13 @@ const styles = StyleSheet.create({
     borderBottomColor: COLORS.primaryColor,
     borderBottomWidth: 1,
     marginVertical: 10,
+  },
+  skeleton: {
+    height: 120,
+    width: "100%",
+    marginBottom: 15,
+    borderRadius: 20,
+    overflow: "hidden",
+    backgroundColor: "red",
   },
 });

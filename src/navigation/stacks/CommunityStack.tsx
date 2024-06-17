@@ -53,7 +53,7 @@ export default function CommunityStack() {
                 component={ProfilScreen}
                 options={{
                   statusBarColor: "transparent",
-                  statusBarHidden: true,
+                  statusBarTranslucent: true,
                 }}
               />
             </Stack.Navigator>

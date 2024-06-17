@@ -27,7 +27,7 @@ export default function FilterModal({
   visible: boolean;
   setVisible: (visible: boolean) => void;
 }) {
-  const navigation = useNavigation();
+  const navigation = useNavigation() as any;
   const cardHeight1 = useRef(new Animated.Value(50)).current;
   const textOpacity1 = useRef(new Animated.Value(1)).current;
   const inputOpacity1 = useRef(new Animated.Value(0)).current;
@@ -305,10 +305,8 @@ const styles = StyleSheet.create({
   },
   picker: {
     fontSize: 16,
-    fontFamily: FONTS.poppinsMedium,
     width: "90%",
     marginLeft: 10,
-    marginTop: 3,
   },
   inputContainer: {
     flexDirection: "row",

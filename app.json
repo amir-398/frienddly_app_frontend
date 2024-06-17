@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "Frienddly",
-    "slug": "Frienddly",
+    "slug": "frienddly_app_frontend",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/logo.png",
@@ -19,7 +19,12 @@
         "foregroundImage": "./assets/logo.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.amir398.frienddly_app_frontend"
+      "package": "com.amir398.frienddly_app_frontend",
+      "config": {
+        "googleMaps": {
+          "apiKey": "AIzaSyBhTIY9901ofPPGOaQ2UfKIvwikmQEb7iw"
+        }
+      }
     },
     "web": {
       "favicon": "./assets/logo.png"

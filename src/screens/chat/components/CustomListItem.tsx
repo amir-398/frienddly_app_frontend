@@ -5,12 +5,13 @@ import { useAppContext } from "@/context/AppProvider";
 import { useAppSelector } from "@/redux/hooks";
 import { useNavigation } from "@react-navigation/native";
 import { DateTime, Settings } from "luxon";
-import React from "react";
+import React, { useEffect } from "react";
 import { Image, Pressable, StyleSheet, Text, View } from "react-native";
 Settings.defaultLocale = "fr";
 export default function CustomListItem(props: any) {
   const { unread, channel, latestMessagePreview } = props;
   const { setChannel } = useAppContext();
+  const [isMessageUnread, setIsMessageUnread] = React.useState(unread);
   const navigation = useNavigation() as any;
   const userInfo = useAppSelector((state) => state.authSlice.userData);
   const userId = userInfo.id.toString();
@@ -22,7 +23,14 @@ export default function CustomListItem(props: any) {
   const userName = userData?.name;
   const userImage = userData?.image;
 
-  const backgroundColor = unread ? COLORS.primaryColorLight : "#fff";
+  useEffect(() => {
+    if (unread) {
+      setIsMessageUnread(true);
+    } else {
+      setIsMessageUnread(false);
+    }
+  }, [unread]);
+  const backgroundColor = isMessageUnread ? COLORS.primaryColorLight : "#fff";
   let lastMessageText =
     latestMessagePreview?.text || "Vous n'avez pas de message";
 
@@ -57,6 +65,7 @@ export default function CustomListItem(props: any) {
     <Pressable
       onPress={() => {
         setChannel(channel);
+        setIsMessageUnread(false);
         navigation.navigate(ROUTES.ChatScreen);
       }}
       style={[styles.container, { backgroundColor }]}

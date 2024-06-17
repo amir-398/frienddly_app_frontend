@@ -54,7 +54,7 @@ export default function SignUpScreenStep3({ navigation }: { navigation: any }) {
   return (
     <ScreenBackground>
       <ScreenContainer>
-        <HeaderComponent title="Indiquez votre adresse email" />
+        <HeaderComponent title="Indique ton adresse email" />
         <Formik
           initialValues={{
             email: "",
