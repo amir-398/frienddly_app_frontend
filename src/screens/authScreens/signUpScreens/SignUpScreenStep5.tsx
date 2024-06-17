@@ -18,6 +18,7 @@ export default function SignUpScreenStep6({ navigation }: { navigation: any }) {
   );
   const { storeToken } = useTokenEffect();
   const [image, setImage] = useState<ImageInfo | null>(null);
+
   const [imageError, setImageError] = useState("");
   const [imagePickerIsVisible, setImagePickerIsVisible] = useState(false);
   const [btnDisabled, setBtnDisabled] = useState(true);
@@ -55,13 +56,13 @@ export default function SignUpScreenStep6({ navigation }: { navigation: any }) {
   const onSubmit = async () => {
     const formData = createFormData(image);
     userRegister(formData, {
-      onSuccess: (data) => {
+      onSuccess: (data: any) => {
         const token = data.token.token;
         const streamtoken = data.streamToken;
         storeToken(token, streamtoken);
       },
       onError: (error) => {
-        console.error("Registration failed", error.message);
+        console.error("Registration failed", error);
       },
     });
   };
@@ -74,7 +75,7 @@ export default function SignUpScreenStep6({ navigation }: { navigation: any }) {
           setImage={setImage}
           setImageError={setImageError}
         />
-        <HeaderComponent title="Ajouter votre photo de profil" />
+        <HeaderComponent title="ajoute ta photo de profil" />
         {image ? (
           <TouchableOpacity onPress={() => setImagePickerIsVisible(true)}>
             <Image

@@ -16,13 +16,16 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+import CguModal from "./components/CguModal";
 import ScreenBackground from "./components/ScreenBackground";
 export default function LandingScreen({ navigation }: { navigation: any }) {
   const [pageType, setPageType] = React.useState<"login" | "register">(
     "register"
   );
+  const [showCguModal, setShowCguModal] = React.useState(false);
   return (
     <ScreenBackground>
+      <CguModal visible={showCguModal} setVisible={setShowCguModal} />
       <ScreenContainer>
         <View style={styles.container}>
           <View style={styles.logoContainer}>
@@ -83,7 +86,7 @@ export default function LandingScreen({ navigation }: { navigation: any }) {
             {pageType == "register" && (
               <Text style={styles.bottomText}>
                 En continuant, je déclare accepter{" "}
-                <TouchableNativeFeedback onPress={() => alert("lol")}>
+                <TouchableNativeFeedback onPress={() => setShowCguModal(true)}>
                   <Text
                     style={{
                       color: COLORS.primaryColor,
@@ -102,7 +105,7 @@ export default function LandingScreen({ navigation }: { navigation: any }) {
       </ScreenContainer>
       <BlurView intensity={50} style={styles.bottomContainer}>
         <Text style={styles.bottomText}>
-          {pageType == "login"
+          {pageType == "register"
             ? "Tu as déja un compte ?"
             : "Tu n'as pas encore de compte ?"}{" "}
           <TouchableNativeFeedback
@@ -117,7 +120,7 @@ export default function LandingScreen({ navigation }: { navigation: any }) {
                 textDecorationLine: "underline",
               }}
             >
-              {pageType == "login" ? "Connecte toi" : "Inscris toi"}
+              {pageType == "register" ? "Connecte toi" : "Inscris toi"}
             </Text>
           </TouchableNativeFeedback>
         </Text>
@@ -190,7 +193,7 @@ const styles = StyleSheet.create({
   },
   bottomText: {
     fontFamily: FONTS.poppinsMedium,
-    fontSize: 12,
+    fontSize: 13,
     marginTop: 10,
     textAlign: "center",
   },

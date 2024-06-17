@@ -1,7 +1,7 @@
 // src/services/socket.ts
 import { io, Socket } from "socket.io-client";
 
-const endpoint = process.env.EXPO_PUBLIC_ENDPONT_HOME;
+const endpoint = process.env.EXPO_PUBLIC_ENDPONT_WORK;
 if (!endpoint) {
   throw new Error("No endpoint found");
 }

@@ -1,3 +1,4 @@
+import InteractiveIcon from "@/components/InteractiveIcon";
 import ScreenContainer from "@/components/ScreenContainer";
 import COLORS from "@/constants/COLORS";
 import FONTS from "@/constants/FONTS";
@@ -9,17 +10,17 @@ import { setUserInvitedFriend } from "@/redux/Slices/userInvitedFriends";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import { decodeText } from "@/utils/decodes/decodeText";
 import { calculateAge } from "@/utils/userUtils/CalculateAge";
-import { Icon } from "@rneui/themed";
 import React from "react";
 import {
+  ActivityIndicator,
   Image,
+  Pressable,
   ScrollView,
   StyleSheet,
   Text,
   TouchableOpacity,
   View,
 } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
 import ScreenBackground from "../authScreens/components/ScreenBackground";
 
 export default function ProfilScreen({
@@ -35,7 +36,6 @@ export default function ProfilScreen({
   const sendedInvitations = useAppSelector(
     (state) => state.userInvitedFriends.usersId
   );
-  const userIsInvited = userId && sendedInvitations.includes(userId);
 
   const { mutate: sendFriendRequest } = useSendFriendRequest();
 
@@ -64,8 +64,20 @@ export default function ProfilScreen({
   }
 
   if (!userInfo) {
-    return <Text>Loading...</Text>;
+    return (
+      <ActivityIndicator
+        size="large"
+        color={COLORS.primaryColor}
+        style={{ alignSelf: "center", marginTop: 40 }}
+      />
+    );
   }
+  const userIsInvited =
+    (userId && sendedInvitations.includes(userId)) ||
+    userInfo.friendShipStatus == "pending" ||
+    userInfo.friendShipStatus == "rejected";
+
+  const userIsFriend = userInfo?.friendShipStatus == "accepted";
 
   const profilImage = userInfo?.profilImage;
   const firstname = decodeText(userInfo?.firstname);
@@ -99,13 +111,29 @@ export default function ProfilScreen({
     ? decodeText(userInfo?.dreamCity)
     : "Pas encore renseigné";
   return (
-    <SafeAreaView style={{ flex: 1 }}>
+    <View style={{ flex: 1 }}>
       <ScreenBackground>
-        <ScrollView style={styles.container}>
+        <ScrollView
+          style={styles.container}
+          contentContainerStyle={{ paddingBottom: 30 }}
+        >
           <ScreenContainer>
-            <View style={styles.iconSettingsContainer}>
-              <Icon name="settings-outline" type="ionicon" size={24} />
-            </View>
+            {userData.id == userInfo.id ? (
+              <Pressable
+                style={styles.iconSettingsContainer}
+                onPress={() => navigation.navigate(ROUTES.Settings)}
+              >
+                <InteractiveIcon
+                  name="settings-outline"
+                  type="ionicon"
+                  size={24}
+                  color="#000"
+                  onPress={() => navigation.navigate(ROUTES.Settings)}
+                />
+              </Pressable>
+            ) : (
+              <View style={{ height: 30 }}></View>
+            )}
             <View style={styles.headerContainer}>
               <Image
                 source={{ uri: S3ENDPOINTUSERIMAGES + profilImage }}
@@ -128,23 +156,28 @@ export default function ProfilScreen({
                 )}
               </View>
             </View>
-            <Text style={styles.bioText}>{bio}</Text>
             {userData.id !== userInfo.id && (
               <View style={styles.btnsContainer}>
                 <TouchableOpacity
                   style={[
                     styles.inviteBtn,
                     {
-                      backgroundColor: userIsInvited
-                        ? "grey"
-                        : COLORS.secondaryColor,
+                      backgroundColor:
+                        userIsInvited || userIsFriend
+                          ? "grey"
+                          : COLORS.secondaryColor,
                     },
                   ]}
                   onPress={handleSendFriendRequest}
-                  disabled={userIsInvited}
+                  disabled={userIsInvited || userIsFriend}
                 >
                   <Text style={styles.inviteBtnText}>
-                    {userIsInvited ? "Invitation envoyée" : "Inviter"}
+                    {!userIsFriend && userIsInvited
+                      ? "Invitation envoyée"
+                      : !userIsFriend && !userIsInvited
+                      ? "Inviter"
+                      : ""}
+                    {userIsFriend ? "Ami" : ""}
                   </Text>
                 </TouchableOpacity>
                 <TouchableOpacity style={styles.sendMessageBtn}>
@@ -155,12 +188,14 @@ export default function ProfilScreen({
               </View>
             )}
 
+            <Text style={styles.bioText}>{bio}</Text>
+
             <Text style={styles.dataTitle}>Qui suis-je vraiment</Text>
             <View style={styles.dataContainer}>
               <View style={styles.dataTopContainer}>
                 <Text style={styles.dataText}>
                   <Text style={{ fontFamily: FONTS.poppinsBold }}>
-                    Je suis née à :
+                    Je suis né à :
                   </Text>{" "}
                   {cityOfBirth}
                 </Text>
@@ -178,7 +213,7 @@ export default function ProfilScreen({
               <View style={styles.dataTopContainer}>
                 <Text style={styles.dataText}>
                   <Text style={{ fontFamily: FONTS.poppinsBold }}>
-                    Film série préféré :
+                    Film / série préféré.e :
                   </Text>{" "}
                   {favoriteShows}
                 </Text>
@@ -231,7 +266,7 @@ export default function ProfilScreen({
           </ScreenContainer>
         </ScrollView>
       </ScreenBackground>
-    </SafeAreaView>
+    </View>
   );
 }
 
@@ -274,18 +309,19 @@ const styles = StyleSheet.create({
   btnsContainer: {
     flexDirection: "row",
     justifyContent: "space-between",
+    marginTop: 15,
   },
   inviteBtn: {
     backgroundColor: COLORS.secondaryColor,
     borderRadius: 20,
-    width: 150,
+    width: 130,
     paddingVertical: 5,
   },
   inviteBtnText: {
     color: "#fff",
     fontFamily: FONTS.poppinsMedium,
     textAlign: "center",
-    fontSize: 13,
+    fontSize: 12,
     marginTop: 2,
   },
   sendMessageBtn: {
@@ -303,7 +339,7 @@ const styles = StyleSheet.create({
   dataTitle: {
     fontFamily: FONTS.poppinsBold,
     fontSize: 16,
-    marginVertical: 15,
+    marginBottom: 10,
   },
   dataContainer: {
     marginBottom: 10,

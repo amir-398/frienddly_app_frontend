@@ -8,7 +8,6 @@ import { useSearchUsers } from "@/hooks/userData";
 import { SearchUserPros } from "@/types/users";
 import { useNavigation } from "@react-navigation/native";
 import { Icon } from "@rneui/themed";
-import { StatusBar } from "expo-status-bar";
 import { Formik } from "formik";
 import React, { useEffect, useState } from "react";
 import {
@@ -64,8 +63,8 @@ export default function SearchUserModal({
       visible={visible}
       onRequestClose={() => setIsVisible(false)}
       animationType="slide"
+      statusBarTranslucent
     >
-      <StatusBar backgroundColor="#fff" />
       <ScreenContainer>
         <View style={styles.header}>
           <InteractiveIcon
@@ -151,6 +150,7 @@ const styles = StyleSheet.create({
     borderBottomColor: COLORS.primaryColor,
     borderBottomWidth: 2,
     paddingVertical: 15,
+    marginTop: 20,
   },
   textInputContainer: {
     flexDirection: "row",
