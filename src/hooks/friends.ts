@@ -1,7 +1,7 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
 import * as SecureStore from "expo-secure-store";
 import ky from "ky";
-const endpoint = process.env.EXPO_PUBLIC_ENDPONT_HOME;
+const endpoint = process.env.EXPO_PUBLIC_ENDPONT_WORK;
 
 // accept friend request notifications
 async function acceptFriendRequestNotification(
@@ -35,7 +35,7 @@ async function refuseFriendRequestNotification(
 
   try {
     await ky
-      .put(`${endpoint}/api/v1/friends/refuseInvitation/${friendshipId}`, {
+      .put(`${endpoint}/api/v1/friends/rejectInvitation/${friendshipId}`, {
         headers: { Authorization: `Bearer ${token}` },
       })
       .json();

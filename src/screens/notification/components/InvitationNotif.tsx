@@ -1,6 +1,7 @@
 import logo from "@/assets/logo/logo_2.png";
 import COLORS from "@/constants/COLORS";
 import FONTS from "@/constants/FONTS";
+import { S3ENDPOINTUSERIMAGES } from "@/constants/S3Endpoint";
 import {
   useAcceptFriendRequestNotification,
   useRefuseFriendRequestNotification,
@@ -26,13 +27,9 @@ export default function InvitationNotif({
   const notificationDate = formatNotificationDate(item.createdAt);
 
   // accept friend request
-  const {
-    mutate: acceptFriendRequest,
-    error,
-    isSuccess,
-  } = useAcceptFriendRequestNotification();
+  const { mutate: acceptFriendRequest } = useAcceptFriendRequestNotification();
 
-  const accepteFriendRequest = (friendshipId: number) => {
+  const handleAcceptFriendRequest = (friendshipId: number) => {
     acceptFriendRequest(friendshipId, {
       onSuccess: () => {
         setNotifications((prevNotifications: NotificationProps[]) => {
@@ -52,6 +49,22 @@ export default function InvitationNotif({
 
   // refuse friend request
   const { mutate: refuseFriendRequest } = useRefuseFriendRequestNotification();
+
+  const handleRefuseFriendRequest = (friendshipId: number) => {
+    refuseFriendRequest(friendshipId, {
+      onSuccess: () => {
+        setNotifications((prevNotifications: NotificationProps[]) => {
+          const updatedNotifications = prevNotifications.filter(
+            (notif) => notif.id !== item.id
+          );
+          return updatedNotifications;
+        });
+      },
+      onError: (error) => {
+        console.log(error);
+      },
+    });
+  };
   return (
     <View style={styles.container}>
       <View style={styles.header}>
@@ -75,13 +88,13 @@ export default function InvitationNotif({
               <View style={styles.btnsContainer}>
                 <TouchableOpacity
                   style={styles.acceptBtn}
-                  onPress={() => accepteFriendRequest(item.friendship.id)}
+                  onPress={() => handleAcceptFriendRequest(item.friendship.id)}
                 >
                   <Text style={styles.btnText}>Accepter</Text>
                 </TouchableOpacity>
                 <TouchableOpacity
                   style={styles.refuseBtn}
-                  onPress={() => refuseFriendRequest(item.friendship.id)}
+                  onPress={() => handleRefuseFriendRequest(item.friendship.id)}
                 >
                   <Text style={styles.btnText}>Refuser</Text>
                 </TouchableOpacity>
@@ -89,7 +102,7 @@ export default function InvitationNotif({
             )}
           </View>
           <Image
-            source={{ uri: senderProfileImage }}
+            source={{ uri: S3ENDPOINTUSERIMAGES + senderProfileImage }}
             style={styles.profilImage}
           />
         </View>

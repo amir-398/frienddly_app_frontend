@@ -67,7 +67,7 @@ export default function SignInScreen({ navigation }: { navigation: any }) {
           </View>
           <Text style={styles.title}>Content de te revoir</Text>
           <Text style={styles.subTitle}>
-            Connectez-vous à votre compte Frienddly
+            Connecte-toi à ton compte Frienddly
           </Text>
 
           <Formik

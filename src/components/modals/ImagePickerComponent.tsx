@@ -12,6 +12,12 @@ import {
   View,
 } from "react-native";
 import InteractiveIcon from "../InteractiveIcon";
+
+interface OptionsProps {
+  mediaTypes: ImagePicker.MediaTypeOptions;
+  aspect: [number, number];
+  quality: number;
+}
 export default function ImagePickerComponent({
   isVisible,
   setIsVisible,
@@ -34,9 +40,11 @@ export default function ImagePickerComponent({
 
     try {
       if (isCamera) {
-        result = await ImagePicker.launchImageLibraryAsync(options);
+        result = await ImagePicker.launchImageLibraryAsync(
+          options as OptionsProps
+        );
       } else {
-        result = await ImagePicker.launchCameraAsync(options);
+        result = await ImagePicker.launchCameraAsync(options as OptionsProps);
       }
       if (!result.canceled) {
         const resultData = result.assets[0];
@@ -76,6 +84,7 @@ export default function ImagePickerComponent({
       visible={isVisible}
       onRequestClose={() => setIsVisible(false)}
       transparent
+      statusBarTranslucent
     >
       <Pressable style={styles.container} onPress={() => setIsVisible(false)}>
         <View style={styles.pickerContainer}>
