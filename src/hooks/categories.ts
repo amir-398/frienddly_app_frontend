@@ -2,7 +2,7 @@ import { CategoriesProps } from "@/types/categories";
 import { useQuery } from "@tanstack/react-query";
 import * as SecureStore from "expo-secure-store";
 import ky from "ky";
-const endpoint = process.env.EXPO_PUBLIC_ENDPONT_HOME;
+const endpoint = process.env.EXPO_PUBLIC_ENDPONT_WORK;
 export async function getCategories(): Promise<CategoriesProps[]> {
   const token = await SecureStore.getItemAsync("token");
   if (!token) {

@@ -2,7 +2,10 @@ import penIcon from "@/assets/icons/pen.png";
 import ScreenContainer from "@/components/ScreenContainer";
 import COLORS from "@/constants/COLORS";
 import FONTS from "@/constants/FONTS";
-import { S3ENDPOINTPOSTIMAGES } from "@/constants/S3Endpoint";
+import {
+  S3ENDPOINTPOSTIMAGES,
+  S3ENDPOINTUSERIMAGES,
+} from "@/constants/S3Endpoint";
 import { useGetPostById, useSendCommentToPost } from "@/hooks/posts";
 import { setBottomBarIsVisible } from "@/redux/Slices/bottomBarIsVisible";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
@@ -51,7 +54,12 @@ export default function PostScreen({
   const [addGradeModalVisible, setAddGradeModalVisible] = useState(false);
 
   // get post by id
-  const { data: postData, refetch } = useGetPostById(id);
+  const {
+    data: postData,
+    refetch,
+    isPending: postDataIsLoading,
+  } = useGetPostById(id);
+
   const grades = postData?.grades;
   const postImages = postData?.images;
   const postComments = postData?.comments;
@@ -137,181 +145,195 @@ export default function PostScreen({
 
   return (
     <>
-      <AddGradeModal
-        isVisible={addGradeModalVisible}
-        setIsVisible={setAddGradeModalVisible}
-        postId={id}
-        refetch={refetch}
-      />
-      <StatusBar backgroundColor="transparent" translucent />
-      <KeyboardAwareScrollView
-        style={styles.container}
-        onScrollBeginDrag={() => !scrollIsActive && setScrollIsActive(true)}
-        stickyHeaderIndices={[0]}
-        stickyHeaderHiddenOnScroll={true}
-        extraHeight={150}
-      >
-        <View>
-          <FlatList
-            data={postImages}
-            horizontal
-            pagingEnabled
-            onScroll={({ nativeEvent }) => onImageChange(nativeEvent)}
-            showsHorizontalScrollIndicator={false}
-            renderItem={({ item }) => (
-              <Image
-                style={styles.imageHeader}
-                source={{ uri: S3ENDPOINTPOSTIMAGES + item.url }}
-              />
-            )}
-          />
-          <View style={styles.wrapDot}>
-            {postImages?.map((item, index) => (
-              <Text
-                key={item.id}
-                style={imgActive == index ? styles.dotActive : styles.dot}
-              >
-                ●
-              </Text>
-            ))}
-          </View>
-          <Pressable
-            style={({ pressed }) => [
-              styles.arrowBackContainer,
-              pressed && styles.arrowBackContainerPressed,
-            ]}
-            onPress={() => navigation.goBack()}
-            android_ripple={{ color: "transparent" }}
-          >
-            <Icon
-              name="arrow-back-outline"
-              type="ionicon"
-              color={"white"}
-              style={{ padding: 10 }}
-              size={28}
-            />
-          </Pressable>
+      {postDataIsLoading ? (
+        <View
+          style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
+        >
+          <ActivityIndicator size="large" color={COLORS.primaryColor} />
         </View>
-        <ScreenContainer>
-          <View style={styles.noteContainer}>
-            <Icon name="star" type="ionicon" color={"#000"} size={15} />
-            <Text
-              style={[
-                styles.noteText,
-                { fontSize: postData?.grade == 0 ? 12 : 16 },
-              ]}
-            >
-              {postData?.grade == 0
-                ? "Pas de note pour le moment"
-                : postData?.grade}
-            </Text>
-          </View>
-          <Text style={styles.title}>{postData?.title}</Text>
-          <Text style={styles.price}>{postData?.price} € par personne</Text>
-          <Text style={styles.location}> {postData?.location} </Text>
-          <Text style={styles.description}> {postData?.description} </Text>
-          <Text style={styles.noteTitle}>Notes</Text>
-          <View style={styles.noteWrapper}>
-            <View style={styles.left}>
-              <Icon
-                name="star"
-                type="ionicon"
-                color={COLORS.primaryColor}
-                size={50}
-              />
-              <Text style={styles.note}>{postData?.grade}</Text>
-            </View>
+      ) : (
+        <>
+          <AddGradeModal
+            isVisible={addGradeModalVisible}
+            setIsVisible={setAddGradeModalVisible}
+            postId={id}
+            refetch={refetch}
+          />
+          <StatusBar backgroundColor="transparent" translucent />
+          <KeyboardAwareScrollView
+            style={styles.container}
+            onScrollBeginDrag={() => !scrollIsActive && setScrollIsActive(true)}
+            stickyHeaderIndices={[0]}
+            stickyHeaderHiddenOnScroll={true}
+            extraHeight={150}
+          >
             <View>
-              {Object.entries(gradesCounts).map(([grade, percentage]) => (
-                <View style={styles.stat} key={grade}>
-                  <Text style={styles.statGrade}>{grade}</Text>
-                  <View style={styles.gradeBarContainer}>
-                    <View
-                      style={[styles.gradeBar, { width: `${percentage}%` }]}
-                    ></View>
-                  </View>
-                </View>
-              ))}
-            </View>
-          </View>
-          <Text style={styles.noticeTitle}>Avis</Text>
-          {!userHasCommented && (
-            <Formik
-              initialValues={{
-                commentText: "",
-              }}
-              validationSchema={validationSchema}
-              onSubmit={handleCommentInput}
-            >
-              {({ handleSubmit, handleChange, handleBlur, values }) => (
-                <>
-                  <View style={styles.addCommentContainer}>
-                    <Image source={penIcon} style={styles.penIcon} />
-                    <TextInput
-                      style={styles.commentInput}
-                      cursorColor="#000"
-                      placeholder="Écrire un avis"
-                      onChangeText={handleChange("commentText")}
-                      onBlur={handleBlur("commentText")}
-                      value={values.commentText}
-                      readOnly={isPending}
-                    />
-                    {!isPending && (
-                      <TouchableOpacity onPress={() => handleSubmit()}>
-                        <Icon name="send" type="font-awesome" size={20} />
-                      </TouchableOpacity>
-                    )}
-                    {isPending && <ActivityIndicator color="#000" size={30} />}
-                  </View>
-                </>
-              )}
-            </Formik>
-          )}
-          {postComments?.length ?? 0 > 0 ? (
-            postComments?.map((comment) => (
-              <View key={comment.id} style={styles.commentContainer}>
-                <View style={styles.header}>
+              <FlatList
+                data={postImages}
+                horizontal
+                pagingEnabled
+                onScroll={({ nativeEvent }) => onImageChange(nativeEvent)}
+                showsHorizontalScrollIndicator={false}
+                renderItem={({ item }) => (
                   <Image
-                    source={{ uri: comment.user.profilImage }}
-                    style={styles.avatar}
+                    style={styles.imageHeader}
+                    source={{ uri: S3ENDPOINTPOSTIMAGES + item.url }}
                   />
-                  <View>
-                    <Text style={styles.commentUserName}>
-                      {comment.user.lastname} {comment.user.firstname}
-                    </Text>
-                    <Stars
-                      default={usersCommentGrades(comment.userId)}
-                      count={5}
-                      disabled
-                      fullStar={
-                        <Icon
-                          name={"star"}
-                          type="ionicon"
-                          size={20}
-                          color={COLORS.primaryColor}
-                        />
-                      }
-                      emptyStar={
-                        <Icon
-                          name={"star-outline"}
-                          type="ionicon"
-                          color={COLORS.primaryColor}
-                          size={20}
-                        />
-                      }
-                    />
-                  </View>
-                </View>
-                <Text style={styles.comment}>{comment.content}</Text>
+                )}
+              />
+              <View style={styles.wrapDot}>
+                {postImages?.map((item, index) => (
+                  <Text
+                    key={item.id}
+                    style={imgActive == index ? styles.dotActive : styles.dot}
+                  >
+                    ●
+                  </Text>
+                ))}
               </View>
-            ))
-          ) : (
-            <Text style={styles.nonCommentText}>
-              Il n'y a pas d'avis pour le moment
-            </Text>
-          )}
-        </ScreenContainer>
-      </KeyboardAwareScrollView>
+              <Pressable
+                style={({ pressed }) => [
+                  styles.arrowBackContainer,
+                  pressed && styles.arrowBackContainerPressed,
+                ]}
+                onPress={() => navigation.goBack()}
+                android_ripple={{ color: "transparent" }}
+              >
+                <Icon
+                  name="arrow-back-outline"
+                  type="ionicon"
+                  color={"white"}
+                  style={{ padding: 10 }}
+                  size={28}
+                />
+              </Pressable>
+            </View>
+            <ScreenContainer>
+              <View style={styles.noteContainer}>
+                <Icon name="star" type="ionicon" color={"#000"} size={15} />
+                <Text
+                  style={[
+                    styles.noteText,
+                    { fontSize: postData?.grade == 0 ? 12 : 16 },
+                  ]}
+                >
+                  {postData?.grade == 0
+                    ? "Pas de note pour le moment"
+                    : postData?.grade}
+                </Text>
+              </View>
+              <Text style={styles.title}>{postData?.title}</Text>
+              <Text style={styles.price}>{postData?.price} € par personne</Text>
+              <Text style={styles.location}> {postData?.location} </Text>
+              <Text style={styles.description}> {postData?.description} </Text>
+              <Text style={styles.noteTitle}>Notes</Text>
+              <View style={styles.noteWrapper}>
+                <View style={styles.left}>
+                  <Icon
+                    name="star"
+                    type="ionicon"
+                    color={COLORS.primaryColor}
+                    size={50}
+                  />
+                  <Text style={styles.note}>{postData?.grade}</Text>
+                </View>
+                <View>
+                  {Object.entries(gradesCounts).map(([grade, percentage]) => (
+                    <View style={styles.stat} key={grade}>
+                      <Text style={styles.statGrade}>{grade}</Text>
+                      <View style={styles.gradeBarContainer}>
+                        <View
+                          style={[styles.gradeBar, { width: `${percentage}%` }]}
+                        ></View>
+                      </View>
+                    </View>
+                  ))}
+                </View>
+              </View>
+              <Text style={styles.noticeTitle}>Avis</Text>
+              {!userHasCommented && (
+                <Formik
+                  initialValues={{
+                    commentText: "",
+                  }}
+                  validationSchema={validationSchema}
+                  onSubmit={handleCommentInput}
+                >
+                  {({ handleSubmit, handleChange, handleBlur, values }) => (
+                    <>
+                      <View style={styles.addCommentContainer}>
+                        <Image source={penIcon} style={styles.penIcon} />
+                        <TextInput
+                          style={styles.commentInput}
+                          cursorColor="#000"
+                          placeholder="Écrire un avis"
+                          onChangeText={handleChange("commentText")}
+                          onBlur={handleBlur("commentText")}
+                          value={values.commentText}
+                          readOnly={isPending}
+                        />
+                        {!isPending && (
+                          <TouchableOpacity onPress={() => handleSubmit()}>
+                            <Icon name="send" type="font-awesome" size={20} />
+                          </TouchableOpacity>
+                        )}
+                        {isPending && (
+                          <ActivityIndicator color="#000" size={30} />
+                        )}
+                      </View>
+                    </>
+                  )}
+                </Formik>
+              )}
+              {postComments?.length ?? 0 > 0 ? (
+                postComments?.map((comment) => (
+                  <View key={comment.id} style={styles.commentContainer}>
+                    <View style={styles.header}>
+                      <Image
+                        source={{
+                          uri: S3ENDPOINTUSERIMAGES + comment.user.profilImage,
+                        }}
+                        style={styles.avatar}
+                      />
+                      <View>
+                        <Text style={styles.commentUserName}>
+                          {comment.user.lastname} {comment.user.firstname}
+                        </Text>
+                        <Stars
+                          default={usersCommentGrades(comment.userId)}
+                          count={5}
+                          disabled
+                          fullStar={
+                            <Icon
+                              name={"star"}
+                              type="ionicon"
+                              size={20}
+                              color={COLORS.primaryColor}
+                            />
+                          }
+                          emptyStar={
+                            <Icon
+                              name={"star-outline"}
+                              type="ionicon"
+                              color={COLORS.primaryColor}
+                              size={20}
+                            />
+                          }
+                        />
+                      </View>
+                    </View>
+                    <Text style={styles.comment}>{comment.content}</Text>
+                  </View>
+                ))
+              ) : (
+                <Text style={styles.nonCommentText}>
+                  Il n'y a pas d'avis pour le moment
+                </Text>
+              )}
+            </ScreenContainer>
+          </KeyboardAwareScrollView>
+        </>
+      )}
     </>
   );
 }

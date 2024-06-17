@@ -18,27 +18,61 @@ export default function AuthNavigation() {
       initialRouteName={ROUTES.LandingPage}
       screenOptions={{ header: CustomHeader }}
     >
-      <Stack.Screen name={ROUTES.LandingPage} component={LandingScreen} />
-      <Stack.Screen name={ROUTES.SignInScreen} component={SignInScreen} />
+      <Stack.Screen
+        name={ROUTES.LandingPage}
+        component={LandingScreen}
+        options={{
+          statusBarColor: "transparent",
+          statusBarTranslucent: true,
+        }}
+      />
+      <Stack.Screen
+        name={ROUTES.SignInScreen}
+        component={SignInScreen}
+        options={{
+          statusBarColor: "transparent",
+          statusBarTranslucent: true,
+        }}
+      />
       <Stack.Screen
         name={ROUTES.SignUpScreenStep1}
         component={SignUpScreenStep1}
+        options={{
+          statusBarColor: "transparent",
+          statusBarTranslucent: true,
+        }}
       />
       <Stack.Screen
         name={ROUTES.SignUpScreenStep2}
         component={SignUpScreenStep2}
+        options={{
+          statusBarColor: "transparent",
+          statusBarTranslucent: true,
+        }}
       />
       <Stack.Screen
         name={ROUTES.SignUpScreenStep3}
         component={SignUpScreenStep3}
+        options={{
+          statusBarColor: "transparent",
+          statusBarTranslucent: true,
+        }}
       />
       <Stack.Screen
         name={ROUTES.SignUpScreenStep4}
         component={SignUpScreenStep4}
+        options={{
+          statusBarColor: "transparent",
+          statusBarTranslucent: true,
+        }}
       />
       <Stack.Screen
         name={ROUTES.SignUpScreenStep5}
         component={SignUpScreenStep5}
+        options={{
+          statusBarColor: "transparent",
+          statusBarTranslucent: true,
+        }}
       />
     </Stack.Navigator>
   );

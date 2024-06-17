@@ -1,10 +1,11 @@
 import ScreenContainer from "@/components/ScreenContainer";
+import SubscriptionModal from "@/components/modals/SubscriptionModal";
 import COLORS from "@/constants/COLORS";
 import FONTS from "@/constants/FONTS";
 import ROUTES from "@/constants/ROUTES";
-import { PostProps } from "@/enums/posts";
 import { useGetCategories } from "@/hooks/categories";
 import { useGetAllPosts } from "@/hooks/posts";
+import { PostsProps } from "@/types/posts";
 import React, { useRef, useState } from "react";
 import {
   FlatList,
@@ -62,6 +63,7 @@ export default function Home({ navigation }: { navigation: any }) {
   };
   return (
     <SafeAreaView>
+      <SubscriptionModal />
       <ScrollView>
         <ScreenContainer>
           <Header />
@@ -83,7 +85,7 @@ export default function Home({ navigation }: { navigation: any }) {
             keyExtractor={(item) => item.id.toString()}
             renderItem={({ item }) => <CardsComponent {...item} />}
           />
-          {postsData?.map((item: PostProps) => (
+          {postsData?.map((item: PostsProps) => (
             <PostComponent key={item.id} {...item} />
           ))}
           <TouchableOpacity

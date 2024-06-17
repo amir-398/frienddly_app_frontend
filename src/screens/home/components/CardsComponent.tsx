@@ -78,14 +78,14 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-around",
-    width: "80%",
+    width: "90%",
     paddingVertical: 8,
     backgroundColor: "#fff",
     borderRadius: 20,
   },
   btnText: {
     fontSize: 9,
-    fontFamily: FONTS.poppinsMedium,
+    fontFamily: FONTS.poppinsBold,
     marginTop: 2,
   },
   right: {

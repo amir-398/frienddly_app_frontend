@@ -1,9 +1,9 @@
-import { PostsProps } from "@/types/posts";
 import { PostProps } from "@/types/post";
+import { PostsProps } from "@/types/posts";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import * as SecureStore from "expo-secure-store";
 import ky from "ky";
-const endpoint = process.env.EXPO_PUBLIC_ENDPONT_HOME;
+const endpoint = process.env.EXPO_PUBLIC_ENDPONT_WORK;
 interface Filter {
   lgt?: number | string;
   ltd?: number | string;

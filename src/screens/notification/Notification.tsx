@@ -42,7 +42,11 @@ export default function Notification({
   }, [notificationsData]);
 
   return (
-    <Modal visible={isVisible} animationType="slide">
+    <Modal
+      visible={isVisible}
+      onRequestClose={() => setIsVisible(false)}
+      animationType="slide"
+    >
       <ScreenContainer>
         <View style={styles.header}>
           <View style={styles.headerIcon}>

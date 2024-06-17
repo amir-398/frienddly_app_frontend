@@ -48,7 +48,7 @@ export default function SignUpScreenStep4({ navigation }: { navigation: any }) {
   return (
     <ScreenBackground>
       <ScreenContainer>
-        <HeaderComponent title="Indiquez votre adresse email?" />
+        <HeaderComponent title="Indique ton mot de passe" />
         <Formik
           initialValues={{
             password: "",

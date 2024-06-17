@@ -1,3 +1,4 @@
+import MapSkeleton from "@/components/skeletons/MapSkeleton";
 import COLORS from "@/constants/COLORS";
 import FONTS from "@/constants/FONTS";
 import ROUTES from "@/constants/ROUTES";
@@ -45,15 +46,20 @@ export default function UsersFlatlist() {
     return sendedInvitations.includes(userId);
   };
 
-  if (isLoading) {
-    return <Text>Loading...</Text>;
-  }
-
   if (error) {
     return <Text>Error loading data</Text>;
   }
 
-  return (
+  return isLoading ? (
+    <View style={styles.skeletonContainer}>
+      <View style={styles.skeleton}>
+        <MapSkeleton />
+      </View>
+      <View style={styles.skeleton}>
+        <MapSkeleton />
+      </View>
+    </View>
+  ) : (
     <FlatList
       data={data}
       keyExtractor={(item) => item.id.toString()}
@@ -98,6 +104,16 @@ export default function UsersFlatlist() {
 }
 
 const styles = StyleSheet.create({
+  skeletonContainer: {
+    flexDirection: "row",
+  },
+  skeleton: {
+    height: 180,
+    width: 180,
+    borderRadius: 20,
+    overflow: "hidden",
+    marginRight: 10,
+  },
   userCardContainer: {
     margin: 10,
     padding: 10,

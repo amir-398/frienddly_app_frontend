@@ -1,6 +1,7 @@
 import MapSkeleton from "@/components/skeletons/MapSkeleton";
 import COLORS from "@/constants/COLORS";
 import { useGetAllPosts } from "@/hooks/posts";
+import { PostsProps } from "@/types/posts";
 import * as Location from "expo-location";
 import React, { useEffect, useState } from "react";
 import { StyleSheet, View } from "react-native";
@@ -8,31 +9,14 @@ import MapView, { Marker } from "react-native-maps";
 import FilterModal from "../modals/FilterModal";
 import PostRender from "./PostRender";
 import SearchBar from "./SearchBar";
-import { PostsProps } from "@/types/posts";
-interface Post {
-  id: number;
-  title: string;
-  description: string;
-  latitude: number;
-  longitude: number;
-  category: {
-    id: number;
-    name: string;
-  };
-  images: [
-    {
-      url: string;
-      postId: number;
-      id: number;
-    }
-  ];
-}
+
 interface Region {
   latitude: number;
   longitude: number;
   latitudeDelta: number;
   longitudeDelta: number;
 }
+
 export default function MapComponent({
   selectedCategory,
   setSelectedCategory,
@@ -47,6 +31,7 @@ export default function MapComponent({
   const [postsData, setPostsData] = useState<PostsProps[]>([]);
   const [selectedPost, setSelectedPost] = useState<PostsProps | null>(null);
   const [filterModalVisible, setFilterModalVisible] = useState(false);
+
   // get user position
   useEffect(() => {
     (async () => {
@@ -62,18 +47,27 @@ export default function MapComponent({
         return;
       }
 
-      let location = await Location.getCurrentPositionAsync({});
-      setRegion({
-        latitude: location.coords.latitude,
-        longitude: location.coords.longitude,
-        latitudeDelta: 0.0922,
-        longitudeDelta: 0.0421,
-      });
+      try {
+        let location = await Location.getCurrentPositionAsync({});
+        if (location.coords.latitude && location.coords.longitude) {
+          setRegion({
+            latitude: location.coords.latitude,
+            longitude: location.coords.longitude,
+            latitudeDelta: 0.0922,
+            longitudeDelta: 0.0421,
+          });
+        } else {
+          setErrorMsg("Invalid location coordinates");
+        }
+      } catch (error) {
+        setErrorMsg("Error fetching location");
+        console.error(error);
+      }
     })();
   }, []);
 
   // Récupère les posts en fonction de la région
-  const { data: posts } = useGetAllPosts({
+  const { data: posts, isLoading } = useGetAllPosts({
     lgt: region?.longitude ?? "",
     ltd: region?.latitude ?? "",
     cat: selectedCategory ?? "",
@@ -105,8 +99,8 @@ export default function MapComponent({
       {region ? (
         <MapView
           initialRegion={{
-            latitude: region?.latitude,
-            longitude: region?.longitude,
+            latitude: region?.latitude ?? 48.866667,
+            longitude: region?.longitude ?? 2.333333,
             latitudeDelta: 0.1,
             longitudeDelta: 0.1,
           }}
