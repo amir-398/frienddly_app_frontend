@@ -38,7 +38,6 @@ export default function SignInScreen({ navigation }: { navigation: any }) {
   const { mutate: userLogin, isPending } = useLogin();
   const [error, setError] = useState(false);
   const { storeToken } = useTokenEffect();
-
   //onSubmit function to handle form submission
   const onSubmit = (values: FormValues) => {
     const email = values.email.trim().toLowerCase();
@@ -47,7 +46,7 @@ export default function SignInScreen({ navigation }: { navigation: any }) {
     userLogin(
       { email, password },
       {
-        onSuccess: (data) => {
+        onSuccess: (data: any) => {
           const token = data.token.token;
           const streamToken = data.streamToken;
           storeToken(token, streamToken);

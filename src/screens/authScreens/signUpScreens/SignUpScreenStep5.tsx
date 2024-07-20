@@ -22,8 +22,6 @@ export default function SignUpScreenStep6({ navigation }: { navigation: any }) {
   const [imageError, setImageError] = useState("");
   const [imagePickerIsVisible, setImagePickerIsVisible] = useState(false);
   const [btnDisabled, setBtnDisabled] = useState(true);
-  const { mutate: userRegister, isPending: UserRegisterIsPending } =
-    useRegister();
 
   //check if image is selected
   useEffect(() => {
@@ -52,7 +50,8 @@ export default function SignUpScreenStep6({ navigation }: { navigation: any }) {
     formData.append("birthDate", userInfo.birthDate as string);
     return formData;
   };
-
+  const { mutate: userRegister, isPending: UserRegisterIsPending } =
+    useRegister();
   const onSubmit = async () => {
     const formData = createFormData(image);
     userRegister(formData, {

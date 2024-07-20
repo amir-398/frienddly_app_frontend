@@ -1,5 +1,5 @@
-import ScreenContainer from "@/components/ScreenContainer";
 import SubscriptionModal from "@/components/modals/SubscriptionModal";
+import ScreenContainer from "@/components/ScreenContainer";
 import COLORS from "@/constants/COLORS";
 import FONTS from "@/constants/FONTS";
 import ROUTES from "@/constants/ROUTES";
@@ -20,8 +20,8 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import CardsComponent from "./components/CardsComponent";
 import CategoriesComponent from "./components/CategoriesComponent";
 import Header from "./components/Header";
-import PostComponent from "./components/PostComponent";
 import MapComponent from "./components/mapComponents/MapComponent";
+import PostComponent from "./components/PostComponent";
 
 export default function Home({ navigation }: { navigation: any }) {
   const [selectedCategory, setSelectedCategory] = useState<number | null>(null);
@@ -56,6 +56,7 @@ export default function Home({ navigation }: { navigation: any }) {
     cat: selectedCategory ?? "",
     nb: 2,
   });
+
   const { data: categories } = useGetCategories();
 
   const handleSearchPress = () => {

@@ -1,7 +1,7 @@
 import FONTS from "@/constants/FONTS";
 import ROUTES from "@/constants/ROUTES";
 import { S3ENDPOINTPOSTIMAGES } from "@/constants/S3Endpoint";
-import { PostProps } from "@/enums/posts";
+import { PostsProps } from "@/types/posts";
 import { useNavigation } from "@react-navigation/native";
 import React from "react";
 import {
@@ -13,7 +13,7 @@ import {
   View,
 } from "react-native";
 
-export default function PostComponent(item: PostProps) {
+export default function PostComponent(item: PostsProps) {
   const navigation = useNavigation() as any;
   const { images, title, grade, location } = item;
 

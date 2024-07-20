@@ -2,7 +2,7 @@ import FONTS from "@/constants/FONTS";
 import React, { useState } from "react";
 import { StyleSheet, Text, TextInput, View } from "react-native";
 import InteractiveIcon from "./InteractiveIcon";
-export default function CustomInput(props) {
+export default function CustomInput(props: any) {
   const {
     secureTextEntry,
     iconName,

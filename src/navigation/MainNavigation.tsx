@@ -57,7 +57,6 @@ export default function MainNavigation() {
           backgroundColor: "#fff",
           height: 60,
           paddingBottom: 10,
-
           borderColor: COLORS.primaryColor,
           borderTopWidth: 1,
           width: "100%",

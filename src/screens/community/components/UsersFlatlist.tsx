@@ -34,7 +34,7 @@ export default function UsersFlatlist() {
           dispatch(setUserInvitedFriend(userId));
         },
         onError: (error) => {
-          console.log("error", error);
+          console.log("error", error.message);
         },
       });
     } catch (error) {

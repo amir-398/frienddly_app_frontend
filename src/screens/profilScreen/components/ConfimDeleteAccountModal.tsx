@@ -23,9 +23,8 @@ export default function ConfimDeleteAccountModal({
   const { removeToken } = useTokenEffect();
   const handleDelete = async () => {
     try {
-      deleteUser().then(() => {
-        removeToken();
-      });
+      await deleteUser();
+      await removeToken();
     } catch (error) {
       console.log(error);
     }

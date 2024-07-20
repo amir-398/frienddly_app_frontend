@@ -184,6 +184,7 @@ const styles = StyleSheet.create({
   btnText: {
     fontFamily: FONTS.poppinsMedium,
     marginTop: 2,
+    color: "#fff",
   },
   profilImage: {
     width: 60,

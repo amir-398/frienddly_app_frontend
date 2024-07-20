@@ -80,5 +80,3 @@ export default function SignUpScreenStep1({ navigation }: { navigation: any }) {
     </ScreenBackground>
   );
 }
-
-const styles = StyleSheet.create({});

@@ -6,12 +6,14 @@
     "start": "expo start",
     "android": "expo start --android",
     "ios": "expo start --ios",
-    "web": "expo start --web"
+    "web": "expo start --web",
+    "doc": "typedoc"
   },
   "dependencies": {
     "@adonisjs/transmit-client": "^1.0.0",
     "@expo-google-fonts/poppins": "^0.2.3",
     "@react-native-community/netinfo": "11.3.1",
+    "@react-native-picker/picker": "2.7.5",
     "@react-navigation/bottom-tabs": "^6.5.20",
     "@react-navigation/native": "^6.1.17",
     "@react-navigation/native-stack": "^6.9.26",
@@ -22,6 +24,7 @@
     "@tanstack/react-query": "^5.37.1",
     "expo": "~51.0.6",
     "expo-av": "~14.0.5",
+    "expo-blur": "~13.0.2",
     "expo-clipboard": "~6.0.3",
     "expo-document-picker": "~12.0.1",
     "expo-file-system": "~17.0.1",
@@ -39,13 +42,13 @@
     "ky": "^1.2.4",
     "luxon": "^3.4.4",
     "react": "18.2.0",
-    "react-native": "0.74.1",
+    "react-native": "0.74.3",
     "react-native-crypto": "^2.2.0",
     "react-native-gesture-handler": "~2.16.1",
     "react-native-keyboard-aware-scroll-view": "^0.9.5",
     "react-native-maps": "1.14.0",
     "react-native-reanimated": "~3.10.1",
-    "react-native-safe-area-context": "4.10.1",
+    "react-native-safe-area-context": "4.10.5",
     "react-native-screens": "3.31.1",
     "react-native-stars": "^1.2.2",
     "react-native-svg": "15.2.0",
@@ -54,8 +57,7 @@
     "socket.io-client": "^4.7.5",
     "stream-chat-expo": "^5.31.1",
     "yup": "^1.4.0",
-    "@react-native-picker/picker": "2.7.5",
-    "expo-blur": "~13.0.2"
+    "expo-dev-client": "~4.0.20"
   },
   "imports": {
     "#assets/*": "@/assets/*"
@@ -65,7 +67,9 @@
     "@types/he": "^1.2.3",
     "@types/luxon": "^3.4.2",
     "@types/react": "~18.2.45",
-    "typescript": "^5.1.3"
+    "jsdoc-babel": "^0.5.0",
+    "typedoc": "^0.26.3",
+    "typescript": "^5.3.3"
   },
   "private": true
 }

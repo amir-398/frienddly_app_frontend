@@ -43,11 +43,14 @@ export default function CustomChannelHeader() {
           <View
             style={[
               styles.statusCircle,
-              { backgroundColor: userData.online ? "#4caf50" : "red" },
+              {
+                backgroundColor:
+                  userData && userData.online ? "#4caf50" : "red",
+              },
             ]}
           ></View>
           <Text style={styles.onlineStatusText}>
-            {userData.online ? "En ligne" : "Hors ligne"}
+            {userData && userData.online ? "En ligne" : "Hors ligne"}
           </Text>
         </View>
       </View>
